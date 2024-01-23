@@ -1,14 +1,15 @@
 package com.ssafy.umzip.domain.delivery.service;
 
+import com.ssafy.umzip.domain.delivery.dto.DeliveryRequestDto;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface DeliveryService {
      //car Test
-     List<Car> getCarList();
+     Optional<Car> getCarList(Long id);
      //사용자
-     void createDelivery();
+     void createDelivery(DeliveryRequestDto dto);
      void calculateDelivery();
      void cancelDelivery();
      void companyListDelivery();
