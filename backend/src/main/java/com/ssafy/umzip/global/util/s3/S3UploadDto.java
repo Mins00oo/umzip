@@ -1,4 +1,4 @@
-package com.ssafy.umzip.global.util;
+package com.ssafy.umzip.global.util.s3;
 
 import lombok.*;
 

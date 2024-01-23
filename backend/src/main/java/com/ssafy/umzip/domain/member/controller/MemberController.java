@@ -18,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
     private final MemberService memberService;
 
+    /**
+     * 일반 사용자 회원가입시 요청을 처리하는 메서드
+     */
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestPart MemberCreateRequestDto requestDto,
                                              @RequestPart(value = "memberProfileImg") MultipartFile multipartFile) {

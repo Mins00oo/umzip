@@ -1,6 +1,11 @@
 spring:
   profiles:
-    active: env
+    active: local
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      port: 6379
   servlet:
     multipart:
       max-file-size: 10MB
@@ -37,3 +42,7 @@ cloud:
     stack:
       auto: 'false'
 
+sms:
+  api:
+    key: ${COOL_SMS_API_KEY}
+    secret: ${COOL_SMS_API_SECRET}

@@ -1,4 +1,4 @@
-package com.ssafy.umzip.global.util;
+package com.ssafy.umzip.global.util.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class S3Service {
     private final AmazonS3Client amazonS3Client;
 
-    public S3UploadDto upload(MultipartFile multipartFile, String bucket, String dirName) throws IOException {
+    public S3UploadDto upload(MultipartFile multipartFile, String bucket, String dirName){
         File uploadFile = convert(multipartFile);
         String originalFilename = multipartFile.getOriginalFilename();
         return upload(uploadFile, bucket, dirName, originalFilename);

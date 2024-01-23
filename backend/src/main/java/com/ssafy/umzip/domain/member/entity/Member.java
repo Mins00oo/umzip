@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.member.entity;
 
 import com.ssafy.umzip.global.common.BaseTimeEntity;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,12 +47,14 @@ public class Member extends BaseTimeEntity {
     private String pwd;
 
     @Builder
-    public Member(String email, String phone, String name, int point, String imageUrl, String address, String addressDetail, int sigungu, String pwd) {
+    public Member(String email, String phone, String name, int point, S3UploadDto s3UploadDto, String address, String addressDetail, int sigungu, String pwd) {
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.point = point;
-        this.imageUrl = imageUrl;
+        if (s3UploadDto != null) {
+            this.imageUrl = s3UploadDto.getImgUrl();
+        }
         this.address = address;
         this.addressDetail = addressDetail;
         this.sigungu = sigungu;

@@ -1,7 +1,7 @@
 package com.ssafy.umzip.domain.member.dto;
 
 import com.ssafy.umzip.domain.member.entity.Member;
-import com.ssafy.umzip.global.util.S3UploadDto;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.Getter;
 
 @Getter
@@ -33,7 +33,8 @@ public class MemberCreateRequestDto {
                 .address(requestDto.getAddress())
                 .addressDetail(requestDto.getAddressDetail())
                 .sigungu(requestDto.getSigungu())
-                .imageUrl(s3UploadDto.getImgUrl())
+                .point(point)
+                .s3UploadDto(s3UploadDto)
                 .build();
     }
 }

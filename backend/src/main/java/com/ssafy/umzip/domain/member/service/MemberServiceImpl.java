@@ -5,15 +5,13 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
-import com.ssafy.umzip.global.util.S3Service;
-import com.ssafy.umzip.global.util.S3UploadDto;
+import com.ssafy.umzip.global.util.s3.S3Service;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +23,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void createMember(MemberCreateRequestDto requestDto, MultipartFile multipartFile) {
-        S3UploadDto s3UploadDto;
-        try {
+        if (checkDuplicateMember(requestDto.getEmail())) {
+            throw new BaseException(StatusCode.ALREADY_EXIST_MEMBER);
+        }
+
+        S3UploadDto s3UploadDto = null;
+        if (!multipartFile.isEmpty()) {
             s3UploadDto = s3Service.upload(multipartFile, "umzip-service", "user");
-        } catch (Exception e) {
-            throw new BaseException(StatusCode.S3_UPLOAD_FAIL);
         }
 
         Member member = MemberCreateRequestDto.toEntity(
@@ -38,7 +38,10 @@ public class MemberServiceImpl implements MemberService {
                 1000,
                 s3UploadDto
         );
-
         memberRepository.save(member);
+    }
+
+    public boolean checkDuplicateMember(String email) {
+        return memberRepository.existsByEmail(email);
     }
 }
