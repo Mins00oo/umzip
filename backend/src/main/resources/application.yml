@@ -1,6 +1,10 @@
 spring:
   profiles:
-    active: env
+    active: local
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
@@ -8,7 +12,7 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -17,6 +21,19 @@ spring:
     serialization:
       fail-on-empty-beans: 'false'
 
+
 jwt:
   secretKey: ${JWT_SECRET_KEY}
   accessExpiredTimeMs: ${JWT_ACCESS_EXPIRED_TIME_MS}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+    region:
+      static: ${S3_REGION}
+    s3:
+      bucket : ${S3_BUCKET}
+    stack:
+      auto: 'false'
