@@ -2,12 +2,15 @@ package com.ssafy.umzip.domain.company.entity;
 
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.common.Role;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,14 +31,14 @@ public class Company {
     private String introduction;
 
     @Column(name = "company_credential")
-    private File credential;
+    private String credential;
 
     @Column(name = "company_role")
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "company_experience")
-    private int experience;
+    private LocalDateTime experience;
 
     @Column(name = "company_image_url")
     private String imageUrl;
@@ -55,4 +58,26 @@ public class Company {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     Member member;
+
+    @Builder
+    public Company(String name, String businessAuthentication, String introduction, S3UploadDto deliverFileDto, Role role,
+                   LocalDateTime experience, S3UploadDto imgDto, String ceo,
+                   String address, String addressDetail, int sigungu, Member member) {
+        this.name = name;
+        this.businessAuthentication = businessAuthentication;
+        this.introduction = introduction;
+        if (deliverFileDto != null) {
+            this.credential = deliverFileDto.getImgUrl();
+        }
+        this.role = role;
+        this.experience = experience;
+        if (imgDto != null) {
+            this.imageUrl = imgDto.getImgUrl();
+        }
+        this.ceo = ceo;
+        this.address = address;
+        this.addressDetail = addressDetail;
+        this.sigungu = sigungu;
+        this.member = member;
+    }
 }

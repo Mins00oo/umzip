@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.auth.controller;
 
 import com.ssafy.umzip.domain.auth.dto.AuthCodeRequestDto;
+import com.ssafy.umzip.domain.auth.dto.AuthEmailRequestDto;
 import com.ssafy.umzip.domain.auth.service.AuthService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -34,6 +35,12 @@ public class AuthController {
     @PostMapping("/code")
     public ResponseEntity<Object> authCode(@RequestBody AuthCodeRequestDto codeRequestDto) {
         authService.authCode(codeRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    @PostMapping("/email")
+    public ResponseEntity<Object> authEmail(@RequestBody AuthEmailRequestDto emailRequestDto) {
+        authService.authEmail(emailRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 }
