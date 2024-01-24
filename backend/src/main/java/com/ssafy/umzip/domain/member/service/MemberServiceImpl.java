@@ -22,15 +22,12 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public void createMember(MemberCreateRequestDto requestDto, MultipartFile multipartFile) {
+    public void createMember(MemberCreateRequestDto requestDto) {
         if (checkDuplicateMember(requestDto.getEmail())) {
             throw new BaseException(StatusCode.ALREADY_EXIST_MEMBER);
         }
 
         S3UploadDto s3UploadDto = null;
-        if (!multipartFile.isEmpty()) {
-            s3UploadDto = s3Service.upload(multipartFile, "umzip-service", "user");
-        }
 
         Member member = MemberCreateRequestDto.toEntity(
                 requestDto,
