@@ -3,7 +3,6 @@ package com.ssafy.umzip.domain.member.service;
 import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
-import com.ssafy.umzip.global.util.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,13 +16,15 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public void createMember(MemberCreateRequestDto requestDto) {
+    public Member createMember(MemberCreateRequestDto requestDto) {
         Member member = MemberCreateRequestDto.toEntity(
                 requestDto,
                 encoder.encode(requestDto.getPassword()),
                 1000
         );
         memberRepository.save(member);
+
+        return member;
     }
 
 }
