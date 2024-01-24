@@ -15,7 +15,7 @@ public class CodeSmall {
     @Column(name = "code_small_id")
     private Long id;
 
-    @Column(name = "code_smll_name")
+    @Column(name = "code_small_name")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

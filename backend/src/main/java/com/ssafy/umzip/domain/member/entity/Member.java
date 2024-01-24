@@ -45,14 +45,11 @@ public class Member extends BaseTimeEntity {
     private String pwd;
 
     @Builder
-    public Member(String email, String phone, String name, int point, S3UploadDto s3UploadDto, String address, String addressDetail, int sigungu, String pwd) {
+    public Member(String email, String phone, String name, int point, String address, String addressDetail, int sigungu, String pwd) {
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.point = point;
-        if (s3UploadDto != null) {
-            this.imageUrl = s3UploadDto.getImgUrl();
-        }
         this.address = address;
         this.addressDetail = addressDetail;
         this.sigungu = sigungu;
