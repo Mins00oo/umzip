@@ -1,8 +1,10 @@
 package com.ssafy.umzip.domain.tag.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "tag")
 public class Tag {
 

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "review_tag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewTag {
     @Id
