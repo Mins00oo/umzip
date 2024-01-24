@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.review.entity;
 
 
 import com.ssafy.umzip.domain.member.entity.Member;
+import com.ssafy.umzip.domain.reviewtag.entity.ReviewTag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,11 +32,13 @@ public class Review {
     @Column(name = "review_update_dt")
     private LocalDateTime updateDt;
 
-
-    // memberId를 통한 Join
     @ManyToOne(cascade= CascadeType.REMOVE)
     @JoinColumn(name="member_id")
     private Member member;
+
+    @ManyToOne(cascade= CascadeType.REMOVE)
+    @JoinColumn(name="review_tag_id")
+    private ReviewTag reviewTag;
 
     @Builder
     public Review(float score, String content, LocalDateTime time, Boolean isUpdate) {

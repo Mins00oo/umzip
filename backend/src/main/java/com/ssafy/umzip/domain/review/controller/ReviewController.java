@@ -22,7 +22,7 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<Object> createReview(CreateReviewRequest createReviewRequest) {
-        reviewService.
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 }
