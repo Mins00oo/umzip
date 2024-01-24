@@ -1,9 +1,11 @@
 package com.ssafy.umzip.domain.delivery.entity;
 
+import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,5 +37,17 @@ public class DeliveryMapping {
     private Company company;
 
     //code_small추가 필요
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="code_small_id")
+    private CodeSmall codeSmall;
+    @Builder
+    public DeliveryMapping(Long id, Long price, Long reissuing, Delivery delivery, Member member, Company company, CodeSmall codeSmall) {
+        this.id = id;
+        this.price = price;
+        this.reissuing = reissuing;
+        this.delivery = delivery;
+        this.member = member;
+        this.company = company;
+        this.codeSmall = codeSmall;
+    }
 }

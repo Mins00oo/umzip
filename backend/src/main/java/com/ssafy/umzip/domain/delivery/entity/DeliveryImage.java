@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.delivery.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,12 @@ public class DeliveryImage {
 
     @Column(name="delivery_image_path")
     private String path;
-
+    @Builder
+    public DeliveryImage(Long id, Delivery delivery, String originalName, String fileName, String path) {
+        this.id = id;
+        this.delivery = delivery;
+        this.originalName = originalName;
+        this.fileName = fileName;
+        this.path = path;
+    }
 }
