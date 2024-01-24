@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.auth.service;
 
 import com.ssafy.umzip.domain.auth.dto.AuthCodeRequestDto;
+import com.ssafy.umzip.domain.auth.dto.AuthEmailRequestDto;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -114,6 +115,13 @@ public class AuthServiceImpl implements AuthService {
         }
 
         redisService.removeSmsCertification(codeRequestDto.getPhone());
+    }
+
+    @Override
+    public void authEmail(AuthEmailRequestDto emailRequestDto) {
+        if (memberRepository.existsByEmail(emailRequestDto.getEmail())) {
+            throw new BaseException(StatusCode.ALREADY_EXIST_MEMBER);
+        }
     }
 
     private boolean isVerify(AuthCodeRequestDto requestDto) {

@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CodeSmall {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_small_id")
     private Long id;
 
-    @Column(name = "code_smll_name")
+    @Column(name = "code_small_name")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

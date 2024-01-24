@@ -23,15 +23,13 @@ public class MemberCreateRequestDto {
     public static Member toEntity(
             MemberCreateRequestDto requestDto,
             String encodedPassword,
-            int point,
-            S3UploadDto s3UploadDto
+            int point
     ) {
         return Member.builder()
                 .email(requestDto.getEmail())
                 .phone(requestDto.getPhone())
                 .name(requestDto.getName())
                 .point(point)
-                .s3UploadDto(s3UploadDto)
                 .address(requestDto.getAddress())
                 .addressDetail(requestDto.getAddressDetail())
                 .sigungu(requestDto.getSigungu())

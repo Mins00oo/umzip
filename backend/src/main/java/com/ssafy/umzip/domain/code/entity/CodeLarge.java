@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "code_large")
 public class CodeLarge  {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_large_id")
     private Long id;
 
