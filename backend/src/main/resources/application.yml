@@ -1,6 +1,11 @@
 spring:
   profiles:
-    active: local
+    active: env
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      port: 6379
   servlet:
     multipart:
       max-file-size: 10MB
@@ -21,7 +26,6 @@ spring:
     serialization:
       fail-on-empty-beans: 'false'
 
-
 jwt:
   secretKey: ${JWT_SECRET_KEY}
   accessExpiredTimeMs: ${JWT_ACCESS_EXPIRED_TIME_MS}
@@ -37,3 +41,8 @@ cloud:
       bucket : ${S3_BUCKET}
     stack:
       auto: 'false'
+
+sms:
+  api:
+    key: ${COOL_SMS_API_KEY}
+    secret: ${COOL_SMS_API_SECRET}
