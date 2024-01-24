@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.help.entity;
 
 import com.ssafy.umzip.global.common.BaseTimeEntity;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,9 +19,9 @@ public class BoardHelpImage extends BaseTimeEntity {
     @Column(name="board_help_image_id")
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name="board_help_id")
-//    private BoardHelp boardHelpId;
+    @ManyToOne
+    @JoinColumn(name="board_help_id")
+    private BoardHelp boardHelp;
 
     @Column(name="board_help_image_origin_name")
     private String imageOriginName;
@@ -32,10 +33,10 @@ public class BoardHelpImage extends BaseTimeEntity {
     private String imagePath;
 
     @Builder
-    public BoardHelpImage(String imageOriginName, String imageSavedName, String imagePath) {
-        this.imageOriginName = imageOriginName;
-        this.imageSavedName = imageSavedName;
-        this.imagePath = imagePath;
+    public BoardHelpImage(S3UploadDto s3UploadDto, BoardHelp boardHelp) {
+        this.imageOriginName = s3UploadDto.getOriginName();
+        this.imageSavedName = s3UploadDto.getSaveName();
+        this.imagePath = s3UploadDto.getImgUrl();
+        this.boardHelp = boardHelp;
     }
-
 }

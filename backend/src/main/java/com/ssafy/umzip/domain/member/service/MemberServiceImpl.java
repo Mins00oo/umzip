@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
+import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

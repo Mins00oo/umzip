@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.help.controller;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
+import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
@@ -13,10 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/helps")
@@ -24,7 +25,27 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class BoardHelpController {
 
-    private final BoardHelpService boardHelpService;
+    private final BoardHelpService service;
+
+    /*
+    도움 게시글 작성
+    * */
+    @PostMapping
+    public ResponseEntity<Object> postBoardHelp(
+            @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
+            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files) { // , required = false 꼭 필요한게 아니다.
+
+        // 1. 사용자 token에서 시군구와 member_id 가져오기
+        // 2. boardHelp에 member_id 연결하기
+
+
+        // service
+        service.postBoardHelp(requestDto, files);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
 
     @GetMapping()
     public ResponseEntity<Object> retrieveList(
@@ -36,7 +57,7 @@ public class BoardHelpController {
         // accessToken 까서 시군구 데이터 service 로 넘겨야 한다.
 
         // service
-        // boardHelpService.retrieveList()
+        // service.retrieveList()
 
         return ResponseEntity
                 .status(HttpStatus.OK)

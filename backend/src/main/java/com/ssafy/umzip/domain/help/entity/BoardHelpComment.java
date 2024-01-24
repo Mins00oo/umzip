@@ -21,11 +21,11 @@ public class BoardHelpComment extends BaseTimeEntity {
 
 //    @ManyToOne
 //    @JoinColumn(name="board_help_id")
-//    private BoardHelp boardHelpId;
+//    private BoardHelp boardHelp;
 //
 //    @ManyToOne
 //    @JoinColumn(name="member_id")
-//    private Member memberId;
+//    private Member member;
 
     @Column(name="board_help_comment_content")
     private String content;

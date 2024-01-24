@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,11 +25,14 @@ public class BoardHelp extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name="member_id")
-    private Member memberId;
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name="code_small_id")
-    private CodeSmall codeSmallId;
+    private CodeSmall codeSmall;
+
+//    @OneToMany(mappedBy = "board_help", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+//    private List<BoardHelpImage> imageFileList = new ArrayList<>();
 
     @Column(name="board_help_title")
     private String title;
@@ -51,13 +57,25 @@ public class BoardHelp extends BaseTimeEntity {
     // DB에
     @Builder
     public BoardHelp(String title, String content, int point, int readCnt,
-                     int sigungu, Boolean isAdopted) {
+                     int sigungu, Boolean isAdopted,
+                     CodeSmall codeSmall, Member member) {
         this.title = title;
         this.content = content;
         this.point = point;
         this.readCnt = readCnt;
         this.sigungu = sigungu;
         this.isAdopted = isAdopted;
+        this.codeSmall = codeSmall;
+        this.member = member;
     }
+
+//    public void addImage(BoardHelpImage image) {
+//        this.imageFileList.add(image);
+//        // 게시글에 이미지 파일이 없는 경우
+//        if (image.getBoardHelp() != this) {
+//            // 파일을 저장한다.
+//            image.setBoard(this);
+//        }
+//    }
 
 }
