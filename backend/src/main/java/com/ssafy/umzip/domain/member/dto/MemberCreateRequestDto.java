@@ -28,13 +28,14 @@ public class MemberCreateRequestDto {
     ) {
         return Member.builder()
                 .email(requestDto.getEmail())
-                .pwd(encodedPassword)
+                .phone(requestDto.getPhone())
                 .name(requestDto.getName())
+                .point(point)
+                .s3UploadDto(s3UploadDto)
                 .address(requestDto.getAddress())
                 .addressDetail(requestDto.getAddressDetail())
                 .sigungu(requestDto.getSigungu())
-                .point(point)
-                .s3UploadDto(s3UploadDto)
+                .pwd(encodedPassword)
                 .build();
     }
 }

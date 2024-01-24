@@ -1,6 +1,9 @@
 package com.ssafy.umzip.domain.auth.service;
 
 import com.ssafy.umzip.domain.auth.dto.AuthCodeRequestDto;
+import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.redis.RedisService;
 import com.ssafy.umzip.global.util.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,8 @@ public class AuthServiceImpl implements AuthService {
     private final SmsUtil smsUtil;
 
     private final RedisService redisService;
+
+    private final MemberRepository memberRepository;
 
     //    @Value("${SMS_SERVICE_ID}")
     private String serviceId;
@@ -71,7 +76,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void sendCode(AuthCodeRequestDto codeRequestDto) {
         String code = createCode();
-        smsUtil.sendOne(codeRequestDto.getPhone(), code);
+        smsUtil.sendAuthCode(codeRequestDto.getPhone(), code);
+
+        redisService.createSmsCertification(codeRequestDto.getPhone(), code);
     }
 
     public String createCode() {
@@ -94,5 +101,24 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return key.toString();
+    }
+
+    @Override
+    public void authCode(AuthCodeRequestDto codeRequestDto) {
+        if (isVerify(codeRequestDto)) {
+            throw new BaseException(StatusCode.NOT_VALID_AUTH_CODE);
+        }
+
+        if (!isVerify(codeRequestDto) && memberRepository.existsByPhone(codeRequestDto.getPhone())) {
+            throw new BaseException(StatusCode.ALREADY_EXIST_PHONE_NUMBER);
+        }
+
+        redisService.removeSmsCertification(codeRequestDto.getPhone());
+    }
+
+    private boolean isVerify(AuthCodeRequestDto requestDto) {
+        return !(redisService.hasKey(requestDto.getPhone()) &&
+                redisService.getSmsCertification(requestDto.getPhone())
+                        .equals(requestDto.getCode()));
     }
 }

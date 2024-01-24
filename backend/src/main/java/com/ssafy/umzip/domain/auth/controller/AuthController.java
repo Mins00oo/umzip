@@ -27,4 +27,13 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
+
+    /**
+     * 전송된 인증번호와 입력번호가 일치한지 확인하는 메서드
+     */
+    @PostMapping("/code")
+    public ResponseEntity<Object> authCode(@RequestBody AuthCodeRequestDto codeRequestDto) {
+        authService.authCode(codeRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
 }

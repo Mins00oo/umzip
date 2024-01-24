@@ -11,7 +11,6 @@ import java.time.Duration;
 
 @Repository
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class RedisService {
 
