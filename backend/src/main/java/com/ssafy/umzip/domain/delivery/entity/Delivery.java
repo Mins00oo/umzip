@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.awt.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,10 +20,13 @@ public class Delivery extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "delivery_id")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY) // 1
+    //연관관계 car
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id")
     private Car car;
+    //연관관계 image
+    @OneToMany(mappedBy = "delivery_image")
+    private List<DeliveryImage> images = new ArrayList<>();
     @Column(name = "delivery_start_time")
     private LocalDateTime startTime;
     @Column(name = "delivery_end_time")
@@ -61,5 +67,9 @@ public class Delivery extends BaseTimeEntity {
         this.parking = parking;
         this.movelist = movelist;
         this.sigungu = sigungu;
+    }
+    //add Image
+    public void addImage(final DeliveryImage image) {
+        images.add(image);
     }
 }
