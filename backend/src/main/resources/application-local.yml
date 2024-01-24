@@ -1,5 +1,0 @@
-DB_USERNAME: root
-DB_URL: jdbc:mysql://localhost:3306/umzip
-DB_PASSWORD: '1234'
-JWT_SECRET_KEY: 'c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK'
-JWT_ACCESS_EXPIRED_TIME_MS: '3600000'  # 예시 값
