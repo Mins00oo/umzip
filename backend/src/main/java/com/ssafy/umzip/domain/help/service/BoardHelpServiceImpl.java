@@ -40,26 +40,24 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final S3Service s3Service;
 
     /*
-     도움 게시글을 작성하는 메소드  
+     도움 게시글을 작성하는 메소드
      */
     @Transactional
     @Override
     public void postBoardHelp(BoardHelpPostRequestDto requestDto, List<MultipartFile> files) {
 
-        // 현재 member 가져오기
-        // token에서 id를 가져오기 때문에 DB에 접근X
-        Member member = memberRepository.findById(1L).orElseThrow();
+        // Token에서 member_id와 sigungu(int)를 가져와서 사용한다.
 
-        // CodeSmall 가져오기
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
+
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
-                .orElseThrow();
+                .orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
 
-        // boardHelp에 데이터 저장
         int curMemberSigungu = 100; // 작성자 시군구
         BoardHelp boardHelp = requestDto.toEntity(requestDto, member, curMemberSigungu, codeSmall);
         boardHelpRepository.save(boardHelp);
-        
-        // boardHelpImage에 데이터 저장
+
         S3UploadDto s3UploadDto;
         if (!files.isEmpty()) {
             for (MultipartFile file : files) {  // 하나씩 저장
