@@ -5,13 +5,16 @@ import com.ssafy.umzip.domain.delivery.entity.Delivery;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class DeliveryReservationRequestDto {
-
+    private Long price;
     private Long carId;
     private Car car;
     private String departure;
@@ -21,7 +24,7 @@ public class DeliveryReservationRequestDto {
     private boolean elevator;
     private boolean parking;
     private String startTime;
-    private String endTime;
+    private String endTime; //세팅필요
     private String departureDetail;
     private String destinationDetail;
     private String movelist;

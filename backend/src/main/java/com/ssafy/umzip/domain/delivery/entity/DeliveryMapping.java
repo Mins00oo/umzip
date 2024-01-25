@@ -23,7 +23,7 @@ public class DeliveryMapping {
 
     @Column(name="delivery_reissuing")
     private Long reissuing;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
