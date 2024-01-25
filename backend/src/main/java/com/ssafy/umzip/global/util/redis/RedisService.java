@@ -42,4 +42,8 @@ public class RedisService {
         values.set(key, value, duration);
     }
 
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
 }

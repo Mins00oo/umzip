@@ -11,12 +11,12 @@ import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import com.ssafy.umzip.global.util.jwt.MemberTokenDto;
+import com.ssafy.umzip.global.util.security.MemberDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -35,10 +35,16 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
     private final CompanyRepository companyRepository;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Member member = memberRepository.findByEmail(String.valueOf(authentication.getPrincipal()))
-                .orElseThrow(() -> new BadCredentialsException("회원 x"));
+
+        Object principal = authentication.getPrincipal();
+        MemberDetailsImpl memberDetails = (MemberDetailsImpl) principal;
+        Member member = memberRepository.findByEmail(memberDetails.getUsername())
+                .orElseThrow(
+                        () -> new BaseException(StatusCode.NOT_VALID_EMAIL));
         List<Company> companyList = companyRepository.findAllByMemberId(member.getId());
         MemberTokenDto tokenDto;
 
@@ -63,6 +69,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
         BaseResponse<MemberTokenDto> tokenResponse = new BaseResponse<>(tokenDto);
 
+        log.info(authentication);
         mapper.writeValue(response.getWriter(), tokenResponse);
     }
 }

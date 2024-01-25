@@ -1,8 +1,14 @@
 package com.ssafy.umzip.global.config;
 
+import com.ssafy.umzip.global.exception.CustomAccessDeniedHandler;
+import com.ssafy.umzip.global.exception.CustomAuthenticationEntryPoint;
+import com.ssafy.umzip.global.util.jwt.JwtTokenFilter;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import com.ssafy.umzip.global.util.security.CustomAuthenticationFilter;
+import com.ssafy.umzip.global.util.security.MemberDetailService;
 import com.ssafy.umzip.global.util.security.handler.AuthFailureHandler;
 import com.ssafy.umzip.global.util.security.handler.AuthSuccessHandler;
+import com.ssafy.umzip.global.util.security.handler.CustomLogoutSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +21,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,20 +30,32 @@ public class SecurityConfig {
     private final CorsConfig corsConfig;
     private final AuthSuccessHandler successHandler;
     private final AuthFailureHandler failureHandler;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberDetailService memberDetailService;
+    private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        JwtTokenFilter jwtTokenFilter = new JwtTokenFilter(jwtTokenProvider);
+
         http
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers("**").permitAll()  // /api/v1/login 경로를 모든 사용자에게 허용
+                                auth.requestMatchers("/api/login", "/api/users/**")
+                                        .permitAll()// /api/v1/login 경로를 모든 사용자에게 허용
                                         .anyRequest().authenticated())
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterAt(customAuthenticationFilter(http.getSharedObject(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(
+                        logout -> logout
+                                        .logoutUrl("/api/logout")
+                                        .logoutSuccessHandler(logoutSuccessHandler)
+                )
+                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
 
         return http.build();
     }
@@ -48,7 +67,7 @@ public class SecurityConfig {
 
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(memberDetailService);
         filter.setFilterProcessesUrl("/api/login");
         filter.setAuthenticationManager(authenticationManager);
         filter.setAuthenticationSuccessHandler(successHandler);

@@ -6,7 +6,9 @@ import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.util.redis.RedisService;
 import com.ssafy.umzip.global.util.security.MemberDetailService;
 import com.ssafy.umzip.global.util.security.MemberDetailsImpl;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -118,49 +120,41 @@ public class JwtTokenProvider {
         response.setHeader(REFRESH_HEADER, refreshToken);
     }
 
-    public String getUserEmail(String token) {
+    public String getEmail(String token) {
         return extractClaims(token).get("email", String.class);
     }
 
-    public Long getMemberId(String token) {
+    public String getMemberEmail(HttpServletRequest request) {
+        String token = this.getToken(request);
+        return extractClaims(token).get("email", String.class);
+    }
+
+    public Long getId(HttpServletRequest request) {
+        String token = this.getToken(request);
         return extractClaims(token).get("id", Long.class);
     }
 
     public String getToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+        return request.getHeader("Authorization").split(" ")[1].trim();
     }
 
     public Authentication getAuthentication(String token) {
-        MemberDetailsImpl memberDetails = (MemberDetailsImpl) memberDetailService.loadUserByUsername(this.getUserEmail(token));
+        MemberDetailsImpl memberDetails = (MemberDetailsImpl) memberDetailService.loadUserByUsername(this.getEmail(token));
 
         return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
     }
 
     public static Claims extractClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getKey(secretKey))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+                    .setSigningKey(getKey(secretKey))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
     }
 
     public static boolean isExpired(String token) {
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
-    }
-
-    public boolean validateToken(String jwtToken) {
-        try {
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
-            // 여기서 구체적인 예외 종류에 따라 다르게 로깅할 수도 있습니다.
-            log.error("Invalid JWT token: {}", e.getMessage());
-            return false;
-        }
     }
 
 }
