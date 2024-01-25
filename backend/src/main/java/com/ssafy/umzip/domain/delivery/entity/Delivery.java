@@ -46,7 +46,11 @@ public class Delivery extends BaseTimeEntity {
     @Column(name = "delivery_sigungu")
     private int sigungu;
     @Builder
-    public Delivery(String departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu, String departureDetail, String destinationDetail) {
+    public Delivery(Long id, Car car, LocalDateTime startTime, LocalDateTime endTime, String departure, String destination, String departureDetail, String destinationDetail, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu) {
+        this.id = id;
+        this.car = car;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.departure = departure;
         this.destination = destination;
         this.departureDetail = departureDetail;
@@ -57,13 +61,5 @@ public class Delivery extends BaseTimeEntity {
         this.parking = parking;
         this.movelist = movelist;
         this.sigungu = sigungu;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
     }
 }

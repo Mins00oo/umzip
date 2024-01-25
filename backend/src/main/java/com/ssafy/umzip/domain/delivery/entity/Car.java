@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +24,8 @@ public class Car {
     private String fuel;
     @Column(name = "car_type")
     private int type;
-    /*
-        생각해보니까 차는 create할일이 없음 -> 주석
-     */
-//    @Builder
-//    public Car(Long id, String name, Long price, String description, String fuel, int type) {
-//        this.id = id;
-//        this.name = name;
-//        this.price = price;
-//        this.description = description;
-//        this.fuel = fuel;
-//        this.type = type;
-//    }
+    @Column(name = "car_mileage")
+    private double mileage;
+
+
 }
