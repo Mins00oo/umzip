@@ -25,5 +25,9 @@ public class TagController {
     public ResponseEntity<List<TagListByLargeCodeResponce>> receiveTagType(@RequestParam long largeCode) {
         return ResponseEntity.status(HttpStatus.OK).body(tagService.receiveTagType(largeCode));
     }
+    @GetMapping( value = "/tagType")
+    public ResponseEntity<List<TagListByLargeCodeResponce>> receiveTagType(@RequestParam long largeCode, @RequestParam String role) {
+        return ResponseEntity.status(HttpStatus.OK).body(tagService.receiveTagByRole(largeCode, role));
+    }
 
 }

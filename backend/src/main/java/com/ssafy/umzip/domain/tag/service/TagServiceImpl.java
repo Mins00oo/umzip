@@ -18,6 +18,7 @@ public class TagServiceImpl implements TagService {
 
 
     @Override
+    // 코드 이름
     public List<TagListByLargeCodeResponce> receiveTagType(long largeCode) {
         List<TagListByLargeCodeResponce> tagListByLargeCode = new ArrayList<>();
         Optional<List<Tag>> optionalTagList = tagRepository.findAllByCodeLargeId(largeCode);
@@ -30,15 +31,31 @@ public class TagServiceImpl implements TagService {
                 tagDTOList.add(convertToDTO(tag));
             }
 
-//            System.out.print(">>>>>> ");
-//            System.out.println(tagDTOList);
-
             return tagDTOList;
         } else {
-//            System.out.println("Optional is empty.");
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public List<TagListByLargeCodeResponce> receiveTagByRole(long largeCode, String role) {
+        List<TagListByLargeCodeResponce> tagListByLargeCode = new ArrayList<>();
+        Optional<List<Tag>> optionalTagList = tagRepository.findAllByCodeLargeId(largeCode);
+
+        if (optionalTagList.isPresent()) {
+            List<Tag> tagList = optionalTagList.get();
+            List<TagListByLargeCodeResponce> tagDTOList = new ArrayList<>();
+
+            for (Tag tag : tagList) {
+                tagDTOList.add(convertToDTO(tag));
+            }
+
+            return tagDTOList;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     private TagListByLargeCodeResponce convertToDTO(Tag tag) {
         TagListByLargeCodeResponce dto = new TagListByLargeCodeResponce();
         dto.setTagId(tag.getTagId());

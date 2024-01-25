@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TagService {
     List<TagListByLargeCodeResponce> receiveTagType(long largeCode);
+
+    List<TagListByLargeCodeResponce> receiveTagByRole(long largeCode, String role);
 }
