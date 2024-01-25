@@ -18,6 +18,8 @@ public enum StatusCode {
     ALREADY_EXIST_PHONE_NUMBER(false, 303, "이미 가입된 전화번호입니다."),
     NOT_VALID_AUTH_CODE(false, 304, "인증번호가 잘못 되었습니다."),
     ALREADY_EXIST_EMAIL(false, 305, "중복된 이메일입니다."),
+    COMPANY_ROLE_NOT_MATCH(false, 306, "일치하는 업체의 권한을 찾을 수 없습니다."),
+    LOGIN_FAILED(false, 307, "로그인에 실패하였습니다."),
 
 
     // BoardHelp

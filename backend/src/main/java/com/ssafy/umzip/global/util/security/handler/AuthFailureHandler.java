@@ -2,6 +2,7 @@ package com.ssafy.umzip.global.util.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.umzip.global.common.BaseResponse;
+import com.ssafy.umzip.global.common.StatusCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,7 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(200);
 
-        String result = "로그인 정보를 다시 확인해주세요!";
-
-        BaseResponse<String> baseResponse = new BaseResponse<>(result);
+        BaseResponse<String> baseResponse = new BaseResponse<>(StatusCode.LOGIN_FAILED);
 
         mapper.writeValue(response.getWriter(), baseResponse);
     }

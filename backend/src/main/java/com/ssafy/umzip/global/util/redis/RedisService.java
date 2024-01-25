@@ -35,4 +35,11 @@ public class RedisService {
     public boolean hasKey(String phone) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(PREFIX + phone));
     }
+
+
+    public void setValue(String key, String value, Duration duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, value, duration);
+    }
+
 }
