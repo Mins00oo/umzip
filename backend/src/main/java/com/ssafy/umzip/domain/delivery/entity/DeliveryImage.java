@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.delivery.entity;
 
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,11 +29,11 @@ public class DeliveryImage {
     @Column(name="delivery_image_path")
     private String path;
     @Builder
-    public DeliveryImage(Long id, Delivery delivery, String originalName, String fileName, String path) {
+    public DeliveryImage(Long id, Delivery delivery, S3UploadDto dto) {
         this.id = id;
         this.delivery = delivery;
-        this.originalName = originalName;
-        this.fileName = fileName;
-        this.path = path;
+        this.originalName = dto.getOriginName();
+        this.fileName = dto.getSaveName();
+        this.path = dto.getImgUrl();
     }
 }

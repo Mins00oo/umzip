@@ -1,20 +1,32 @@
 package com.ssafy.umzip.domain.delivery.service;
 
-import com.ssafy.umzip.domain.delivery.dto.DeliveryCalRequestDto;
-import com.ssafy.umzip.domain.delivery.dto.DeliveryCalResponseDto;
-import com.ssafy.umzip.domain.delivery.dto.DeliveryReservationRequestDto;
-import com.ssafy.umzip.domain.delivery.dto.MobilityDto;
+import com.ssafy.umzip.domain.code.entity.CodeSmall;
+import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
+import com.ssafy.umzip.domain.company.entity.Company;
+import com.ssafy.umzip.domain.company.repository.CompanyRepository;
+import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.entity.Delivery;
+import com.ssafy.umzip.domain.delivery.entity.DeliveryImage;
+import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.CarRepository;
 import com.ssafy.umzip.domain.delivery.repository.DeliveryRepository;
+import com.ssafy.umzip.domain.member.entity.Member;
+import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.global.common.Role;
+import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
+import com.ssafy.umzip.global.util.s3.S3Service;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
@@ -25,6 +37,10 @@ import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 public class DeliveryServiceImpl implements DeliveryService {
     private final CarRepository carRepository;
     private final DeliveryRepository deliveryRepository;
+    private final CompanyRepository companyRepository;
+    private final S3Service s3Service;
+    private final CodeSmallRepository codeSmallRepository;
+    private final MemberRepository memberRepository;
     @Override
     public Optional<Car> getCar(Long id) {
         return carRepository.findById(id);
@@ -35,20 +51,67 @@ public class DeliveryServiceImpl implements DeliveryService {
         예약 신청
      */
     @Override
-    public void createDelivery(DeliveryReservationRequestDto dto) {
+    public void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
+                               List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
+                               List<MultipartFile> deliveryImages,
+                               Long price
+    ) {
+
         //Delivery Entity 생성
-        Optional<Car> optionalCar = carRepository.findById(dto.getCarId());
+        Optional<Car> optionalCar = carRepository.findById(deliveryReservationRequestDto.getCarId());
         if(!optionalCar.isPresent()){
-            //예외처리
+            //예외처리 - 차종이 없음
+            throw new BaseException(StatusCode.NOT_EXIST_CAR);
         }
         Car car = optionalCar.get();
+        deliveryReservationRequestDto.setCar(car);//car 세팅
+        //Delivery 생성
+        Delivery delivery = DeliveryReservationRequestDto.toEntity(deliveryReservationRequestDto);
+        //image Setting
+        deliveryImgSetting(deliveryImages, delivery);
+        //mapping Setting
+        deliveryMappingSetting(deliveryRequestCompanyDtoList, price, delivery);
 
-        dto.setCar(car);//흠냐링
-
-        Delivery delivery = DeliveryReservationRequestDto.toEntity(dto);
         //저장
         deliveryRepository.save(delivery);
     }
+    /*
+        Mapping 연결 저장
+     */
+    private void deliveryMappingSetting(List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList, Long price, Delivery delivery) {
+        // code small 용달은 항상 101(신청중)
+        Optional<CodeSmall> reservationCode = codeSmallRepository.findById(101L);
+        // member 가져오기-- 추후 jwt 도입시 변경 필요
+        Optional<Member> member = memberRepository.findById(1L);
+
+        for(DeliveryRequestCompanyDto company : deliveryRequestCompanyDtoList){
+            Optional<Company> resultCompany = companyRepository.findByMemberIdAndRole(company.getMemberId(), Role.DELIVER);
+            if(!resultCompany.isPresent()){ //회사 없으면
+                //예외 throw - 해당 company가 존재하지 않습니다.
+                throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
+            }
+
+            DeliveryMapping deliveryMapping = DeliveryMapping.builder()
+                    .company(resultCompany.get())
+                    .member(member.get()) //member 임시
+                    .codeSmall(reservationCode.get())
+                    .price(price).build();
+
+            delivery.addMapping(deliveryMapping);
+        }
+    }
+    /*
+        delivery Image 세팅
+     */
+    private void deliveryImgSetting(List<MultipartFile> deliveryImages, Delivery delivery) {
+        for(MultipartFile file: deliveryImages){
+            S3UploadDto deliveryImg = uploadFile(file, "deliverImg");
+            DeliveryImage deliveryImage = DeliveryImage.builder()
+                    .dto(deliveryImg).build();
+            delivery.addImage(deliveryImage);
+        }
+    }
+
     /*
         계산기
      */
@@ -78,7 +141,9 @@ public class DeliveryServiceImpl implements DeliveryService {
         long result = Math.round((double) price / 100) * 100; // 반올림
         return new DeliveryCalResponseDto(result,end);
     }
-
+    /*
+        시간당 부가세 계산
+     */
     private static Long getTimeFee(DeliveryCalRequestDto calDto, Long price) {
         String time = calDto.getStartTime().split(" ")[1].split(":")[0];
         Integer startTime = Integer.valueOf(time);
@@ -91,14 +156,18 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
         return price;
     }
-
+    /*
+        현재 평균 유가 당 거리 가격 계산
+     */
     @NotNull
     private static Long getDistancePrice(MobilityDto mobilityDto, int OilPrice, Car car) {
         double distanceKm = Math.ceil(mobilityDto.getDistance()/1000); //몇 Km?
         Long distancePrice = (long) (( distanceKm / car.getMileage() ) * OilPrice); //거리 주유비
         return distancePrice;
     }
-
+    /*
+        거리 계산 결과를 가지고 endTime 계산
+     */
     @NotNull
     private static LocalDateTime getEndTime(MobilityDto mobilityDto, DeliveryCalRequestDto calDto) {
         //모빌리티 API로 End Time 계산
@@ -137,5 +206,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public void companyReservationDelivery() {
 
+    }
+    //s3
+    private S3UploadDto uploadFile(MultipartFile file, String fileNamePrefix) {
+        if (file != null && !file.isEmpty()) {
+            return s3Service.upload(file, "umzip-service", fileNamePrefix);
+        }
+        return null;
     }
 }

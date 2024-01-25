@@ -29,26 +29,15 @@ public class DeliveryUserController {
         예약 신청
      */
     @PostMapping("/reservation")
-    public ResponseEntity<Object> createDelivery(@RequestPart DeliveryReservationRequestDto deliveryReservationRequestDto,
-                                                 @RequestPart List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
-                                                 @RequestPart(value="imageFileList",required = false) List<MultipartFile> deliveryImages
+    public ResponseEntity<Object> createDelivery(@RequestPart(value = "delivery") DeliveryReservationRequestDto delivery,
+                                                 @RequestPart(value = "companys") List<DeliveryRequestCompanyDto> companys,
+                                                 @RequestPart(value="imageFileList",required = false) List<MultipartFile> imageFileList,
+                                                 @RequestPart(value="price") Long price
     ){
-        //임시 처리
-        /*
-            1. iamges 다S3UploadDto로 업데이트 해서 가져오기
-                -> foreach
-
-            2. 다 Delivery images에 add해주기
-                나머지 정보 Delivery에 담기^^
-                -> endTime 계산 필요
-                -> price값도 필요(mapping Table) => 계산기 한번 더 접근함.
-
-            3. Delivery insert
-
-            4. mapping Table insert
-         */
+        deliveryService.createDelivery(delivery,companys,imageFileList,price);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
+
     /*
         계산기
      */
@@ -56,7 +45,6 @@ public class DeliveryUserController {
     public ResponseEntity<Object> calculateDelivery(@RequestBody DeliveryCalRequestDto dto){
         //---- 모빌리티 API
         MobilityDto mobilityAPI = getMobilityAPI(dto);
-
 
         //---- 유가정보 API ( 가격만 가져옴 )
         int OilPrice = getFuelPrice();

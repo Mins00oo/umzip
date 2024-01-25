@@ -27,6 +27,9 @@ public class Delivery extends BaseTimeEntity {
     // Cascade : Delivery 엔터티를 저장할 때 자동으로 DeliveryImage 엔터티도 저장
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.PERSIST)
     private List<DeliveryImage> images = new ArrayList<>();
+    //연관관계 Mapping
+    @OneToMany(mappedBy = "delivery", cascade = CascadeType.PERSIST)
+    private List<DeliveryMapping> mappings = new ArrayList<>();
     @Column(name = "delivery_start_time")
     private LocalDateTime startTime;
     @Column(name = "delivery_end_time")
@@ -71,5 +74,9 @@ public class Delivery extends BaseTimeEntity {
     //add Image
     public void addImage(final DeliveryImage image) {
         images.add(image);
+    }
+    //add Mapping
+    public void addMapping(final DeliveryMapping mapping) {
+        mappings.add(mapping);
     }
 }
