@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: env
   data:
     redis:
       host: ${REDIS_HOST}
@@ -29,6 +29,7 @@ spring:
 jwt:
   secretKey: ${JWT_SECRET_KEY}
   accessExpiredTimeMs: ${JWT_ACCESS_EXPIRED_TIME_MS}
+  refreshExpiredTimeMs: ${JWT_REFRESH_EXPIRED_TIME_MS}
 
 cloud:
   aws:
