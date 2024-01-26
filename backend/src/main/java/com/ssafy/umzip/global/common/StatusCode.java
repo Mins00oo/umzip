@@ -12,7 +12,7 @@ public enum StatusCode {
     TRANSLATE_FILE_FAILED(false, 201, "파일 변환에 실패하였습니다"),
     FORBIDDEN_REQUEST(false, 202, "접근 권한이 없습니다."),
 
-    // MEMBER
+    // MEMBER : 300
     ALREADY_EXIST_MEMBER(false, 300, "이미 존재하는 계정입니다."),
     NOT_VALID_PASSWORD(false, 301, "비밀번호 입력값이 잘못되었습니다."),
     NOT_VALID_EMAIL(false, 302, "해당 이메일의 계정을 찾을 수 없습니다."),
@@ -27,9 +27,19 @@ public enum StatusCode {
     DAMAGED_ACCESS_TOKEN(false, 310, "손상된 토큰입니다."),
     UNSUPPORTED_ACCESS_TOKEN(false, 311, "지원하지 않는 토큰입니다."),
 
+    // COMPANY : 400
+    NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),
 
     // BoardHelp
-    CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다.");
+    CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
+
+    // DELIVERY : 600
+    NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다.");
+
+
+
+
+
 
     private final boolean isSuccess;
     private final int code;

@@ -2,18 +2,22 @@ package com.ssafy.umzip.domain.delivery.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.ssafy.umzip.domain.delivery.dto.DeliveryCalRequestDto;
-import com.ssafy.umzip.domain.delivery.dto.MobilityDto;
+import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.service.DeliveryService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,18 +26,34 @@ import java.util.Optional;
 public class DeliveryUserController {
     private final DeliveryService deliveryService;
     /*
+        예약 신청
+     */
+    @PostMapping("/reservation")
+    public ResponseEntity<Object> createDelivery(@RequestPart(value = "delivery") DeliveryReservationRequestDto delivery,
+                                                 @RequestPart(value = "companys") List<DeliveryRequestCompanyDto> companys,
+                                                 @RequestPart(value="imageFileList",required = false) List<MultipartFile> imageFileList,
+                                                 @RequestPart(value="price") Long price
+    ){
+        deliveryService.createDelivery(delivery,companys,imageFileList,price);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*
         계산기
      */
     @PostMapping("/calculation")
     public ResponseEntity<Object> calculateDelivery(@RequestBody DeliveryCalRequestDto dto){
         //---- 모빌리티 API
         MobilityDto mobilityAPI = getMobilityAPI(dto);
+
         //---- 유가정보 API ( 가격만 가져옴 )
         int OilPrice = getFuelPrice();
         //유가, 차량, 수수료, 거리, 출퇴근 및 주야간
-        Long resultPrice = deliveryService.calculateDelivery(mobilityAPI, dto, OilPrice);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(resultPrice));
+        DeliveryCalResponseDto resultDto = deliveryService.calculateDelivery(mobilityAPI, dto, OilPrice);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(resultDto));
     }
+
+
     /*
         KAKAO Mobility 길찾기 API
      */
