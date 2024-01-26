@@ -11,5 +11,5 @@ public interface CodeSmallRepository extends JpaRepository<CodeSmall, Long> {
 
     @NotNull
     public Optional<CodeSmall> findById(@NotNull Long id);
-    Optional<CodeLarge>  findIdByName(String name);
+    Optional<CodeSmall>  findIdByName(String name);
 }
