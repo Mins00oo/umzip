@@ -52,7 +52,7 @@ public class DeliveryUserController {
     /*
         고객 취소 API
      */
-    @PostMapping("/cancel")
+    @PutMapping("/cancel")
     public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancleRequestDto cancleRequestDto){
 
         deliveryUserService.cancelDelivery(cancleRequestDto.getMappingId());
