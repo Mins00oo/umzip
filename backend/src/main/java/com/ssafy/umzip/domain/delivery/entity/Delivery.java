@@ -24,7 +24,7 @@ public class Delivery extends BaseTimeEntity {
     @JoinColumn(name = "car_id")
     private Car car;
     //연관관계 image
-    // Cascade : Delivery 엔터티를 저장할 때 자동으로 DeliveryImage 엔터티도 저장
+    // Cascade.PERSIST : Delivery 엔터티를 저장할 때 자동으로 DeliveryImage 엔터티도 저장
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.PERSIST)
     private List<DeliveryImage> images = new ArrayList<>();
     //연관관계 Mapping

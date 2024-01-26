@@ -41,8 +41,7 @@ public class DeliveryMapping {
     @JoinColumn(name="code_small_id")
     private CodeSmall codeSmall;
     @Builder
-    public DeliveryMapping(Long id, Long price, Long reissuing, Delivery delivery, Member member, Company company, CodeSmall codeSmall) {
-        this.id = id;
+    public DeliveryMapping(Long price, Long reissuing, Delivery delivery, Member member, Company company, CodeSmall codeSmall) {
         this.price = price;
         this.reissuing = reissuing;
         this.delivery = delivery;

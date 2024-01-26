@@ -56,7 +56,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                                List<MultipartFile> deliveryImages,
                                Long price
     ) {
-
+        deliveryReservationRequestDto.setPrice(price);
         //Delivery Entity 생성
         Optional<Car> optionalCar = carRepository.findById(deliveryReservationRequestDto.getCarId());
         if(!optionalCar.isPresent()){
@@ -67,6 +67,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         deliveryReservationRequestDto.setCar(car);//car 세팅
         //Delivery 생성
         Delivery delivery = DeliveryReservationRequestDto.toEntity(deliveryReservationRequestDto);
+
         //image Setting
         deliveryImgSetting(deliveryImages, delivery);
         //mapping Setting
@@ -95,7 +96,10 @@ public class DeliveryServiceImpl implements DeliveryService {
                     .company(resultCompany.get())
                     .member(member.get()) //member 임시
                     .codeSmall(reservationCode.get())
-                    .price(price).build();
+                    .price(price)
+                    .delivery(delivery)
+                    .reissuing(0L) // 초기값 0
+                    .build();
 
             delivery.addMapping(deliveryMapping);
         }
@@ -107,7 +111,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         for(MultipartFile file: deliveryImages){
             S3UploadDto deliveryImg = uploadFile(file, "deliverImg");
             DeliveryImage deliveryImage = DeliveryImage.builder()
-                    .dto(deliveryImg).build();
+                    .dto(deliveryImg).delivery(delivery)
+                    .build();
             delivery.addImage(deliveryImage);
         }
     }
