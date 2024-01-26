@@ -4,15 +4,13 @@ import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="board_help")
@@ -30,9 +28,6 @@ public class BoardHelp extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name="code_small_id")
     private CodeSmall codeSmall;
-
-//    @OneToMany(mappedBy = "board_help", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-//    private List<BoardHelpImage> imageFileList = new ArrayList<>();
 
     @Column(name="board_help_title")
     private String title;
@@ -52,9 +47,7 @@ public class BoardHelp extends BaseTimeEntity {
     @Column(name="board_adopted")
     private Boolean isAdopted;
 
-    // BaseTimeEntity를 상속해서 createDt, updateDt를 대체
-
-    // DB에
+    // 글 작성
     @Builder
     public BoardHelp(String title, String content, int point, int readCnt,
                      int sigungu, Boolean isAdopted,
@@ -69,13 +62,15 @@ public class BoardHelp extends BaseTimeEntity {
         this.member = member;
     }
 
-//    public void addImage(BoardHelpImage image) {
-//        this.imageFileList.add(image);
-//        // 게시글에 이미지 파일이 없는 경우
-//        if (image.getBoardHelp() != this) {
-//            // 파일을 저장한다.
-//            image.setBoard(this);
-//        }
+    // 글 목록 조회 결과( 카테고리(전체), 검색, 시군구 )
+//    @Builder
+//    public BoardHelp(Long id, String title, int point, int readCnt, int sigungu,
+//                     Member member) {
+//        this.id = id;
+//        this.title = title;
+//        this.point = point;
+//        this.readCnt = readCnt;
+//        this.sigungu = sigungu;
+//        this.member = member;           // 작성자 이름을 가져오기 위함
 //    }
-
 }
