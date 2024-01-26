@@ -1,11 +1,12 @@
 package com.ssafy.umzip.domain.company.repository;
 
 import com.ssafy.umzip.domain.company.entity.Company;
-import com.ssafy.umzip.global.common.Role;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    Optional<Company> findByMemberIdAndRole(Long memberId, Role role);
+    @EntityGraph(attributePaths = {"member"})
+    List<Company> findAllByMemberId(Long memberId);
 }
