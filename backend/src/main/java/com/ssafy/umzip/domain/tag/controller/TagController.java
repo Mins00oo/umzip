@@ -21,13 +21,13 @@ import java.util.List;
 public class TagController {
     private final TagService tagService;
 
-    @GetMapping( value = "/tagType")
+    @GetMapping( value = "/tagTypeById")
     public ResponseEntity<List<TagListByLargeCodeResponce>> receiveTagType(@RequestParam long largeCode) {
         return ResponseEntity.status(HttpStatus.OK).body(tagService.receiveTagType(largeCode));
     }
     @GetMapping( value = "/tagType")
-    public ResponseEntity<List<TagListByLargeCodeResponce>> receiveTagType(@RequestParam long largeCode, @RequestParam String role) {
-        return ResponseEntity.status(HttpStatus.OK).body(tagService.receiveTagByRole(largeCode, role));
+    public ResponseEntity<List<TagListByLargeCodeResponce>> receiveTagType(@RequestParam String role) {
+        return ResponseEntity.status(HttpStatus.OK).body(tagService.receiveTagByRole(role));
     }
 
 }

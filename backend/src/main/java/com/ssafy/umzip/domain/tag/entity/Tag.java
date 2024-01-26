@@ -1,6 +1,8 @@
 package com.ssafy.umzip.domain.tag.entity;
 
+import com.ssafy.umzip.domain.code.entity.CodeLarge;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -13,17 +15,16 @@ public class Tag {
     @Column(name = "tag_id")
     private Long tagId;
 
-    @Column(name = "code_large_id")
-    private Long codeLargeId;
-
     @Column(name = "tag_name")
     private String tagName;
 
-    public Tag() {
-    }
+    @ManyToOne(cascade= CascadeType.REMOVE)
+    @JoinColumn(name="code_large_id")
+    private CodeLarge codeLarge;
 
-    public Tag(Long codeLargeId, String tagName) {
-        this.codeLargeId = codeLargeId;
+    @Builder
+    public Tag(String tagName) {
         this.tagName = tagName;
     }
+    public Tag(){}
 }

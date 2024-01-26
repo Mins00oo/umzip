@@ -1,5 +1,7 @@
 package com.ssafy.umzip.domain.tag.service;
 
+import com.ssafy.umzip.domain.code.entity.CodeLarge;
+import com.ssafy.umzip.domain.code.repository.CodeLargeRepository;
 import com.ssafy.umzip.domain.tag.dto.TagListByLargeCodeResponce;
 import com.ssafy.umzip.domain.tag.entity.Tag;
 import com.ssafy.umzip.domain.tag.repository.TagRepository;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
+    private final CodeLargeRepository codeLargeRepository;
 
 
     @Override
@@ -38,11 +41,21 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<TagListByLargeCodeResponce> receiveTagByRole(long largeCode, String role) {
+    public List<TagListByLargeCodeResponce> receiveTagByRole(String role) {
+        // 1) CodeLarge에서 역할값으로 ID값 가져오는 과정
+        Optional<CodeLarge> codeLarge = codeLargeRepository.findIdByName(role);
+
+        long largeCode = 0L;
+        if (!codeLarge.isEmpty()) {
+            CodeLarge code = codeLarge.get();
+            largeCode = code.getId();
+        }
+
+        // 2) CodeLarge ID로 관련 태그값 가져오는 과정
         List<TagListByLargeCodeResponce> tagListByLargeCode = new ArrayList<>();
         Optional<List<Tag>> optionalTagList = tagRepository.findAllByCodeLargeId(largeCode);
 
-        if (optionalTagList.isPresent()) {
+        if(!optionalTagList.isEmpty()){
             List<Tag> tagList = optionalTagList.get();
             List<TagListByLargeCodeResponce> tagDTOList = new ArrayList<>();
 
@@ -51,6 +64,7 @@ public class TagServiceImpl implements TagService {
             }
 
             return tagDTOList;
+
         } else {
             return Collections.emptyList();
         }
@@ -59,7 +73,6 @@ public class TagServiceImpl implements TagService {
     private TagListByLargeCodeResponce convertToDTO(Tag tag) {
         TagListByLargeCodeResponce dto = new TagListByLargeCodeResponce();
         dto.setTagId(tag.getTagId());
-        dto.setTagId(tag.getCodeLargeId());
         dto.setTagName(tag.getTagName());
         return dto;
     }
