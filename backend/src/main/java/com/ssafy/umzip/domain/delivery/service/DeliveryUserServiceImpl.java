@@ -112,13 +112,14 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         계산기
      */
     @Override
-    public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, int OilPrice) {
+    public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice) {
         //end Time 구하기
         LocalDateTime end = getEndTime(mobilityDto, calDto);
         //car 조회
         Car car = carRepository.findById(calDto.getCarId()).orElseThrow(()->new BaseException(StatusCode.NOT_EXIST_CAR));
         Long price = car.getPrice()*10000; //대여비
-        price += getDistancePrice(mobilityDto, OilPrice, car); //거리 당 비용 ( 주유 가격 고려 )
+        price += getDistancePrice(mobilityDto, OilPrice, car); //거리 당 비용 ( 주유 가격 고려 + 톨게이트 비용 )
+
         if(calDto.isMove()){ //같이 이동시 30000원 추가
             price += 30000;
         }
@@ -134,7 +135,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
             price =Math.round(price*1.15);
         }
         price = getTimeFee(calDto, price); //시간당 수수료 계산.
+
         long result = Math.round((double) price / 100) * 100; // 반올림
+
         return new DeliveryCalResponseDto(result,end);
     }
     /*
@@ -156,10 +159,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         현재 평균 유가 당 거리 가격 계산
      */
     @NotNull
-    private static Long getDistancePrice(MobilityDto mobilityDto, int OilPrice, Car car) {
-        double distanceKm = Math.ceil(mobilityDto.getDistance()/1000); //몇 Km?
-        Long distancePrice = (long) (( distanceKm / car.getMileage() ) * OilPrice); //거리 주유비
-        return distancePrice;
+    private static Long getDistancePrice(MobilityDto mobilityDto, double OilPrice, Car car) {
+        double distanceKm = Math.ceil((double) mobilityDto.getDistance() /1000); //몇 Km?
+        return (Long) (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
     }
     /*
         거리 계산 결과를 가지고 endTime 계산
