@@ -4,9 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
+import com.ssafy.umzip.domain.delivery.repository.CarRepository;
 import com.ssafy.umzip.domain.delivery.service.DeliveryUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.util.Optional;
 @RequestMapping("/api/delivery/user")
 public class DeliveryUserController {
     private final DeliveryUserService deliveryUserService;
+    // car Service가 없어도 될정도 이므로 바로 Repository 소환
+    private final CarRepository carRepository;
     /*
         예약 신청
      */
@@ -54,7 +58,6 @@ public class DeliveryUserController {
      */
     @PutMapping("/cancel")
     public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancleRequestDto cancleRequestDto){
-
         deliveryUserService.cancelDelivery(cancleRequestDto.getMappingId());
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
@@ -66,19 +69,12 @@ public class DeliveryUserController {
         /*  가져올 값
             departure x,y좌표 & destination x,y좌표 & 차종(car_type) & car_fuel
             받을 값
-            routes - fare - taxi
             routes - fare - toll
             routes - distance
             routes - duration
          */
-
-        Optional<Car> optionalCar = deliveryUserService.getCar(Long.valueOf(dto.getCarId()));
-
-        if(!optionalCar.isPresent()){
-            //예외 처리 필요
-        }
-        // car이 있으면 가져옴. 근데 이게맞나
-        Car car = optionalCar.get();
+        // car Service가 없어도 될정도 이므로 바로 Repository 소환
+        Car car = carRepository.findById(Long.valueOf(dto.getCarId())).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CAR));
         // API 엔드포인트 주소
         String apiUrl = "https://apis-navi.kakaomobility.com/v1/directions?"+
                 "origin="+dto.getDepartureX()+","+dto.getDepartureY()+"&"+
@@ -110,13 +106,11 @@ public class DeliveryUserController {
                 .getAsJsonObject("summary");
 
         //원하는 값
-        int taxi = summary.getAsJsonObject("fare")
-                .getAsJsonPrimitive("taxi").getAsInt();
         int toll = summary.getAsJsonObject("fare")
                 .getAsJsonPrimitive("toll").getAsInt();
         int duration = summary.getAsJsonPrimitive("duration").getAsInt();//초
         int distance = summary.getAsJsonPrimitive("distance").getAsInt();//미터
-        return new MobilityDto(taxi, duration, toll, distance);
+        return new MobilityDto( duration, toll, distance);
     }
     /*
         유가 정보 API
