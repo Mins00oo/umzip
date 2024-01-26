@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,6 +117,28 @@ public class DeliveryUserController {
         유가 정보 API
      */
     public int getFuelPrice(){
+        String keyCode = "F240126029";
+        String out = "json";
+        String yesterday = LocalDateTime.now().toString().substring(0, 10).replaceAll("-", "");
+        String prodcd = "K015";
+        String apiUrl = "http://www.opinet.co.kr/api/avgRecentPrice.do?"+
+                "code="+keyCode+"&"+
+//                "date="+yesterday+"&"+ date의 기준이 뭔데요.. 알려줘야할거아닙니까.....
+                "out="+out+"&"+
+                "prodcd="+prodcd;
+
+        System.out.println(yesterday);
+
+        // RestTemplate 생성
+        RestTemplate restTemplate = new RestTemplate();
+        // 요청 보냄
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
+        System.out.println("responseEntity.getBody() = " + responseEntity.getBody());
+
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(responseEntity.getBody()).getAsJsonObject();
+
+
         return 900;
     }
 }
