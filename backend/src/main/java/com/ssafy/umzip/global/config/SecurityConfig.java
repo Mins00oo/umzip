@@ -54,8 +54,8 @@ public class SecurityConfig {
                         logout -> logout
                                         .logoutUrl("/api/logout")
                                         .logoutSuccessHandler(logoutSuccessHandler)
-                )
-                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
+                );
+//                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
 
         return http.build();
     }
