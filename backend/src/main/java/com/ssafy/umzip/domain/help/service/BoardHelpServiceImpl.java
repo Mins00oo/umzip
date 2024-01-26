@@ -39,9 +39,6 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     private final S3Service s3Service;
 
-    /*
-     도움 게시글을 작성하는 메소드
-     */
     @Transactional
     @Override
     public void postBoardHelp(BoardHelpPostRequestDto requestDto, List<MultipartFile> files) {
@@ -59,31 +56,42 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         boardHelpRepository.save(boardHelp);
 
         S3UploadDto s3UploadDto;
-        if (!files.isEmpty()) {
-            for (MultipartFile file : files) {  // 하나씩 저장
-                s3UploadDto = s3Service.upload(file, "umzip-service", "boardHelp");
-                BoardHelpImage boardHelpImage = new BoardHelpImage(s3UploadDto, boardHelp);
-                boardHelpImageRepository.save(boardHelpImage);
-            }
+        // files가 null이면( file을 첨부하지 않으면 ) 에러가 발생한다. -> if(!files.isEmpty()) 제외해봄
+        for (MultipartFile file : files) {  // 하나씩 저장
+            s3UploadDto = s3Service.upload(file, "umzip-service", "boardHelp");
+            BoardHelpImage boardHelpImage = new BoardHelpImage(s3UploadDto, boardHelp);
+            boardHelpImageRepository.save(boardHelpImage);
         }
     }
 
-    /*
-        도움 게시글 리스트를 현재 사용자의 시/군/구에 맞게 가져오는 메소드
-        시군구와 category( 도와줘요(401), 도와줄게요(402), 도와줬어요(403) ), pageable을 인자로 받는다.
-    */
     @Transactional(readOnly = true)
     @Override
-    public Page<BoardHelpListDto> retrieveList(
+    public Page<BoardHelpListDto> listBoardHelp(
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
 
+        System.out.println("-------------------");
+        System.out.println("Service");
+        System.out.println("requestDto: " + requestDto.toString());
 
+        // 시군구는 100이다. -> 나중에 Token에서 가져옴
 
-        // repository 접근 후 Page<BoardHelp>를 가져온다.
-        // 가져오지 못한 경우 예외처리
-        Page<BoardHelpListDto> boardPage = boardHelpRepository.findBySigungu(requestDto.getSigungu(), pageable);
+        int sigungu = requestDto.getSigungu();
+        String keyword = requestDto.getKeyword();
+        Page<BoardHelp> boardHelpPage = boardHelpRepository
+                .findBySigunguAndTitleContaining(sigungu, keyword, pageable);
 
-        return boardPage;
+        System.out.println("------------------");
+        System.out.println("repository");
+        System.out.println("boardHelpPage: " + boardHelpPage.toString());
+        for (BoardHelp boardHelp : boardHelpPage) {
+            System.out.println(boardHelp.toString());
+        }
+
+        // BoardHelp의 board_id를 가져온다.
+        // board_id를 이용해서 comment count를 가져온다.
+
+        // Entity -> DTO
+        return BoardHelpListDto.toDto(boardHelpPage);
     }
 }

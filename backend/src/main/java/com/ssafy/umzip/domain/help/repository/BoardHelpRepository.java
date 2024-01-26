@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BoardHelpRepository extends JpaRepository<BoardHelp, Long> {
 
-    Page<BoardHelpListDto> findBySigungu(int sigungu, Pageable pageable);
+    // keyword -> title
+    Page<BoardHelp> findBySigunguAndTitleContaining(int sigungu, String title, Pageable pageable);
 
 }

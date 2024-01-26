@@ -5,34 +5,35 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class BoardHelpListRequestDto {
 
-    private Long id;
+    // 카테고리
+//    private String codeSmallName;
+//    private int codeSmallId;
 
-//    private Member memberId;
-
-    private Long codeSmallId;
-    private String title;
-    private String content;
-    private int point;
-    private int readCnt;
+    // 시군구 + 전체 + 검색
     private int sigungu;
-    private Boolean isAdopted;
+    private String keyword;
 
-    // codeSmall도 초기화 해야 함
-    public static BoardHelp toEntity(BoardHelpListRequestDto requestDto, int codeSmall, int curMemberSigungu) {
-        return BoardHelp.builder()
-
-                .title(requestDto.title)
-                .content(requestDto.content)
-                .point(requestDto.point)
-                .readCnt(requestDto.readCnt)
-                .isAdopted(requestDto.isAdopted)
-                .sigungu(curMemberSigungu)
-                .build();
+    @Builder
+    public BoardHelpListRequestDto(int sigungu, String keyword) {
+        this.sigungu = sigungu;
+        this.keyword = keyword;
     }
+
+    // 카테고리에서 사용
+//    @Builder
+//    public BoardHelpListRequestDto(int sigungu, int codeSmallId, String keyword) {
+//        this.sigungu = sigungu;
+//        setCodeSmallName(codeSmallId);
+//        this.codeSmallId = codeSmallId;
+//        this.keyword = keyword;
+//    }
 
 }
