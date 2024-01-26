@@ -4,19 +4,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
-import com.ssafy.umzip.domain.delivery.service.DeliveryService;
+import com.ssafy.umzip.domain.delivery.service.DeliveryUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/delivery/user")
 public class DeliveryUserController {
-    private final DeliveryService deliveryService;
+    private final DeliveryUserService deliveryUserService;
     /*
         예약 신청
      */
@@ -34,7 +31,7 @@ public class DeliveryUserController {
                                                  @RequestPart(value="imageFileList",required = false) List<MultipartFile> imageFileList,
                                                  @RequestPart(value="price") Long price
     ){
-        deliveryService.createDelivery(delivery,companys,imageFileList,price);
+        deliveryUserService.createDelivery(delivery,companys,imageFileList,price);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 
@@ -49,10 +46,17 @@ public class DeliveryUserController {
         //---- 유가정보 API ( 가격만 가져옴 )
         int OilPrice = getFuelPrice();
         //유가, 차량, 수수료, 거리, 출퇴근 및 주야간
-        DeliveryCalResponseDto resultDto = deliveryService.calculateDelivery(mobilityAPI, dto, OilPrice);
+        DeliveryCalResponseDto resultDto = deliveryUserService.calculateDelivery(mobilityAPI, dto, OilPrice);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(resultDto));
     }
-
+    /*
+        고객 취소 API
+     */
+    @PostMapping("/cancel")
+    public ResponseEntity<Object> cancelDelivery(@RequestBody Long mappingId){
+        deliveryUserService.cancelDelivery(mappingId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
 
     /*
         KAKAO Mobility 길찾기 API
@@ -67,7 +71,7 @@ public class DeliveryUserController {
             routes - duration
          */
 
-        Optional<Car> optionalCar = deliveryService.getCar(Long.valueOf(dto.getCarId()));
+        Optional<Car> optionalCar = deliveryUserService.getCar(Long.valueOf(dto.getCarId()));
 
         if(!optionalCar.isPresent()){
             //예외 처리 필요

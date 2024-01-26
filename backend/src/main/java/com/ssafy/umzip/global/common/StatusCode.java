@@ -34,7 +34,8 @@ public enum StatusCode {
     CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
 
     // DELIVERY : 600
-    NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다.");
+    NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다."),
+    NOT_EXIST_MAPPING(false,601,"존재하지 않는 용달 주문건입니다.");
 
 
 

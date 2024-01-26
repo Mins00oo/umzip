@@ -49,4 +49,12 @@ public class DeliveryMapping {
         this.company = company;
         this.codeSmall = codeSmall;
     }
+
+    public void setReissuing(Long reissuing) {
+        this.reissuing = reissuing;
+    }
+
+    public void setCodeSmall(CodeSmall codeSmall) {
+        this.codeSmall = codeSmall;
+    }
 }

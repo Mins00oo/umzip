@@ -10,6 +10,7 @@ import com.ssafy.umzip.domain.delivery.entity.Delivery;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryImage;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.CarRepository;
+import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingRepository;
 import com.ssafy.umzip.domain.delivery.repository.DeliveryRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +34,15 @@ import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DeliveryServiceImpl implements DeliveryService {
+public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final CarRepository carRepository;
     private final DeliveryRepository deliveryRepository;
+    private final MemberRepository memberRepository;
     private final CompanyRepository companyRepository;
     private final S3Service s3Service;
     private final CodeSmallRepository codeSmallRepository;
-    private final MemberRepository memberRepository;
+    private final DeliveryMappingRepository deliveryMappingRepository;
+
     @Override
     public Optional<Car> getCar(Long id) {
         return carRepository.findById(id);
@@ -122,7 +124,7 @@ public class DeliveryServiceImpl implements DeliveryService {
      */
     @Override
     public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, int OilPrice) {
-        //end Time구하기
+        //end Time 구하기
         LocalDateTime end = getEndTime(mobilityDto, calDto);
         //car 조회
         Car car = carRepository.findById(calDto.getCarId()).get();
@@ -184,7 +186,21 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public void cancelDelivery() {
+    public void cancelDelivery(Long mappingId) {
+        //1. delivery_mapping 가져옴.
+        Optional<DeliveryMapping> mappingResult = deliveryMappingRepository.findById(mappingId);
+        if(mappingResult.isEmpty()){
+            //해당하는 주문건이 없으면 예외
+            throw new BaseException(StatusCode.NOT_EXIST_MAPPING);
+        }
+        DeliveryMapping deliveryMapping = mappingResult.get();
+        //2. 상태 105로 변경 ( 105 : 취소 )
+        Optional<CodeSmall> code = codeSmallRepository.findById(105L);
+        if(code.isEmpty()){
+            //해당 코드 없으면
+            throw new BaseException(StatusCode.CODE_DOES_NOT_EXIST);
+        }
+        deliveryMapping.setCodeSmall(code.get());//업데이트
 
     }
 
@@ -198,20 +214,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     }
 
-    @Override
-    public void rejectionDelivery() {
-
-    }
-
-    @Override
-    public void quotationDelivery() {
-
-    }
-
-    @Override
-    public void companyReservationDelivery() {
-
-    }
     //s3
     private S3UploadDto uploadFile(MultipartFile file, String fileNamePrefix) {
         if (file != null && !file.isEmpty()) {
