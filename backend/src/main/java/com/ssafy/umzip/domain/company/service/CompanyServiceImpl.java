@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.company.service;
 
 import com.ssafy.umzip.domain.company.dto.CompanyCreateRequestDto;
 import com.ssafy.umzip.domain.company.dto.CompanyResponseDto;
+import com.ssafy.umzip.domain.company.dto.CompanyReviewListResponse;
 import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -76,10 +78,16 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
 
-        List<String> tagList = reviewReceiverRepository.findTopTagsByMemberId(company.getMember().getId(), 3);
-        String formattedScore = reviewReceiverService.receiverReviewScore(company.getMember().getId());
+        List<String> tagList = reviewReceiverRepository
+                .findTopTagsByMemberId(company.getMember().getId(), 3, company.getRole());
 
-        return CompanyResponseDto.fromEntity(company, formattedScore, tagList);
+        String formattedScore = reviewReceiverService
+                .receiverReviewScore(company.getMember().getId(), company.getRole());
+
+        List<CompanyReviewListResponse> companyReviewList = reviewReceiverRepository
+                .findReviewByMemberIdAndRole(company.getMember().getId(), 5, company.getRole());
+
+        return CompanyResponseDto.fromEntity(company, formattedScore, tagList, companyReviewList);
     }
 
     private Role getRoleForCompanyType(int companyType) {

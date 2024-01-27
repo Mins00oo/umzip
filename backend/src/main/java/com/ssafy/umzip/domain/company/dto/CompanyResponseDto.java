@@ -18,20 +18,27 @@ public class CompanyResponseDto {
 
     private List<String> mostTag;
 
+    private List<CompanyReviewListResponse> reviewList;
+
     @Builder
-    public CompanyResponseDto(String name, String averageScore, String introduction, List<String> mostTag) {
+    public CompanyResponseDto(String name, String averageScore, String introduction,
+                              List<String> mostTag,
+                              List<CompanyReviewListResponse> reviewList) {
         this.name = name;
         this.averageScore = averageScore;
         this.introduction = introduction;
         this.mostTag = mostTag;
+        this.reviewList = reviewList;
     }
 
-    public static CompanyResponseDto fromEntity(Company company, String formattedAverageScore, List<String> tagList) {
+    public static CompanyResponseDto fromEntity(Company company, String formattedAverageScore,
+                                                List<String> tagList, List<CompanyReviewListResponse> companyReviewList) {
         return CompanyResponseDto.builder()
                 .name(company.getName())
                 .averageScore(formattedAverageScore)
                 .introduction(company.getIntroduction())
                 .mostTag(tagList)
+                .reviewList(companyReviewList)
                 .build();
     }
 }

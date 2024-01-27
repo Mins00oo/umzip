@@ -6,12 +6,15 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
 import com.ssafy.umzip.domain.reviewreceiver.service.ReviewReceiverService;
+import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +43,11 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+        List<String> tagList = reviewReceiverRepository.findTopTagsByMemberId(member.getId(), 3, Role.USER);
 
-        String formattedAverageScore = reviewReceiverService.receiverReviewScore(member.getId());
+        String formattedAverageScore = reviewReceiverService.receiverReviewScore(member.getId(), Role.USER);
 
-        return MemberResponseDto.fromEntity(member, isMe, String.valueOf(formattedAverageScore));
+        return MemberResponseDto.fromEntity(member, isMe, String.valueOf(formattedAverageScore), tagList);
     }
 
 }

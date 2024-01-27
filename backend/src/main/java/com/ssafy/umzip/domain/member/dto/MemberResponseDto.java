@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class MemberResponseDto {
@@ -20,17 +22,21 @@ public class MemberResponseDto {
 
     private String avgScore;
 
+    private List<String> tagList;
+
     @Builder
-    public MemberResponseDto(boolean me, String name, String phone, int point, String email, String avgScore) {
+    public MemberResponseDto(boolean me, String name, String phone, int point, String email, String avgScore, List<String> tagList) {
         this.me = me;
         this.name = name;
         this.phone = phone;
         this.point = point;
         this.email = email;
         this.avgScore = avgScore;
+        this.tagList = tagList;
     }
 
-    public static MemberResponseDto fromEntity(Member member, boolean isMe, String formattedAvgScore) {
+
+    public static MemberResponseDto fromEntity(Member member, boolean isMe, String formattedAvgScore, List<String> tagList) {
         return MemberResponseDto.builder()
                 .me(isMe)
                 .email(member.getEmail())
@@ -38,6 +44,7 @@ public class MemberResponseDto {
                 .name(member.getName())
                 .point(member.getPoint())
                 .avgScore(formattedAvgScore)
+                .tagList(tagList)
                 .build();
     }
 }

@@ -37,7 +37,7 @@ public class CompanyController {
     @GetMapping("/{companyId}")
     public ResponseEntity<Object> retrieveCompany(@PathVariable Long companyId) {
         CompanyResponseDto response = companyService.retrieveCompany(companyId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(response));
     }
 
 

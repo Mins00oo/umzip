@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -36,9 +37,8 @@ public class Review {
     @JoinColumn(name="member_id")
     private Member member;
 
-    @ManyToOne(cascade= CascadeType.REMOVE)
-    @JoinColumn(name="review_tag_id")
-    private ReviewTag reviewTag;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)
+    private List<ReviewTag> reviewTags;
 
     @Builder
     public Review(float score, String content, LocalDateTime time, Boolean isUpdate) {
