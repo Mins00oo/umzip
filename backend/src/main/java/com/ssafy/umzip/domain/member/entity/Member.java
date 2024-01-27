@@ -55,4 +55,5 @@ public class Member extends BaseTimeEntity {
         this.sigungu = sigungu;
         this.pwd = pwd;
     }
+
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 public class ReviewReceiver {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_receiver_id")
     int id;
 
