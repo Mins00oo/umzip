@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,23 +19,19 @@ public class CompanyReviewListResponse {
 
     private String content;
 
-    private LocalDateTime createDt;
+    private String createDt;
 
     private float score;
 
     @Builder
     public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage, String content,
-                                     LocalDateTime createDt, float score, List<String> tagList) {
+                                     String createDt, float score, List<String> tagList) {
         this.reviewId = reviewId;
         this.writerName = writerName;
         this.writerProfileImage = writerProfileImage;
         this.content = content;
         this.createDt = createDt;
         this.score = score;
-        this.tagList = tagList;
-    }
-
-    public void setTagList(List<String> tagList) {
         this.tagList = tagList;
     }
 }

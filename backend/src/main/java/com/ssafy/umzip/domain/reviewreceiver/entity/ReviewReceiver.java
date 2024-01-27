@@ -4,9 +4,11 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.global.common.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
 @Table(name = "review_receiver")
+@Getter
 public class ReviewReceiver {
 
     @Id

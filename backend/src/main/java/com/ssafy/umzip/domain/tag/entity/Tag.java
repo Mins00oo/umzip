@@ -18,7 +18,7 @@ public class Tag {
     @Column(name = "tag_name")
     private String tagName;
 
-    @ManyToOne(cascade= CascadeType.REMOVE)
+    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name="code_large_id")
     private CodeLarge codeLarge;
 

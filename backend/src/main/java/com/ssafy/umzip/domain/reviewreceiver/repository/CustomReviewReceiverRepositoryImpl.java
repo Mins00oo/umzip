@@ -1,12 +1,9 @@
 package com.ssafy.umzip.domain.reviewreceiver.repository;
 
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.company.dto.CompanyReviewListResponse;
-import com.ssafy.umzip.domain.member.entity.QMember;
 import com.ssafy.umzip.domain.review.entity.QReview;
+import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.domain.reviewreceiver.entity.QReviewReceiver;
 import com.ssafy.umzip.domain.reviewtag.entity.QReviewTag;
 import com.ssafy.umzip.domain.tag.entity.QTag;
@@ -14,7 +11,9 @@ import com.ssafy.umzip.global.common.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -42,41 +41,39 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
 
     @Override
     public List<CompanyReviewListResponse> findReviewByMemberIdAndRole(Long memberId, int limit, Role role) {
-        QReviewReceiver reviewReceiver = QReviewReceiver.reviewReceiver;
         QReview review = QReview.review;
-        QMember member = QMember.member;
-        QTag tag = QTag.tag;
+        QReviewReceiver reviewReceiver = QReviewReceiver.reviewReceiver;
         QReviewTag reviewTag = QReviewTag.reviewTag;
+        QTag tag = QTag.tag;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        List<CompanyReviewListResponse> results = queryFactory
-                .select(Projections.constructor(
-                        CompanyReviewListResponse.class,
-                        review.id,
-                        member.name,
-                        member.imageUrl,
-                        review.content,
-                        review.createDt,
-                        review.score
-                ))
+
+        List<Review> reviews = queryFactory
+                .select(review)
                 .from(reviewReceiver)
                 .join(reviewReceiver.review, review)
-                .join(review.member, member)
-                .where(reviewReceiver.receiverRole.eq(role))
-                .where(reviewReceiver.member.id.eq(memberId))
-                .orderBy(review.createDt.desc())
-                .limit(limit)
+                .join(review.reviewTags, reviewTag).fetchJoin()
+                .join(reviewTag.tag, tag).fetchJoin()
+                .where(reviewReceiver.member.id.eq(memberId),
+                        reviewReceiver.receiverRole.eq(role))
+                .distinct()
                 .fetch();
 
-        for (CompanyReviewListResponse response : results) {
-            List<String> tagList = queryFactory
-                    .select(tag.tagName)
-                    .from(reviewTag)
-                    .join(reviewTag.tag, tag)
-                    .where(reviewTag.review.id.eq(response.getReviewId()))
-                    .fetch();
-
-            response.setTagList(tagList);
-        }
-        return results;
+        return reviews.stream()
+                .map(reviewEntity -> {
+                    List<String> tagNames = reviewEntity.getReviewTags().stream()
+                            .map(reviewTagEntity -> reviewTagEntity.getTag().getTagName())
+                            .collect(Collectors.toList());
+                    return new CompanyReviewListResponse(
+                            reviewEntity.getId(),
+                            reviewEntity.getMember().getName(),
+                            reviewEntity.getMember().getImageUrl(),
+                            reviewEntity.getContent(),
+                            reviewEntity.getCreateDt().format(formatter),
+                            reviewEntity.getScore(),
+                            tagNames
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }
