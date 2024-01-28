@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -25,23 +27,18 @@ public class CompanyReviewListResponse {
 
     private float score;
 
-    @Builder
     public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage, String content,
-                                     String createDt, float score, List<String> tagList) {
+                                     LocalDateTime createDt, float score) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.reviewId = reviewId;
         this.writerName = writerName;
         this.writerProfileImage = writerProfileImage;
         this.content = content;
-        this.createDt = createDt;
+        this.createDt = createDt.format(formatter);
         this.score = score;
-        this.tagList = tagList;
     }
 
-    public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage, String content, float score) {
-        this.reviewId = reviewId;
-        this.writerName = writerName;
-        this.writerProfileImage = writerProfileImage;
-        this.content = content;
-        this.score = score;
+    public void setTagList(List<String> tagList) {
+        this.tagList = tagList;
     }
 }
