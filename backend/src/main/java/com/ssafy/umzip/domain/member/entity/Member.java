@@ -1,7 +1,6 @@
 package com.ssafy.umzip.domain.member.entity;
 
 import com.ssafy.umzip.global.common.BaseTimeEntity;
-import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
