@@ -16,8 +16,8 @@ import java.util.List;
 public interface BoardHelpService {
 
     void postBoardHelp(BoardHelpPostRequestDto requestDto, List<MultipartFile> files);
-    
-    Page<BoardHelpListDto> listBoardHelp(
+
+    List<BoardHelpListDto> listBoardHelp(
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable);
 

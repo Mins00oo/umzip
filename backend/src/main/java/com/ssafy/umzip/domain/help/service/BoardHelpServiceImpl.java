@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,32 +67,32 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<BoardHelpListDto> listBoardHelp(
+    public List<BoardHelpListDto> listBoardHelp(
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+        // 0: 모두 보여줌
+        // 401, 403: 도와주세요 도와줬어요
+        // 402: 도와줄게요
 
-        System.out.println("-------------------");
-        System.out.println("Service");
-        System.out.println("requestDto: " + requestDto.toString());
-
-        // 시군구는 100이다. -> 나중에 Token에서 가져옴
-
+        // 시군구는 100이다.
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
-        Page<BoardHelp> boardHelpPage = boardHelpRepository
-                .findBySigunguAndTitleContaining(sigungu, keyword, pageable);
+        Long codeSmallId = requestDto.getCodeSmallId();
 
-        System.out.println("------------------");
-        System.out.println("repository");
-        System.out.println("boardHelpPage: " + boardHelpPage.toString());
-        for (BoardHelp boardHelp : boardHelpPage) {
-            System.out.println(boardHelp.toString());
+        // 1. board 가져오기
+        Page<BoardHelp> boards = boardHelpRepository.findAll(pageable);
+        List<BoardHelpListDto> listDto = new ArrayList<>();
+
+        // 2. comment 가져오기: group by board_help_id 를 이용해서 count 한 값을 가져옴
+
+        for (BoardHelp boardHelp : boards) {
+            listDto.add(BoardHelpListDto.toDto(boardHelp));
+        }
+        for (BoardHelpListDto dto : listDto) {
+            System.out.println(dto.toString());
         }
 
-        // BoardHelp의 board_id를 가져온다.
-        // board_id를 이용해서 comment count를 가져온다.
 
-        // Entity -> DTO
-        return BoardHelpListDto.toDto(boardHelpPage);
+        return listDto;
     }
 }

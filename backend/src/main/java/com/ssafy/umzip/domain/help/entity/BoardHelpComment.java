@@ -19,19 +19,21 @@ public class BoardHelpComment extends BaseTimeEntity {
     @Column(name="board_help_comment_id")
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name="board_help_id")
-//    private BoardHelp boardHelp;
-//
-//    @ManyToOne
-//    @JoinColumn(name="member_id")
-//    private Member member;
+    @ManyToOne
+    @JoinColumn(name="board_help_id")
+    private BoardHelp boardHelp;
+
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
 
     @Column(name="board_help_comment_content")
     private String content;
 
     @Builder
-    public BoardHelpComment(String content) {
+    public BoardHelpComment(BoardHelp boardHelp, Member member, String content) {
+        this.boardHelp = boardHelp;
+        this.member = member;
         this.content = content;
     }
 }

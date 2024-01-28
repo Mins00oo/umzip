@@ -1,12 +1,16 @@
 package com.ssafy.umzip.domain.help.dto;
 
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
+import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
+import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 public class BoardHelpListDto {
 
@@ -16,7 +20,7 @@ public class BoardHelpListDto {
     private String codeSmallName;
     private Long codeSmallId;
     private LocalDateTime createDt;
-    private int commentCnt;             // comment table
+    private Long commentCnt;             // comment table
     private int readCnt;
     private int rewardPoint;
 
@@ -25,29 +29,29 @@ public class BoardHelpListDto {
     @Builder
     public BoardHelpListDto(Long id, String writerName, String title,
                             Long codeSmallId, LocalDateTime createDt,
-                            int commentCnt, int readCnt, int rewardPoint) {
+                            int readCnt, int rewardPoint) {
         this.id = id;
         this.writerName = writerName;
         this.title = title;
         setCodeSmallName(codeSmallId);
         this.codeSmallId = codeSmallId;
         this.createDt = createDt;
-        this.commentCnt = commentCnt;
         this.readCnt = readCnt;
         this.rewardPoint = rewardPoint;
     }
 
-    public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
-
-        return boardHelpPage.map(m -> BoardHelpListDto.builder()
-                .id(m.getId())
-                .writerName(m.getMember().getName())
-                .title(m.getTitle())
-                .codeSmallId(m.getCodeSmall().getId())
-                .createDt(m.getCreateDt())  // commentCnt를 위한 Comment Entity 필요
-                .readCnt(m.getReadCnt())
-                .rewardPoint(m.getPoint())
-                .build());
+    public static BoardHelpListDto toDto(BoardHelp boardHelp) {
+        // 각 게시글의 member_id를 이용해서 게시글 작성자 이름을 가져온다.
+        // board_id와 comment_id를 이용해서 댓글 수를 가져온다.
+        return BoardHelpListDto.builder()
+                .id(boardHelp.getId())
+                .writerName(boardHelp.getMember().getName())
+                .title(boardHelp.getTitle())
+                .codeSmallId(boardHelp.getCodeSmall().getId())
+                .createDt(boardHelp.getCreateDt())
+                .readCnt(boardHelp.getReadCnt())
+                .rewardPoint(boardHelp.getPoint())
+                .build();
     }
 
     private void setCodeSmallName(Long codeSmallId) {

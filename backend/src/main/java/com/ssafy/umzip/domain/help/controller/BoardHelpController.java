@@ -57,25 +57,16 @@ public class BoardHelpController {
     * */
     @GetMapping()
     public ResponseEntity<Object> listBoardHelp(
-            @RequestParam("code-small") int codeSmallId,
+            @RequestParam("code-small") Long codeSmallId,
             @RequestParam(defaultValue = "")String keyword,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable
             ) {
 
-        // code-small이 잘못된 값이면 예외처리
+        // code-small이 잘못된 값이면 예외처리 : existsBy로 DB에 접근해서 값이 있는지 없는지 체크
         // 0: default
         if (codeSmallId != 401 && codeSmallId != 402 && codeSmallId != 403 && codeSmallId != 0) {
             throw new BaseException(StatusCode.CODE_DOES_NOT_EXIST);
         }
-
-        if (keyword == null) {
-            keyword = "";
-        }
-
-        System.out.println("Controller");
-        System.out.println("code-small: " + codeSmallId);
-        System.out.println("keyword: " + keyword);
-        System.out.println("pageable: " + pageable);
 
         // accessToken 이 있는지 판단한다. 없으면 로그인 창으로 이동하게끔 에러 코드를 보낸다.
 
@@ -86,24 +77,16 @@ public class BoardHelpController {
         BoardHelpListRequestDto requestDto = BoardHelpListRequestDto.builder()
                 .sigungu(sigungu) // 작성자 시군구
                 .keyword(keyword)
+                .codeSmallId(codeSmallId)
                 .build();
 
         // service
-        Page<BoardHelpListDto> BoardHelpPage = service.listBoardHelp(requestDto, pageable);
-        
-        // 안 나옴
-        System.out.println("--------------");
-        System.out.println("Controller");
-        for (BoardHelpListDto dto : BoardHelpPage) {
-            System.out.println(dto.getId() + " " + dto.getTitle());
-        }
+        List<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
+//        Page<BoardHelpListDto> BoardHelpPage = service.listBoardHelp(requestDto, pageable);
+
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(BoardHelpPage));
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
     }
-    
-    /*
-    * 도움 게시글 목록 조회 + 카테고리 구분
-    * */
 }
