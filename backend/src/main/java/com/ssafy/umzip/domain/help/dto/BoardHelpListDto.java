@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 public class BoardHelpListDto {
 
+    // comment repository
+
     private Long id;
     private String writerName;
     private String title;
@@ -40,10 +42,10 @@ public class BoardHelpListDto {
         this.rewardPoint = rewardPoint;
     }
 
-    public static BoardHelpListDto toDto(BoardHelp boardHelp) {
+    public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
         // 각 게시글의 member_id를 이용해서 게시글 작성자 이름을 가져온다.
         // board_id와 comment_id를 이용해서 댓글 수를 가져온다.
-        return BoardHelpListDto.builder()
+        return  boardHelpPage.map(boardHelp -> BoardHelpListDto.builder()
                 .id(boardHelp.getId())
                 .writerName(boardHelp.getMember().getName())
                 .title(boardHelp.getTitle())
@@ -51,7 +53,7 @@ public class BoardHelpListDto {
                 .createDt(boardHelp.getCreateDt())
                 .readCnt(boardHelp.getReadCnt())
                 .rewardPoint(boardHelp.getPoint())
-                .build();
+                .build());
     }
 
     private void setCodeSmallName(Long codeSmallId) {

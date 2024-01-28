@@ -54,12 +54,13 @@ public class BoardHelpController {
     * 도움 게시글 목록 조회 + 도움 게시글 검색
     * 현재 사용자의 시군구 데이터를 토대로 근처 게시글만 조회한다.
     * 검색어를 입력 받으면 like 방식으로 제목을 조회한다.
+    * page는 service에서 -1 처리
     * */
     @GetMapping()
     public ResponseEntity<Object> listBoardHelp(
             @RequestParam("code-small") Long codeSmallId,
             @RequestParam(defaultValue = "")String keyword,
-            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable  // sort="EntityColumn"
             ) {
 
         // code-small이 잘못된 값이면 예외처리 : existsBy로 DB에 접근해서 값이 있는지 없는지 체크
@@ -81,8 +82,17 @@ public class BoardHelpController {
                 .build();
 
         // service
-        List<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
-//        Page<BoardHelpListDto> BoardHelpPage = service.listBoardHelp(requestDto, pageable);
+        Page<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(boards));
+    }
+
+    // 댓글 작성
+    @PostMapping("detail/comments/{boardId}")
+    public ResponseEntity<Object> postComment() {
+
 
 
         return ResponseEntity

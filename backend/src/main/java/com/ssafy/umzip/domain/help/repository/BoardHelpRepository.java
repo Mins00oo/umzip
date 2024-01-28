@@ -19,10 +19,8 @@ public interface BoardHelpRepository extends JpaRepository<BoardHelp, Long> {
     // page: 0부터 시작
     // size: 페이지당 데이터수
     // PageRequest.of(page, size, Direction)
-    @NotNull
-    Page<BoardHelp> findAll(@NotNull Pageable pageable);    // 전체 가져오기
-//    List<BoardHelp> findTitleContaining(String title);  // %title% 찾기
-
+    Page<BoardHelp> findAllByTitleContaining(String title, @NotNull Pageable pageable);    // 전체 가져오기
+    Page<BoardHelp> findPageByTitleContaining(String title, Pageable pageable);
 
 
 //    @Query("SELECT b FROM BoardHelp b WHERE b.sigungu = :sigungu AND b.title LIKE %:title% AND " +

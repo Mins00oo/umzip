@@ -17,6 +17,7 @@ import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -67,32 +68,27 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BoardHelpListDto> listBoardHelp(
+    public Page<BoardHelpListDto> listBoardHelp(
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-        // 0: 모두 보여줌
-        // 401, 403: 도와주세요 도와줬어요
-        // 402: 도와줄게요
+
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
+
 
         // 시군구는 100이다.
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
         Long codeSmallId = requestDto.getCodeSmallId();
 
-        // 1. board 가져오기
-        Page<BoardHelp> boards = boardHelpRepository.findAll(pageable);
-        List<BoardHelpListDto> listDto = new ArrayList<>();
+        Page<BoardHelp> boards = boardHelpRepository
+                .findPageByTitleContaining(keyword, PageRequest.of(curPage, size, Sort.Direction.DESC, "id")); // title 가져오기
+        Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);
+
 
         // 2. comment 가져오기: group by board_help_id 를 이용해서 count 한 값을 가져옴
 
-        for (BoardHelp boardHelp : boards) {
-            listDto.add(BoardHelpListDto.toDto(boardHelp));
-        }
-        for (BoardHelpListDto dto : listDto) {
-            System.out.println(dto.toString());
-        }
 
-
-        return listDto;
+        return boardDtoList;
     }
 }

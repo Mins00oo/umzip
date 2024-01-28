@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
 public class BoardHelpListRequestDto {
 
     // 카테고리
