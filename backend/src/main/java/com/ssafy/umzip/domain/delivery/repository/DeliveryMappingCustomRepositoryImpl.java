@@ -2,6 +2,8 @@ package com.ssafy.umzip.domain.delivery.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.umzip.domain.code.entity.CodeSmall;
+import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.dto.UserDeliveyMappingDto;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +44,16 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
     }
 
     @Override
-    public long updateDeliveryMappingDetailAndReissuingAndCodeSmall(long mappingId, String detail, long reissuing, long codeSmallId) {
-//        return queryFactory
-//                .update(deliveryMapping)
-//                .set(deliveryMapping.detail, detail)
-//                .set(deliveryMapping.reissuing, reissuing)
-//                .set(deliveryMapping.codeSmall, codeSmallId)  // assuming codeSmall is a foreign key in DeliveryMapping
-//                .where(deliveryMapping.id.eq(mappingId))
-//                .execute();
+    public Boolean updateDeliveryMappingDetailAndReissuingAndCodeSmall(DeliveryQuotationRequestDto dto,CodeSmall codeSmall) {
+        long result = queryFactory
+                .update(deliveryMapping)
+                .set(deliveryMapping.detail, dto.getDetail())
+                .set(deliveryMapping.reissuing, dto.getPrice())
+                .set(deliveryMapping.codeSmall, codeSmall)  // assuming codeSmall is a foreign key in DeliveryMapping
+                .where(deliveryMapping.id.eq(dto.getMappingId()))
+                .execute();
+
+        return result != 0L;
+
     }
 }

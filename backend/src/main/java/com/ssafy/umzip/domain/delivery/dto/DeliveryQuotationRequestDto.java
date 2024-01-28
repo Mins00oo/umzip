@@ -10,17 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DeliveryQuotationRequestDto {
-    /*
-    {
-        "mappingId": Long,
-        "price" : Long,
-        "detail": String
-}
-     */
     private Long mappingId;
     private Long price;
     private String detail;
-    private CodeSmall codeSmall;
     @Builder
     public DeliveryQuotationRequestDto(Long mappingId, Long price, String detail) {
         this.mappingId = mappingId;
