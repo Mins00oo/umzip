@@ -1,12 +1,18 @@
 package com.ssafy.umzip.domain.company.service;
 
 import com.ssafy.umzip.domain.company.dto.CompanyCreateRequestDto;
+import com.ssafy.umzip.domain.company.dto.CompanyResponseDto;
+import com.ssafy.umzip.domain.company.dto.CompanyReviewListResponse;
 import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.service.MemberService;
+import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
+import com.ssafy.umzip.domain.reviewreceiver.service.ReviewReceiverService;
 import com.ssafy.umzip.global.common.Role;
+import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +33,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final MemberService memberService;
     private final S3Service s3Service;
+    private final ReviewReceiverRepository reviewReceiverRepository;
+    private final ReviewReceiverService reviewReceiverService;
 
     @Transactional
     @Override
@@ -62,6 +71,23 @@ public class CompanyServiceImpl implements CompanyService {
 
             companyRepository.save(company);
         }
+    }
+
+    @Override
+    public CompanyResponseDto retrieveCompany(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
+
+        List<String> tagList = reviewReceiverRepository
+                .findTopTagsByMemberId(company.getMember().getId(), 3, company.getRole());
+
+        String formattedScore = reviewReceiverService
+                .receiverReviewScore(company.getMember().getId(), company.getRole());
+
+        List<CompanyReviewListResponse> companyReviewList = reviewReceiverRepository
+                .findReviewByMemberIdAndRole(company.getMember().getId(), 5, company.getRole());
+
+        return CompanyResponseDto.fromEntity(company, formattedScore, tagList, companyReviewList);
     }
 
     private Role getRoleForCompanyType(int companyType) {
