@@ -62,6 +62,19 @@ public class DeliveryUserController {
         deliveryUserService.cancelDelivery(cancleRequestDto.getMappingId());
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
+    /*
+        용달 유저 예약 확인 API
+     */
+    @GetMapping("/reservation")
+    public ResponseEntity<Object>  userReservationDelivery(){
+        //memberID는 JWT토큰에서 가져온다.
+        //임시 memberId
+        Long memberId = 1L;
+        deliveryUserService.userReservationDelivery(memberId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+
 
     /*
         KAKAO Mobility 길찾기 API

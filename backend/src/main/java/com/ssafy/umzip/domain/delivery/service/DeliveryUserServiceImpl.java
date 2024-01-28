@@ -190,9 +190,26 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     public void companyListDelivery() {
 
     }
-
+    /*
+        용달 유저 예약 전체 조회
+     */
     @Override
-    public void userReservationDelivery() {
+    public void userReservationDelivery(Long memberId) {
+        /*
+            mapping의 member_id가 ${memberId} 인 것들
+            List<Delivery>가 return 되면 됨.
+         */
+
+
+        //해당하는 목록 가져오기.
+        /*
+1번 방법
+memberId와 일치하는 List<DeliveryIdDto> 다 가져옴 distinct해서
+delivery 를 다 조회해서 또 mapping 지연로딩
+         */
+        List<DeliveryMapping> mappings = deliveryMappingRepository.findByMemberId(memberId);
+
+
 
     }
 
