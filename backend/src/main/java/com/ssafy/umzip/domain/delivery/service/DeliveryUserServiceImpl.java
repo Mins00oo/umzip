@@ -198,7 +198,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         Optional<CodeSmall> code = codeSmallRepository.findById(105L);
         if(code.isEmpty()){
             //해당 코드 없으면
-            throw new BaseException(StatusCode.CODE_DOES_NOT_EXIST);
+            throw new BaseException(StatusCode.NOT_EXIST_CODE);
         }
         deliveryMapping.setCodeSmall(code.get());//업데이트
 

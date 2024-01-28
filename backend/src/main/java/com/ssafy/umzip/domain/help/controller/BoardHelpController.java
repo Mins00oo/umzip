@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
+import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
@@ -66,7 +67,7 @@ public class BoardHelpController {
         // code-small이 잘못된 값이면 예외처리 : existsBy로 DB에 접근해서 값이 있는지 없는지 체크
         // 0: default
         if (codeSmallId != 401 && codeSmallId != 402 && codeSmallId != 403 && codeSmallId != 0) {
-            throw new BaseException(StatusCode.CODE_DOES_NOT_EXIST);
+            throw new BaseException(StatusCode.NOT_EXIST_CODE);
         }
 
         // accessToken 이 있는지 판단한다. 없으면 로그인 창으로 이동하게끔 에러 코드를 보낸다.
@@ -91,9 +92,12 @@ public class BoardHelpController {
 
     // 댓글 작성
     @PostMapping("detail/comments/{boardId}")
-    public ResponseEntity<Object> postComment() {
+    public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
+                                              @RequestParam("comment") String comment) {
 
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, comment);
 
+        service.postComment(requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
