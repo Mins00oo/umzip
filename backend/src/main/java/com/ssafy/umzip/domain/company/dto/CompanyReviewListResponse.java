@@ -34,4 +34,10 @@ public class CompanyReviewListResponse {
         this.score = score;
         this.tagList = tagList;
     }
+
+    public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage) {
+        this.reviewId = reviewId;
+        this.writerName = writerName;
+        this.writerProfileImage = writerProfileImage;
+    }
 }
