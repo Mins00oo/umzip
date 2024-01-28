@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.delivery.controller;
 
+import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryRejectionRequestDto;
 import com.ssafy.umzip.domain.delivery.service.DeliveryCompanyService;
 import com.ssafy.umzip.global.common.BaseResponse;
@@ -20,6 +21,12 @@ public class DeliveryCompanyController {
     @PutMapping("/rejection")
     public ResponseEntity<Object> rejectionDelivery(@RequestBody DeliveryRejectionRequestDto dto){
         deliveryCompanyService.rejectionDelivery(dto.getMappingId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+
+    }
+    @PutMapping("/quotation")
+    public ResponseEntity<Object> quotationDelivery(@RequestBody DeliveryQuotationRequestDto dto){
+        deliveryCompanyService.quotationDelivery(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
 
     }

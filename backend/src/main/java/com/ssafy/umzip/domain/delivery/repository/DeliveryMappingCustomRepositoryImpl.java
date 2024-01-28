@@ -40,4 +40,15 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                 .where(deliveryMapping.delivery.id.eq(deliveryId))
                 .fetch();
     }
+
+    @Override
+    public long updateDeliveryMappingDetailAndReissuingAndCodeSmall(long mappingId, String detail, long reissuing, long codeSmallId) {
+//        return queryFactory
+//                .update(deliveryMapping)
+//                .set(deliveryMapping.detail, detail)
+//                .set(deliveryMapping.reissuing, reissuing)
+//                .set(deliveryMapping.codeSmall, codeSmallId)  // assuming codeSmall is a foreign key in DeliveryMapping
+//                .where(deliveryMapping.id.eq(mappingId))
+//                .execute();
+    }
 }
