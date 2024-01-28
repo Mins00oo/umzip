@@ -26,7 +26,8 @@ public enum StatusCode {
     EXPIRED_ACCESS_TOKEN(false, 309, "토큰이 만료되었습니다."),
     DAMAGED_ACCESS_TOKEN(false, 310, "손상된 토큰입니다."),
     UNSUPPORTED_ACCESS_TOKEN(false, 311, "지원하지 않는 토큰입니다."),
-    NOT_VALID_MEMBER_PK(false, 312, "해당 ID로 계정을 찾을 수 없습니다."),
+    NOT_EXIST_MEMBER(false,312,"존재하지 않는 회원입니다."),
+    NOT_VALID_MEMBER_PK(false, 313, "해당 ID로 계정을 찾을 수 없습니다."),
 
     // COMPANY : 400
     NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),
