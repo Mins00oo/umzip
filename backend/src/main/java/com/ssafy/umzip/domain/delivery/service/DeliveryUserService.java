@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DeliveryUserService {
-     //car Test
-     Optional<Car> getCar(Long id);
      //사용자
      void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                          List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
