@@ -3,11 +3,13 @@ package com.ssafy.umzip.domain.company.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@ToString
 public class CompanyReviewListResponse {
     private Long reviewId;
 
@@ -35,9 +37,11 @@ public class CompanyReviewListResponse {
         this.tagList = tagList;
     }
 
-    public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage) {
+    public CompanyReviewListResponse(Long reviewId, String writerName, String writerProfileImage, String content, float score) {
         this.reviewId = reviewId;
         this.writerName = writerName;
         this.writerProfileImage = writerProfileImage;
+        this.content = content;
+        this.score = score;
     }
 }
