@@ -31,6 +31,7 @@ public enum StatusCode {
 
     // COMPANY : 400
     NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),
+    NOT_VALID_BUSINESS_NUMBER(false, 401, "등록되지 않은 사업자 번호입니다."),
 
     // BoardHelp
     CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
