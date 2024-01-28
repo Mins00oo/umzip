@@ -9,5 +9,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DeliveryMappingRepository extends JpaRepository<DeliveryMapping, Long> {
-    public List<DeliveryMapping> findByMemberId(Long memberId);
 }

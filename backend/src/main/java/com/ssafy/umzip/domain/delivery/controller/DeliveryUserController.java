@@ -69,9 +69,9 @@ public class DeliveryUserController {
     public ResponseEntity<Object>  userReservationDelivery(){
         //memberID는 JWT토큰에서 가져온다.
         //임시 memberId
-        Long memberId = 1L;
-        deliveryUserService.userReservationDelivery(memberId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+        Long memberId = 2L;
+        List<UserReservationDto> deliveryList = deliveryUserService.userReservationDelivery(memberId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryList));
     }
 
 

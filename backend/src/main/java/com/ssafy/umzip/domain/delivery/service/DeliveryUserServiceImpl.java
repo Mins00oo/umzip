@@ -9,12 +9,9 @@ import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.entity.Delivery;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryImage;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
-import com.ssafy.umzip.domain.delivery.repository.CarRepository;
-import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingRepository;
-import com.ssafy.umzip.domain.delivery.repository.DeliveryRepository;
+import com.ssafy.umzip.domain.delivery.repository.*;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
-import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -27,8 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 
@@ -43,7 +40,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final S3Service s3Service;
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryMappingRepository deliveryMappingRepository;
-
+    private final DeliveryMappingCustomRepository deliveryMappingCustomRepository;
 
 
     //departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu, String departureDetail, String destinationDetail) {
@@ -194,23 +191,34 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         용달 유저 예약 전체 조회
      */
     @Override
-    public void userReservationDelivery(Long memberId) {
-        /*
-            mapping의 member_id가 ${memberId} 인 것들
-            List<Delivery>가 return 되면 됨.
-         */
+    public List<UserReservationDto> userReservationDelivery(Long memberId) {
+
+        //distinct한 deliveryId
+        List<Long> deliveryIdList = deliveryMappingCustomRepository.findDistinctDeliveryIdsByMemberId(memberId);
+        //delivery List 조회
+        List<UserReservationDto> deliveryList = new ArrayList<>();
+        for(Long id:deliveryIdList){
+            UserReservationDto dto = UserReservationDto.builder()
+                    .delivery(deliveryRepository.findById(id).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY)))
+                    .build();
+            deliveryList.add(dto);
+        }
+        //해당 Delivery건에 대한 Mapping 조회
+        for(UserReservationDto reservationDto: deliveryList){
+            List<UserDeliveyMappingDto> deliveryMappingsByDeliveryId = deliveryMappingCustomRepository.findAllDeliveryMappingsWithCompany(reservationDto.getId());
+            reservationDto.setList(deliveryMappingsByDeliveryId);
+        }
+        //최신 상태 저장.
+        for(UserReservationDto reservationDto: deliveryList){
+            Long recentStatus = 0L;
+            for(UserDeliveyMappingDto mappingDto: reservationDto.getList()){
+                recentStatus = Math.max(mappingDto.getCodeSmallId(),recentStatus);
+            }
+            reservationDto.setStatus(recentStatus);
+        }
 
 
-        //해당하는 목록 가져오기.
-        /*
-1번 방법
-memberId와 일치하는 List<DeliveryIdDto> 다 가져옴 distinct해서
-delivery 를 다 조회해서 또 mapping 지연로딩
-         */
-        List<DeliveryMapping> mappings = deliveryMappingRepository.findByMemberId(memberId);
-
-
-
+        return deliveryList;
     }
 
     //s3
