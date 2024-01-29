@@ -8,16 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DeliveryUserService {
-     //car Test
-     Optional<Car> getCar(Long id);
      //사용자
      void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                          List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
                          List<MultipartFile> deliveryImages,
                          Long price);
-     DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, int OilPrice);
+     DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice);
      void cancelDelivery(Long mappingId);
      void companyListDelivery();
-     void userReservationDelivery();
+     void userReservationDelivery(Long memberId);
 
 }

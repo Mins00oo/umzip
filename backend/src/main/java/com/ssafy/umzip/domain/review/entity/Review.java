@@ -2,19 +2,21 @@ package com.ssafy.umzip.domain.review.entity;
 
 
 import com.ssafy.umzip.domain.member.entity.Member;
+import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
 import com.ssafy.umzip.domain.reviewtag.entity.ReviewTag;
+import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+@ToString
+public class Review extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -32,13 +34,9 @@ public class Review {
     @Column(name = "review_update_dt")
     private LocalDateTime updateDt;
 
-    @ManyToOne(cascade= CascadeType.REMOVE)
+    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
-
-    @ManyToOne(cascade= CascadeType.REMOVE)
-    @JoinColumn(name="review_tag_id")
-    private ReviewTag reviewTag;
 
     @Builder
     public Review(float score, String content, LocalDateTime time, Boolean isUpdate) {

@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.company.controller;
 
 import com.ssafy.umzip.domain.company.dto.CompanyCreateRequestDto;
+import com.ssafy.umzip.domain.company.dto.CompanyResponseDto;
 import com.ssafy.umzip.domain.company.service.CompanyService;
 import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
 import com.ssafy.umzip.global.common.BaseResponse;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -35,4 +33,12 @@ public class CompanyController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
+
+    @GetMapping("/{companyId}")
+    public ResponseEntity<Object> retrieveCompany(@PathVariable Long companyId) {
+        CompanyResponseDto response = companyService.retrieveCompany(companyId);
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(response));
+    }
+
+
 }

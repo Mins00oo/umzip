@@ -71,7 +71,20 @@ public class JwtTokenProvider {
         MemberTokenDto tokenDto =
                 MemberTokenDto.builder()
                         .accessToken(this.createAccessToken(company.getMember().getEmail(), company.getRole(),
-                                company.getMember().getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
+                                company.getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
+                        .refreshToken(this.createRefreshToken(company.getMember().getEmail(), secretKey, refreshExpiredTimeMs))
+                        .build();
+
+        redisService.setValue(
+                company.getMember().getEmail(), tokenDto.getRefreshToken(), Duration.ofMillis(refreshExpiredTimeMs));
+        return tokenDto;
+    }
+
+    public MemberTokenDto regenerateCompanyToken(Company company, Role role) {
+        MemberTokenDto tokenDto =
+                MemberTokenDto.builder()
+                        .accessToken(this.createAccessToken(company.getMember().getEmail(), role,
+                                company.getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
                         .refreshToken(this.createRefreshToken(company.getMember().getEmail(), secretKey, refreshExpiredTimeMs))
                         .build();
 
@@ -122,6 +135,11 @@ public class JwtTokenProvider {
 
     public String getEmail(String token) {
         return extractClaims(token).get("email", String.class);
+    }
+
+    public String getSigungu(HttpServletRequest request) {
+        String token = this.getToken(request);
+        return extractClaims(token).get("sigungu", String.class);
     }
 
     public String getMemberEmail(HttpServletRequest request) {

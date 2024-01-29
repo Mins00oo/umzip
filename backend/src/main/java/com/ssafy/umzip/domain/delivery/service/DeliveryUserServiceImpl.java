@@ -14,6 +14,7 @@ import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingRepository;
 import com.ssafy.umzip.domain.delivery.repository.DeliveryRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -43,10 +44,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryMappingRepository deliveryMappingRepository;
 
-    @Override
-    public Optional<Car> getCar(Long id) {
-        return carRepository.findById(id);
-    }
+
 
     //departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu, String departureDetail, String destinationDetail) {
     /*
@@ -60,12 +58,8 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     ) {
         deliveryReservationRequestDto.setPrice(price);
         //Delivery Entity 생성
-        Optional<Car> optionalCar = carRepository.findById(deliveryReservationRequestDto.getCarId());
-        if(!optionalCar.isPresent()){
-            //예외처리 - 차종이 없음
-            throw new BaseException(StatusCode.NOT_EXIST_CAR);
-        }
-        Car car = optionalCar.get();
+        //car 가져옴.
+        Car car = carRepository.findById(deliveryReservationRequestDto.getCarId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CAR));
         deliveryReservationRequestDto.setCar(car);//car 세팅
         //Delivery 생성
         Delivery delivery = DeliveryReservationRequestDto.toEntity(deliveryReservationRequestDto);
@@ -83,21 +77,16 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
      */
     private void deliveryMappingSetting(List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList, Long price, Delivery delivery) {
         // code small 용달은 항상 101(신청중)
-        Optional<CodeSmall> reservationCode = codeSmallRepository.findById(101L);
+        CodeSmall codeSmall = codeSmallRepository.findById(101L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
         // member 가져오기-- 추후 jwt 도입시 변경 필요
-        Optional<Member> member = memberRepository.findById(1L);
+        Member member = memberRepository.findById(1L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
 
         for(DeliveryRequestCompanyDto company : deliveryRequestCompanyDtoList){
-            Optional<Company> resultCompany = companyRepository.findByMemberIdAndRole(company.getMemberId(), Role.DELIVER);
-            if(!resultCompany.isPresent()){ //회사 없으면
-                //예외 throw - 해당 company가 존재하지 않습니다.
-                throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
-            }
-
+            Company resultCompany = companyRepository.findByMemberIdAndRole(company.getMemberId(), Role.DELIVER).orElseThrow(()->new BaseException(StatusCode.NOT_EXIST_COMPANY));
             DeliveryMapping deliveryMapping = DeliveryMapping.builder()
-                    .company(resultCompany.get())
-                    .member(member.get()) //member 임시
-                    .codeSmall(reservationCode.get())
+                    .company(resultCompany)
+                    .member(member) //member 임시
+                    .codeSmall(codeSmall)
                     .price(price)
                     .delivery(delivery)
                     .reissuing(0L) // 초기값 0
@@ -123,13 +112,14 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         계산기
      */
     @Override
-    public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, int OilPrice) {
+    public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice) {
         //end Time 구하기
         LocalDateTime end = getEndTime(mobilityDto, calDto);
         //car 조회
-        Car car = carRepository.findById(calDto.getCarId()).get();
+        Car car = carRepository.findById(calDto.getCarId()).orElseThrow(()->new BaseException(StatusCode.NOT_EXIST_CAR));
         Long price = car.getPrice()*10000; //대여비
-        price += getDistancePrice(mobilityDto, OilPrice, car); //거리 당 비용 ( 주유 가격 고려 )
+        price += getDistancePrice(mobilityDto, OilPrice, car); //거리 당 비용 ( 주유 가격 고려 + 톨게이트 비용 )
+
         if(calDto.isMove()){ //같이 이동시 30000원 추가
             price += 30000;
         }
@@ -145,7 +135,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
             price =Math.round(price*1.15);
         }
         price = getTimeFee(calDto, price); //시간당 수수료 계산.
+
         long result = Math.round((double) price / 100) * 100; // 반올림
+
         return new DeliveryCalResponseDto(result,end);
     }
     /*
@@ -167,10 +159,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         현재 평균 유가 당 거리 가격 계산
      */
     @NotNull
-    private static Long getDistancePrice(MobilityDto mobilityDto, int OilPrice, Car car) {
-        double distanceKm = Math.ceil(mobilityDto.getDistance()/1000); //몇 Km?
-        Long distancePrice = (long) (( distanceKm / car.getMileage() ) * OilPrice); //거리 주유비
-        return distancePrice;
+    private static Long getDistancePrice(MobilityDto mobilityDto, double OilPrice, Car car) {
+        double distanceKm = Math.ceil((double) mobilityDto.getDistance() /1000); //몇 Km?
+        return (Long) (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
     }
     /*
         거리 계산 결과를 가지고 endTime 계산
@@ -188,29 +179,38 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @Override
     public void cancelDelivery(Long mappingId) {
         //1. delivery_mapping 가져옴.
-        Optional<DeliveryMapping> mappingResult = deliveryMappingRepository.findById(mappingId);
-        if(mappingResult.isEmpty()){
-            //해당하는 주문건이 없으면 예외
-            throw new BaseException(StatusCode.NOT_EXIST_MAPPING);
-        }
-        DeliveryMapping deliveryMapping = mappingResult.get();
-        //2. 상태 105로 변경 ( 105 : 취소 )
-        Optional<CodeSmall> code = codeSmallRepository.findById(105L);
-        if(code.isEmpty()){
-            //해당 코드 없으면
-            throw new BaseException(StatusCode.NOT_EXIST_CODE);
-        }
-        deliveryMapping.setCodeSmall(code.get());//업데이트
 
+        DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
+
+        //2. 상태 105로 변경 ( 105 : 취소 )
+        CodeSmall codeSmall = codeSmallRepository.findById(105L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+        deliveryMapping.setCodeSmall(codeSmall);//업데이트
     }
 
     @Override
     public void companyListDelivery() {
 
     }
-
+    /*
+        용달 유저 예약 전체 조회
+     */
     @Override
-    public void userReservationDelivery() {
+    public void userReservationDelivery(Long memberId) {
+        /*
+            mapping의 member_id가 ${memberId} 인 것들
+            List<Delivery>가 return 되면 됨.
+         */
+
+
+        //해당하는 목록 가져오기.
+        /*
+1번 방법
+memberId와 일치하는 List<DeliveryIdDto> 다 가져옴 distinct해서
+delivery 를 다 조회해서 또 mapping 지연로딩
+         */
+        List<DeliveryMapping> mappings = deliveryMappingRepository.findByMemberId(memberId);
+
+
 
     }
 
