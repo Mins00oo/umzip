@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
+import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
@@ -54,28 +55,20 @@ public class BoardHelpController {
     * 도움 게시글 목록 조회 + 도움 게시글 검색
     * 현재 사용자의 시군구 데이터를 토대로 근처 게시글만 조회한다.
     * 검색어를 입력 받으면 like 방식으로 제목을 조회한다.
+    * page는 service에서 -1 처리
     * */
     @GetMapping()
     public ResponseEntity<Object> listBoardHelp(
-            @RequestParam("code-small") int codeSmallId,
+            @RequestParam("code-small") Long codeSmallId,
             @RequestParam(defaultValue = "")String keyword,
-            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable  // sort="EntityColumn"
             ) {
 
-        // code-small이 잘못된 값이면 예외처리
+        // code-small이 잘못된 값이면 예외처리 : existsBy로 DB에 접근해서 값이 있는지 없는지 체크
         // 0: default
         if (codeSmallId != 401 && codeSmallId != 402 && codeSmallId != 403 && codeSmallId != 0) {
-            throw new BaseException(StatusCode.CODE_DOES_NOT_EXIST);
+            throw new BaseException(StatusCode.NOT_EXIST_CODE);
         }
-
-        if (keyword == null) {
-            keyword = "";
-        }
-
-        System.out.println("Controller");
-        System.out.println("code-small: " + codeSmallId);
-        System.out.println("keyword: " + keyword);
-        System.out.println("pageable: " + pageable);
 
         // accessToken 이 있는지 판단한다. 없으면 로그인 창으로 이동하게끔 에러 코드를 보낸다.
 
@@ -86,24 +79,28 @@ public class BoardHelpController {
         BoardHelpListRequestDto requestDto = BoardHelpListRequestDto.builder()
                 .sigungu(sigungu) // 작성자 시군구
                 .keyword(keyword)
+                .codeSmallId(codeSmallId)
                 .build();
 
         // service
-        Page<BoardHelpListDto> BoardHelpPage = service.listBoardHelp(requestDto, pageable);
-        
-        // 안 나옴
-        System.out.println("--------------");
-        System.out.println("Controller");
-        for (BoardHelpListDto dto : BoardHelpPage) {
-            System.out.println(dto.getId() + " " + dto.getTitle());
-        }
+        Page<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(BoardHelpPage));
+                .body(new BaseResponse<>(boards));
     }
-    
-    /*
-    * 도움 게시글 목록 조회 + 카테고리 구분
-    * */
+
+    // 댓글 작성
+    @PostMapping("detail/comments/{boardId}")
+    public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
+                                              @RequestParam("comment") String comment) {
+
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, comment);
+
+        service.postComment(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
 }

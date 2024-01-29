@@ -2,9 +2,14 @@ package com.ssafy.umzip.domain.auth.service;
 
 import com.ssafy.umzip.domain.auth.dto.AuthCodeRequestDto;
 import com.ssafy.umzip.domain.auth.dto.AuthEmailRequestDto;
+import com.ssafy.umzip.domain.company.entity.Company;
+import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
+import com.ssafy.umzip.global.util.jwt.MemberTokenDto;
 import com.ssafy.umzip.global.util.redis.RedisService;
 import com.ssafy.umzip.global.util.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +33,8 @@ public class AuthServiceImpl implements AuthService {
     private final RedisService redisService;
 
     private final MemberRepository memberRepository;
+    private final CompanyRepository companyRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     //    @Value("${SMS_SERVICE_ID}")
     private String serviceId;
@@ -124,9 +131,29 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    @Override
+    public MemberTokenDto changeAuth(Long companyId, Long authNo) {
+        Company requestAuth = companyRepository.findById(companyId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
+
+        Role role = getRoleByAuthNo(authNo);
+
+        Company company = companyRepository.findByMemberIdAndRole(requestAuth.getMember().getId(), role)
+                .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
+
+        return jwtTokenProvider.regenerateCompanyToken(company, Role.DELIVER);
+    }
+
     private boolean isVerify(AuthCodeRequestDto requestDto) {
         return !(redisService.hasKey(requestDto.getPhone()) &&
                 redisService.getSmsCertification(requestDto.getPhone())
                         .equals(requestDto.getCode()));
+    }
+
+    private Role getRoleByAuthNo(Long authNo) {
+        if (authNo == -1) { // AUTH_NO_FOR_CLEAN is a constant, e.g., -1
+            return Role.CLEAN;
+        }
+        return Role.DELIVER;
     }
 }

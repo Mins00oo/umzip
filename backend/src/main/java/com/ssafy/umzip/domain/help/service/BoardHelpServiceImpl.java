@@ -5,10 +5,13 @@ import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
+import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
+import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
 import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
 import com.ssafy.umzip.domain.help.repository.BoardHelpImageRepository;
 import com.ssafy.umzip.domain.help.repository.BoardHelpRepository;
+import com.ssafy.umzip.domain.help.repository.CommentRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -17,6 +20,7 @@ import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +41,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final BoardHelpRepository boardHelpRepository;
     private final BoardHelpImageRepository boardHelpImageRepository;
     private final CodeSmallRepository codeSmallRepository;
+    private final CommentRepository commentRepository;
 
     private final S3Service s3Service;
 
@@ -49,7 +55,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
 
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
-                .orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
 
         int curMemberSigungu = 100; // 작성자 시군구
         BoardHelp boardHelp = requestDto.toEntity(requestDto, member, curMemberSigungu, codeSmall);
@@ -70,28 +76,39 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        System.out.println("-------------------");
-        System.out.println("Service");
-        System.out.println("requestDto: " + requestDto.toString());
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
 
-        // 시군구는 100이다. -> 나중에 Token에서 가져옴
 
+        // 시군구는 100이다.
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
-        Page<BoardHelp> boardHelpPage = boardHelpRepository
-                .findBySigunguAndTitleContaining(sigungu, keyword, pageable);
+        Long codeSmallId = requestDto.getCodeSmallId();
 
-        System.out.println("------------------");
-        System.out.println("repository");
-        System.out.println("boardHelpPage: " + boardHelpPage.toString());
-        for (BoardHelp boardHelp : boardHelpPage) {
-            System.out.println(boardHelp.toString());
-        }
+        Page<BoardHelp> boards = boardHelpRepository
+                .findPageByTitleContaining(keyword, PageRequest.of(curPage, size, Sort.Direction.DESC, "id")); // title 가져오기
+        Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);
 
-        // BoardHelp의 board_id를 가져온다.
-        // board_id를 이용해서 comment count를 가져온다.
 
-        // Entity -> DTO
-        return BoardHelpListDto.toDto(boardHelpPage);
+        // 2. comment 가져오기: group by board_help_id 를 이용해서 count 한 값을 가져옴
+
+
+        return boardDtoList;
     }
+
+    @Transactional
+    @Override
+    public void postComment(CommentRequestDto requestDto) {
+
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
+
+        BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_BOARD));
+
+        BoardHelpComment comment = requestDto.toEntity(requestDto, boardHelp, member);
+        commentRepository.save(comment);
+    }
+
+
 }

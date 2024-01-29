@@ -73,6 +73,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
+    @Transactional
     @Override
     public CompanyResponseDto retrieveCompany(Long companyId) {
         Company company = companyRepository.findById(companyId)
