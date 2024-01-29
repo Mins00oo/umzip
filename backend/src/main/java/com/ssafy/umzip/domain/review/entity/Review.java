@@ -32,7 +32,7 @@ public class Review extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public Review(double score, String content, Member member) {
+    public Review(float score, String content, Member member) {
         this.score = score;
         this.content = content;
         this.member = member;
