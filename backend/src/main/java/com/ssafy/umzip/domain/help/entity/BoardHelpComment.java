@@ -19,11 +19,11 @@ public class BoardHelpComment extends BaseTimeEntity {
     @Column(name="board_help_comment_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_help_id")
     private BoardHelp boardHelp;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
