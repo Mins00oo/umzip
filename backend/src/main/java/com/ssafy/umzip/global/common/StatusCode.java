@@ -40,9 +40,11 @@ public enum StatusCode {
     NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다."),
     NOT_EXIST_MAPPING(false,601,"존재하지 않는 용달 주문건입니다."),
     NOT_EXIST_FUEL(false,602,"일치하는 연료의 종류가 없습니다."),
-    FAIL_API_REQUEST(false,603,"외부 API 요청의 반환값이 없습니다.");
+    FAIL_API_REQUEST(false,603,"외부 API 요청의 반환값이 없습니다."),
 
-
+    // REVIEW & TAG : 700
+    NOT_EXIST_REVIEW(false,700, "존재하지 않는 리뷰입니다."),
+    NOT_EXIST_TAG(false,701, "존재하지 않는 태그입니다.");
 
 
 
