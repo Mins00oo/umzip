@@ -16,7 +16,7 @@ public class ChatController {
 
     @MessageMapping("/chat-send")
     public ResponseEntity<Object> sendMessage(@Payload ChatMessageRequestDto messageRequestDto) {
-      log.info("chat send success" + messageRequestDto);
+      log.info("chat send success" + messageRequestDto.getContent());
       return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 }
