@@ -5,10 +5,13 @@ import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
+import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
+import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
 import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
 import com.ssafy.umzip.domain.help.repository.BoardHelpImageRepository;
 import com.ssafy.umzip.domain.help.repository.BoardHelpRepository;
+import com.ssafy.umzip.domain.help.repository.CommentRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -38,6 +41,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final BoardHelpRepository boardHelpRepository;
     private final BoardHelpImageRepository boardHelpImageRepository;
     private final CodeSmallRepository codeSmallRepository;
+    private final CommentRepository commentRepository;
 
     private final S3Service s3Service;
 
@@ -51,7 +55,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
 
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
-                .orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
 
         int curMemberSigungu = 100; // 작성자 시군구
         BoardHelp boardHelp = requestDto.toEntity(requestDto, member, curMemberSigungu, codeSmall);
@@ -91,4 +95,20 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         return boardDtoList;
     }
+
+    @Transactional
+    @Override
+    public void postComment(CommentRequestDto requestDto) {
+
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
+
+        BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_BOARD));
+
+        BoardHelpComment comment = requestDto.toEntity(requestDto, boardHelp, member);
+        commentRepository.save(comment);
+    }
+
+
 }

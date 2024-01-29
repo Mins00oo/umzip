@@ -4,6 +4,7 @@ package com.ssafy.umzip.domain.help.service;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
+import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,5 @@ public interface BoardHelpService {
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable);
 
+    void postComment(CommentRequestDto requestDto);
 }
