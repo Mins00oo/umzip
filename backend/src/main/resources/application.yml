@@ -48,6 +48,10 @@ sms:
     key: ${COOL_SMS_API_KEY}
     secret: ${COOL_SMS_API_SECRET}
 
+business:
+  api:
+    key: ${BUSINESS_SERVICE_KEY}
+
 kakao:
   api:
     key: ${KAKAO_API_KEY}
