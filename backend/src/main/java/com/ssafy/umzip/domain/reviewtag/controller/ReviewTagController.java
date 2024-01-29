@@ -21,7 +21,6 @@ import java.util.List;
 public class ReviewTagController {
     private final ReviewTagService reviewTagService;
 
-    // 특정 리뷰에 달린 태그 전체 반환(by 리뷰ID) : 임시
     @GetMapping( value = "/review_tag")
     public ResponseEntity<List<TagIdByReviewIdResponse>> findMatchTagByReviewId(@RequestParam long reviewId) {
         return ResponseEntity.status(HttpStatus.OK).body(reviewTagService.findMatchTag(reviewId));

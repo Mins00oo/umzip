@@ -64,13 +64,16 @@ public class BoardHelp extends BaseTimeEntity {
 
     // 글 목록 조회 결과( 카테고리(전체), 검색, 시군구 )
 //    @Builder
-//    public BoardHelp(Long id, String title, int point, int readCnt, int sigungu,
-//                     Member member) {
+//    public BoardHelp(Long id, Member member, CodeSmall codeSmall,
+//                     String title, int point, int readCnt, int sigungu) {
 //        this.id = id;
+//        this.member = member;           // 작성자 이름을 가져오기 위함
+//        this.codeSmall = codeSmall;
 //        this.title = title;
 //        this.point = point;
 //        this.readCnt = readCnt;
 //        this.sigungu = sigungu;
-//        this.member = member;           // 작성자 이름을 가져오기 위함
+//        // 날짜 정보도 필요한데 어떻게 가져오지?
+//        // getCreateDt()
 //    }
 }

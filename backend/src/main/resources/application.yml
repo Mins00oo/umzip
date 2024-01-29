@@ -51,3 +51,11 @@ sms:
 business:
   api:
     key: ${BUSINESS_SERVICE_KEY}
+
+kakao:
+  api:
+    key: ${KAKAO_API_KEY}
+
+fuel:
+  api:
+    key: ${FUEL_API_KEY}

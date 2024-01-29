@@ -24,6 +24,8 @@ public class DeliveryMapping {
     @Column(name="delivery_reissuing")
     private Long reissuing;
 
+    @Column(name = "delivery_mapping_detail")
+    private String detail;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
@@ -40,6 +42,8 @@ public class DeliveryMapping {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="code_small_id")
     private CodeSmall codeSmall;
+
+
     @Builder
     public DeliveryMapping(Long price, Long reissuing, Delivery delivery, Member member, Company company, CodeSmall codeSmall) {
         this.price = price;
@@ -57,4 +61,8 @@ public class DeliveryMapping {
     public void setCodeSmall(CodeSmall codeSmall) {
         this.codeSmall = codeSmall;
     }
+    public void setDetail(String detail){
+        this.detail = detail;
+    }
+
 }
