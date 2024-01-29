@@ -10,6 +10,7 @@ import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -27,8 +28,18 @@ public class DeliveryUserController {
     private final DeliveryUserService deliveryUserService;
     // car Service가 없어도 될정도 이므로 바로 Repository 소환
     private final CarRepository carRepository;
+    private static String kakaoApiKey;
+    private static String fuelApiKey;
+    @Value("${kakao.api.key}")
+    public void setKakaoApiKey(String kakaoApiKey) {
+        DeliveryUserController.kakaoApiKey = kakaoApiKey;
+    }
+    @Value("${fuel.api.key}")
+    public void setFuelApiKey(String fuelApiKey) {
+        DeliveryUserController.fuelApiKey = fuelApiKey;
+    }
     /*
-        예약 신청
+        고객 : 예약 신청
      */
     @PostMapping("/reservation")
     public ResponseEntity<Object> createDelivery(@RequestPart(value = "delivery") DeliveryReservationRequestDto delivery,
@@ -41,7 +52,7 @@ public class DeliveryUserController {
     }
 
     /*
-        계산기
+        고객 : 계산기
      */
     @PostMapping("/calculation")
     public ResponseEntity<Object> calculateDelivery(@RequestBody DeliveryCalRequestDto dto){
@@ -55,7 +66,7 @@ public class DeliveryUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(resultDto));
     }
     /*
-        고객 취소 API
+        고객 : 취소 API
      */
     @PutMapping("/cancel")
     public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancleRequestDto cancleRequestDto){
@@ -63,7 +74,12 @@ public class DeliveryUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
-        용달 유저 예약 확인 API
+        고객 : 매칭 API
+     */
+
+
+    /*
+        고객 : 용달 유저 예약 확인 API
      */
     @GetMapping("/reservation")
     public ResponseEntity<Object>  userReservationDelivery(){
@@ -97,9 +113,8 @@ public class DeliveryUserController {
                 .append("car_type=").append(car.getType());
 
         HttpHeaders headers = new HttpHeaders();
-        String API_KEY = "efbbf48d809a4e2001e31b17724e640c"; //key
         // 헤더 추가
-        headers.set("Authorization", "KakaoAK " + API_KEY);
+        headers.set("Authorization", "KakaoAK " + kakaoApiKey);
         headers.set("Content-Type", "application/json");
 
         // RestTemplate 생성
@@ -132,14 +147,13 @@ public class DeliveryUserController {
      */
     public Double getFuelPrice(Long carId){
         // API 요청 PARAM 세팅
-        String keyCode = "F240126029";
         String out = "json";
         String yesterday = LocalDateTime.now().minusDays(1).toString().substring(0, 10).replaceAll("-", "").trim();
         // 해당 CAR에 맞춰서 유가 정보 알아옴.
         String prodcd=getProdcd(carId);
         // API BUILD
         StringBuilder apiUrl = new StringBuilder("http://www.opinet.co.kr/api/avgRecentPrice.do?");
-        apiUrl.append("code=").append(keyCode).append("&")
+        apiUrl.append("code=").append(fuelApiKey).append("&")
                 .append("out=").append(out).append("&")
                 .append("prodcd=").append(prodcd).append("&")
                 .append("date=").append(yesterday);

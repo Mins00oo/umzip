@@ -27,13 +27,9 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     }
 
     @Override
-    public void quotationDelivery(DeliveryQuotationRequestDto dto) {
-        DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(dto.getMappingId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
+    public Boolean quotationDelivery(DeliveryQuotationRequestDto dto) {
         CodeSmall codeSmall = codeSmallRepository.findById(102L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
-        deliveryMappingCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
-
-
-
+        return deliveryMappingCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
     }
 
     @Override
