@@ -39,9 +39,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(responseDto));
     }
 
-    @GetMapping("/test/{memberId}")
-    public ResponseEntity<Object> test(@PathVariable Long memberId) {
-        log.info("test success" + memberId);
+    @GetMapping("/test/aaa")
+    public ResponseEntity<Object> test() {
+        log.info("test success");
         return ResponseEntity.status(HttpStatus.OK).body("ok");
     }
 
