@@ -31,8 +31,9 @@ public enum StatusCode {
     NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),
 
     // BoardHelp: 500
-    NOT_EXIST_CODE(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
-    NOT_EXIST_BOARD(false, 501, "존재하지 않는 게시글 입니다."),
+    CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
+    NOT_EXIST_CODE(false, 501, "해당 코드 소분류가 존재하지 않습니다."),
+    NOT_EXIST_BOARD(false, 502, "존재하지 않는 게시글 입니다."),
 
     // DELIVERY : 600
     NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다."),
