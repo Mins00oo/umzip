@@ -48,6 +48,9 @@ public enum StatusCode {
     
 
 
+    // REVIEW & TAG : 700
+    NOT_EXIST_REVIEW(false,700, "존재하지 않는 리뷰입니다."),
+    NOT_EXIST_TAG(false,701, "존재하지 않는 태그입니다.");
 
 
 
