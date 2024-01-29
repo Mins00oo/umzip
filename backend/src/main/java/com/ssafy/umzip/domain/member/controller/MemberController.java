@@ -33,9 +33,16 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity<Object> retrieveUser(@PathVariable Long memberId, HttpServletRequest request) {
-        Long requestId = jwtTokenProvider.getId(request);
-        MemberResponseDto responseDto = memberService.retrieveMember(memberId, requestId);
+        log.info("?????");
+//        Long requestId = jwtTokenProvider.getId(request);
+        MemberResponseDto responseDto = memberService.retrieveMember(memberId, 1L);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(responseDto));
+    }
+
+    @GetMapping("/test/{memberId}")
+    public ResponseEntity<Object> test(@PathVariable Long memberId) {
+        log.info("test success" + memberId);
+        return ResponseEntity.status(HttpStatus.OK).body("ok");
     }
 
 }

@@ -1,7 +1,5 @@
 package com.ssafy.umzip.global.config;
 
-import com.ssafy.umzip.global.exception.CustomAccessDeniedHandler;
-import com.ssafy.umzip.global.exception.CustomAuthenticationEntryPoint;
 import com.ssafy.umzip.global.util.jwt.JwtTokenFilter;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import com.ssafy.umzip.global.util.security.CustomAuthenticationFilter;
@@ -20,8 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -43,7 +39,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers("**")
+                                auth.requestMatchers("**", "/ws/**")
                                         .permitAll()// /api/v1/login 경로를 모든 사용자에게 허용
                                         .anyRequest().authenticated())
                 .sessionManagement(
@@ -52,8 +48,8 @@ public class SecurityConfig {
 //                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(
                         logout -> logout
-                                        .logoutUrl("/api/logout")
-                                        .logoutSuccessHandler(logoutSuccessHandler)
+                                .logoutUrl("/api/logout")
+                                .logoutSuccessHandler(logoutSuccessHandler)
                 );
 //                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
 
