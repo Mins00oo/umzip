@@ -28,9 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +60,6 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         boardHelpRepository.save(boardHelp);
 
         S3UploadDto s3UploadDto;
-        // files가 null이면( file을 첨부하지 않으면 ) 에러가 발생한다. -> if(!files.isEmpty()) 제외해봄
         for (MultipartFile file : files) {  // 하나씩 저장
             s3UploadDto = s3Service.upload(file, "umzip-service", "boardHelp");
             BoardHelpImage boardHelpImage = new BoardHelpImage(s3UploadDto, boardHelp);
@@ -85,13 +82,22 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         String keyword = requestDto.getKeyword();
         Long codeSmallId = requestDto.getCodeSmallId();
 
+        // 게시글 table에서 데이터 가져오기
         Page<BoardHelp> boards = boardHelpRepository
                 .findPageByTitleContaining(keyword, PageRequest.of(curPage, size, Sort.Direction.DESC, "id")); // title 가져오기
+
+        // Entity -> Dto
         Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);
 
-
-        // 2. comment 가져오기: group by board_help_id 를 이용해서 count 한 값을 가져옴
-
+        // 댓글수 세팅
+        boardDtoList.getContent().forEach(dto -> {
+            Long id = dto.getId();
+            Long commentCnt = commentRepository.countAllByBoardIdGroupBy(id);
+            if (commentCnt == null) {
+                commentCnt = 0L;
+            }
+            dto.setCommentCnt(commentCnt);
+        });
 
         return boardDtoList;
     }

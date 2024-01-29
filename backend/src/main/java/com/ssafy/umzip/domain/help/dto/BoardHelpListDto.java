@@ -5,16 +5,20 @@ import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
 import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @ToString
 @Getter
 public class BoardHelpListDto {
 
-    // comment repository
+
 
     private Long id;
     private String writerName;
@@ -22,7 +26,8 @@ public class BoardHelpListDto {
     private String codeSmallName;
     private Long codeSmallId;
     private LocalDateTime createDt;
-    private Long commentCnt;             // comment table
+    @Setter
+    private Long commentCnt;
     private int readCnt;
     private int rewardPoint;
 
@@ -43,8 +48,6 @@ public class BoardHelpListDto {
     }
 
     public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
-        // 각 게시글의 member_id를 이용해서 게시글 작성자 이름을 가져온다.
-        // board_id와 comment_id를 이용해서 댓글 수를 가져온다.
         return  boardHelpPage.map(boardHelp -> BoardHelpListDto.builder()
                 .id(boardHelp.getId())
                 .writerName(boardHelp.getMember().getName())
@@ -63,4 +66,5 @@ public class BoardHelpListDto {
         else if (codeSmallId == 403) { this.codeSmallName = "도와줬어요"; }
         else if (codeSmallId == 0) { this.codeSmallName = "전체"; }
     }
+
 }

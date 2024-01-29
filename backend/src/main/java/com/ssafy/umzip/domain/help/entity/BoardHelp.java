@@ -47,6 +47,10 @@ public class BoardHelp extends BaseTimeEntity {
     @Column(name="board_adopted")
     private Boolean isAdopted;
 
+//    @OneToMany(mappedBy = "BoardHelp", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+//    //@OrderBy("id")
+//    private List<BoardHelpComment> commentIdList = new ArrayList<>();
+
     // 글 작성
     @Builder
     public BoardHelp(String title, String content, int point, int readCnt,
