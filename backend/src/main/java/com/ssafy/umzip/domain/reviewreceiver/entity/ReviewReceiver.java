@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.global.common.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -27,4 +28,11 @@ public class ReviewReceiver {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     Member member;
+
+    @Builder
+    ReviewReceiver(String role, Review review, Member member){
+        this.receiverRole = Role.valueOf(role);
+        this.review = review;
+        this.member = member;
+    }
 }

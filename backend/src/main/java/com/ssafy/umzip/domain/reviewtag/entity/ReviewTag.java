@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.domain.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,10 @@ public class ReviewTag {
     @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name="review_id")
     private Review review;
+
+    @Builder
+    ReviewTag(Tag tag, Review review) {
+        this.tag = tag;
+        this.review = review;
+    }
 }
