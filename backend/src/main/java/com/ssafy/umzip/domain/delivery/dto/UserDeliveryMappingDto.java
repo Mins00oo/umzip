@@ -1,12 +1,11 @@
 package com.ssafy.umzip.domain.delivery.dto;
 
-import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDeliveyMappingDto {
+public class UserDeliveryMappingDto {
     private Long mappingId;
     private Long companyId;
     private String companyName;
@@ -15,7 +14,7 @@ public class UserDeliveyMappingDto {
     private Long codeSmallId;
 
     @Builder
-    public UserDeliveyMappingDto(Long mappingId, Long companyId, String companyName, String imageUrl, String detail, Long codeSmallId) {
+    public UserDeliveryMappingDto(Long mappingId, Long companyId, String companyName, String imageUrl, String detail, Long codeSmallId) {
         this.mappingId = mappingId;
         this.companyId = companyId;
         this.companyName = companyName;

@@ -158,7 +158,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @NotNull
     private static Long getDistancePrice(MobilityDto mobilityDto, double OilPrice, Car car) {
         double distanceKm = Math.ceil((double) mobilityDto.getDistance() /1000); //몇 Km?
-        return (Long) (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
+        return (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
     }
     /*
         거리 계산 결과를 가지고 endTime 계산
@@ -166,11 +166,10 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @NotNull
     private static LocalDateTime getEndTime(MobilityDto mobilityDto, DeliveryCalRequestDto calDto) {
         //모빌리티 API로 End Time 계산
-        Long hour = Long.valueOf((long)Math.ceil(mobilityDto.getDuration()/3600.0));
+        Long hour = (long) Math.ceil(mobilityDto.getDuration() / 3600.0);
         //날짜 포맷
         LocalDateTime start = getLocalDateTime(calDto.getStartTime());
-        LocalDateTime end = start.plusHours(hour);
-        return end;
+        return start.plusHours(hour);
     }
 
     @Override
@@ -194,31 +193,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     public List<UserReservationDto> userReservationDelivery(Long memberId) {
 
         //distinct한 deliveryId
-        List<Long> deliveryIdList = deliveryMappingCustomRepository.findDistinctDeliveryIdsByMemberId(memberId);
-        //delivery List 조회
-        List<UserReservationDto> deliveryList = new ArrayList<>();
-        for(Long id:deliveryIdList){
-            UserReservationDto dto = UserReservationDto.builder()
-                    .delivery(deliveryRepository.findById(id).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY)))
-                    .build();
-            deliveryList.add(dto);
-        }
-        //해당 Delivery건에 대한 Mapping 조회
-        for(UserReservationDto reservationDto: deliveryList){
-            List<UserDeliveyMappingDto> deliveryMappingsByDeliveryId = deliveryMappingCustomRepository.findAllDeliveryMappingsWithCompany(reservationDto.getId());
-            reservationDto.setList(deliveryMappingsByDeliveryId);
-        }
-        //최신 상태 저장.
-        for(UserReservationDto reservationDto: deliveryList){
-            Long recentStatus = 0L;
-            for(UserDeliveyMappingDto mappingDto: reservationDto.getList()){
-                recentStatus = Math.max(mappingDto.getCodeSmallId(),recentStatus);
-            }
-            reservationDto.setStatus(recentStatus);
-        }
+        List<UserReservationDto> userReservationInfo = deliveryMappingCustomRepository.findUserReservationInfo(memberId);
 
-
-        return deliveryList;
+        return userReservationInfo;
     }
 
     //s3
