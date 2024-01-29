@@ -1,12 +1,10 @@
 package com.ssafy.umzip.domain.delivery.dto;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class DeliveryCalRequestDto {
     private Long carId;
