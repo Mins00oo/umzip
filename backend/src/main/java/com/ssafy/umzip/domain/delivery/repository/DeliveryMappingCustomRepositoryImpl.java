@@ -3,10 +3,8 @@ package com.ssafy.umzip.domain.delivery.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
-import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
-import com.ssafy.umzip.domain.delivery.dto.UserDeliveryMappingRepoDto;
-import com.ssafy.umzip.domain.delivery.dto.UserDeliveryMappingDto;
-import com.ssafy.umzip.domain.delivery.dto.UserReservationDto;
+import com.ssafy.umzip.domain.delivery.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
 import static com.ssafy.umzip.domain.delivery.entity.QDelivery.delivery;
 import static com.ssafy.umzip.domain.delivery.entity.QDeliveryMapping.deliveryMapping;
+import static com.ssafy.umzip.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 @Repository
@@ -55,14 +55,7 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                 .join(deliveryMapping.company, company)
                 .where(deliveryMapping.member.id.eq(memberId))
                 .fetch();
-            /*
-            private Long mappingId;
-    private Long companyId;
-    private String companyName;
-    private String imageUrl;
-    private String detail;
-    private Long codeSmallId;
-             */
+
         Map<Long, List<UserDeliveryMappingDto>> mappingMap = mappingRepoDtoList.stream()
                 .collect(Collectors.groupingBy(
                         UserDeliveryMappingRepoDto::getDeliveryId,
@@ -88,6 +81,36 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
             delivery.setStatus(recentCode);
         });
         return result;
+    }
+
+    @Override
+    @Transactional
+    public List<CompanyReservationDto> findCompanyReservationInfo(Long companyId) {
+
+        List<CompanyReservationDto> fetch = queryFactory
+                .select(
+                        Projections.constructor(
+                                CompanyReservationDto.class,
+                                deliveryMapping.id.as("mappingId"),
+                                delivery.id.as("deliveryId"),
+                                delivery.createDt.as("createDt"),
+                                delivery.startTime.as("startTime"),
+                                member.name.as("memberName"),
+                                codeSmall.id.as("codeSmallId"),
+                                deliveryMapping.price.as("price"),
+                                deliveryMapping.reissuing.as("reissuing"),
+                                member.phone.as("memberPhone")
+                        )
+                )
+                .from(deliveryMapping)
+                .join(deliveryMapping.delivery, delivery)
+                .join(deliveryMapping.member, member)
+                .join(deliveryMapping.codeSmall, codeSmall)
+                .where(deliveryMapping.company.id.eq(companyId))
+                .fetch();
+
+
+        return fetch;
     }
 
     @Override

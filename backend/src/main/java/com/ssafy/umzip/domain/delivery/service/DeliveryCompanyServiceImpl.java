@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.delivery.service;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
+import com.ssafy.umzip.domain.delivery.dto.CompanyReservationDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingCustomRepository;
@@ -11,6 +12,8 @@ import com.ssafy.umzip.global.exception.BaseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -33,8 +36,8 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     }
 
     @Override
-    public void companyReservationDelivery() {
-
+    public List<CompanyReservationDto> companyReservationDelivery(Long companyId) {
+        return deliveryMappingCustomRepository.findCompanyReservationInfo(companyId);
     }
 }
 

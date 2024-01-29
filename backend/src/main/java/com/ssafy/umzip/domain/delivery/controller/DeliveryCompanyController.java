@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.delivery.controller;
 
+import com.ssafy.umzip.domain.delivery.dto.CompanyReservationDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryRejectionRequestDto;
 import com.ssafy.umzip.domain.delivery.service.DeliveryCompanyService;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +43,11 @@ public class DeliveryCompanyController {
      */
     @GetMapping("/reservation")
     public ResponseEntity<Object> companyReservationDelivery(){
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+        //업체 id 임시
+        Long companyId= 1L;
+
+        List<CompanyReservationDto> companyReservationDtos = deliveryCompanyService.companyReservationDelivery(companyId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(companyReservationDtos));
     }
 
 }
