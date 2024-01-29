@@ -179,7 +179,6 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @Override
     public void cancelDelivery(Long mappingId) {
         //1. delivery_mapping 가져옴.
-
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
 
         //2. 상태 105로 변경 ( 105 : 취소 )
