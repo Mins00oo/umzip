@@ -30,13 +30,14 @@ public class BoardHelpListDto {
     private Long commentCnt;
     private int readCnt;
     private int rewardPoint;
+    private int sigungu;
 
 
 
     @Builder
     public BoardHelpListDto(Long id, String writerName, String title,
                             Long codeSmallId, LocalDateTime createDt,
-                            int readCnt, int rewardPoint) {
+                            int readCnt, int rewardPoint, int sigungu) {
         this.id = id;
         this.writerName = writerName;
         this.title = title;
@@ -45,6 +46,7 @@ public class BoardHelpListDto {
         this.createDt = createDt;
         this.readCnt = readCnt;
         this.rewardPoint = rewardPoint;
+        this.sigungu = sigungu;
     }
 
     public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
@@ -56,6 +58,7 @@ public class BoardHelpListDto {
                 .createDt(boardHelp.getCreateDt())
                 .readCnt(boardHelp.getReadCnt())
                 .rewardPoint(boardHelp.getPoint())
+                .sigungu(boardHelp.getSigungu())
                 .build());
     }
 

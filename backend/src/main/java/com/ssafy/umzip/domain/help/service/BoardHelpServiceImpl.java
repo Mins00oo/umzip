@@ -80,11 +80,12 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         // 시군구는 100이다.
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
-        Long codeSmallId = requestDto.getCodeSmallId();
+        Long codeSmallId = requestDto.getCodeSmallId(); // 0, 401, 402
 
-        // 게시글 table에서 데이터 가져오기
         Page<BoardHelp> boards = boardHelpRepository
-                .findPageByTitleContaining(keyword, PageRequest.of(curPage, size, Sort.Direction.DESC, "id")); // title 가져오기
+                .findPageByTitleContainingAndSigunguAndCodeSmall(keyword, sigungu, codeSmallId,
+                        PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+
 
         // Entity -> Dto
         Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);

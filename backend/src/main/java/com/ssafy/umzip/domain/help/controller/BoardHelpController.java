@@ -33,7 +33,7 @@ import java.util.List;
 public class BoardHelpController {
 
     private final BoardHelpService service;
-    private final JwtTokenProvider jwtTokenProvider;
+    // private final JwtTokenProvider jwtTokenProvider;
 
     /*
     * 도움 게시글 작성
@@ -41,11 +41,11 @@ public class BoardHelpController {
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
             @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
-            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files,
-            HttpServletRequest request) { // , required = false 꼭 필요한게 아니다.
+            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files) { // , required = false 꼭 필요한게 아니다.
 
         // 1. 사용자 token에서 시군구와 member_id 가져오기
-        Long memberId = jwtTokenProvider.getId(request);
+        // 인자로 HttpServletRequest request 가져와야 함
+        // Long memberId = jwtTokenProvider.getId(request);
 
         // 2. boardHelp에 member_id 연결하기
 
