@@ -10,8 +10,9 @@ public class BoardHelpDetailRequestDto {
     private Long memberId;
 
     @Builder
-    public BoardHelpDetailRequestDto(Long boardId) {
+    public BoardHelpDetailRequestDto(Long boardId, Long memberId) {
         this.boardId = boardId;
+        this.memberId = memberId;
     }
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface BoardHelpService {
 
-    void postBoardHelp(BoardHelpPostRequestDto requestDto, List<MultipartFile> files);
+    void postBoardHelp(Long memberId, int sigungu, BoardHelpPostRequestDto requestDto, List<MultipartFile> files);
 
     Page<BoardHelpListDto> listBoardHelp(
             BoardHelpListRequestDto requestDto,

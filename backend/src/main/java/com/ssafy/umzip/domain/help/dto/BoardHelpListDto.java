@@ -29,13 +29,15 @@ public class BoardHelpListDto {
     private int readCnt;
     private int rewardPoint;
     private int sigungu;
+    private boolean isAdopted;
 
 
 
     @Builder
     public BoardHelpListDto(Long id, String writerName, String title,
                             Long codeSmallId, LocalDateTime createDt,
-                            int readCnt, int rewardPoint, int sigungu) {
+                            int readCnt, int rewardPoint, int sigungu,
+                            boolean isAdopted) {
         this.id = id;
         this.writerName = writerName;
         this.title = title;
@@ -45,6 +47,7 @@ public class BoardHelpListDto {
         this.readCnt = readCnt;
         this.rewardPoint = rewardPoint;
         this.sigungu = sigungu;
+        this.isAdopted = isAdopted;
     }
 
     public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
@@ -57,6 +60,7 @@ public class BoardHelpListDto {
                 .readCnt(boardHelp.getReadCnt())
                 .rewardPoint(boardHelp.getPoint())
                 .sigungu(boardHelp.getSigungu())
+                .isAdopted(boardHelp.getIsAdopted())
                 .build());
     }
 

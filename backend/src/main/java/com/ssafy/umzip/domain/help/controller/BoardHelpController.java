@@ -30,7 +30,7 @@ import java.util.List;
 public class BoardHelpController {
 
     private final BoardHelpService service;
-    // private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /*
     * [ 도움 게시글 작성 ]
@@ -38,16 +38,13 @@ public class BoardHelpController {
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
             @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
-            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files) { // , required = false 꼭 필요한게 아니다.
+            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files,
+            HttpServletRequest request) {
 
-        // 1. 사용자 token에서 시군구와 member_id 가져오기
-        // 인자로 HttpServletRequest request 가져와야 함
-        // Long memberId = jwtTokenProvider.getId(request);
+        Long memberId = jwtTokenProvider.getId(request);
+        int sigungu = jwtTokenProvider.getSigungu(request);
 
-        // 2. boardHelp에 member_id 연결하기
-
-
-        service.postBoardHelp(requestDto, files);
+        service.postBoardHelp(memberId, sigungu, requestDto, files);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -65,28 +62,25 @@ public class BoardHelpController {
     public ResponseEntity<Object> listBoardHelp(
             @RequestParam("code-small") Long codeSmallId,
             @RequestParam(defaultValue = "")String keyword,
-            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable  // sort="EntityColumn"
+            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable,
+            HttpServletRequest request
             ) {
 
-        // code-small이 잘못된 값이면 예외처리 : existsBy로 DB에 접근해서 값이 있는지 없는지 체크
-        // 0: default
-        if (codeSmallId != 401 && codeSmallId != 402 && codeSmallId != 403 && codeSmallId != 0) {
+        // 0: default, 403: "도와줬어요"라는 카테고리 없음
+        if (codeSmallId != 401 && codeSmallId != 402 && codeSmallId != 0) {
             throw new BaseException(StatusCode.NOT_EXIST_CODE);
         }
 
-        // accessToken 이 있는지 판단한다. 없으면 로그인 창으로 이동하게끔 에러 코드를 보낸다.
+        Long memberId = jwtTokenProvider.getId(request);
+        int sigungu = jwtTokenProvider.getSigungu(request);
 
-        // accessToken 까서 시군구 데이터 service 로 넘겨야 한다.
-        int sigungu = 100;
-
-        // DTO 생성
         BoardHelpListRequestDto requestDto = BoardHelpListRequestDto.builder()
-                .sigungu(sigungu) // 작성자 시군구
+                .sigungu(sigungu)
                 .keyword(keyword)
                 .codeSmallId(codeSmallId)
+                .memberId(memberId)
                 .build();
 
-        // service
         Page<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
 
         return ResponseEntity
@@ -99,9 +93,12 @@ public class BoardHelpController {
      */
     @PostMapping("detail/comments/{boardId}")
     public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
-                                              @RequestParam("comment") String comment) {
+                                              @RequestParam("comment") String comment,
+                                              HttpServletRequest request) {
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, comment);
+        Long memberId = jwtTokenProvider.getId(request);
+
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, comment);
 
         service.postComment(requestDto);
 
@@ -114,10 +111,14 @@ public class BoardHelpController {
     *
     * */
     @GetMapping("/detail/{boardId}")
-    public ResponseEntity<Object> detailBoardHelp(@PathVariable("boardId") Long boardId) {
+    public ResponseEntity<Object> detailBoardHelp(@PathVariable("boardId") Long boardId,
+                                                  HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
 
         BoardHelpDetailDto responseDto = service.detailBoardHelp(BoardHelpDetailRequestDto.builder()
                         .boardId(boardId)
+                        .memberId(memberId)
                         .build());
 
         return ResponseEntity

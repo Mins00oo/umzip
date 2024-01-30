@@ -26,8 +26,12 @@ public class BoardHelpDetailDto {
 
     private List<CommentListDto> commentList = new ArrayList<>();
 
+    private boolean isSameMember;
+    private boolean isAdopted;
+
     @Builder
-    BoardHelpDetailDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment) {
+    BoardHelpDetailDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment,
+                       boolean isSameMember) {
         this.writerId = boardHelp.getMember().getId();
         this.writerName = boardHelp.getMember().getName();
         this.boardId = boardHelp.getId();
@@ -42,5 +46,8 @@ public class BoardHelpDetailDto {
         if ( !boardHelpComment.isEmpty() ) {
             this.commentList = CommentListDto.toDto(boardHelpComment);
         }
+
+        this.isSameMember = isSameMember;
+        this.isAdopted = boardHelp.getIsAdopted();
     }
 }

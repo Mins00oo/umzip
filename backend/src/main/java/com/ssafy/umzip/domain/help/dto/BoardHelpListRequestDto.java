@@ -16,13 +16,15 @@ public class BoardHelpListRequestDto {
     private Long codeSmallId;
     private int sigungu;
     private String keyword;
+    private Long memberId;
 
     @Builder
-    public BoardHelpListRequestDto(int sigungu, String keyword, Long codeSmallId) {
+    public BoardHelpListRequestDto(int sigungu, String keyword, Long codeSmallId, Long memberId) {
         this.sigungu = sigungu;
         this.keyword = keyword;
         setCodeSmallName(codeSmallId);
         this.codeSmallId = codeSmallId;
+        this.memberId = memberId;
     }
 
     private void setCodeSmallName(Long codeSmallId) {

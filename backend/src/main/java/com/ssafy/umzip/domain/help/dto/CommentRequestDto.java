@@ -12,19 +12,19 @@ import javax.xml.stream.events.Comment;
 public class CommentRequestDto {
 
     private Long boardId;
+    private Long memberId;
     private String comment;
 
     @Builder
-    public CommentRequestDto(Long boardId, String comment) {
+    public CommentRequestDto(Long boardId, Long memberId, String comment) {
         this.boardId = boardId;
+        this.memberId = memberId;
         this.comment = comment;
     }
 
-    public BoardHelpComment toEntity(
-        CommentRequestDto requestDto,
-        BoardHelp boardHelp,
-        Member member
-    ) {
+    public BoardHelpComment toEntity(CommentRequestDto requestDto,
+                                     BoardHelp boardHelp,
+                                     Member member) {
         return BoardHelpComment.builder()
                 .boardHelp(boardHelp)
                 .member(member)

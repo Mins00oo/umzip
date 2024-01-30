@@ -42,22 +42,19 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional
     @Override
-    public void postBoardHelp(BoardHelpPostRequestDto requestDto, List<MultipartFile> files) {
+    public void postBoardHelp(Long memberId, int sigungu, BoardHelpPostRequestDto requestDto, List<MultipartFile> files) {
 
-        // Token에서 member_id와 sigungu(int)를 가져와서 사용한다.
-
-        Member member = memberRepository.findById(1L)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
 
-        int curMemberSigungu = 100; // 작성자 시군구
-        BoardHelp boardHelp = requestDto.toEntity(requestDto, member, curMemberSigungu, codeSmall);
+        BoardHelp boardHelp = requestDto.toEntity(requestDto, member, sigungu, codeSmall);
         boardHelpRepository.save(boardHelp);
 
         S3UploadDto s3UploadDto;
-        for (MultipartFile file : files) {  // 하나씩 저장
+        for (MultipartFile file : files) {
             s3UploadDto = s3Service.upload(file, "umzip-service", "boardHelp");
             BoardHelpImage boardHelpImage = new BoardHelpImage(s3UploadDto, boardHelp);
             boardHelpImageRepository.save(boardHelpImage);
@@ -70,11 +67,11 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             BoardHelpListRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
 
+        memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
-
-
-        // 시군구는 100이다.
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
         Long codeSmallId = requestDto.getCodeSmallId(); // 0, 401, 402
@@ -83,11 +80,8 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .findPageByTitleContainingAndSigunguAndCodeSmall(keyword, sigungu, codeSmallId,
                         PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-
-        // Entity -> Dto
         Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);
 
-        // 댓글수 세팅
         boardDtoList.getContent().forEach(dto -> {
             Long id = dto.getId();
             Long commentCnt = commentRepository.countAllByBoardIdGroupBy(id);
@@ -104,11 +98,15 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Override
     public void postComment(CommentRequestDto requestDto) {
 
-        Member member = memberRepository.findById(1L)
+        Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        if (boardHelp.getIsAdopted()) {
+            throw new BaseException(StatusCode.NOT_POST_COMMENT);
+        }
 
         BoardHelpComment comment = requestDto.toEntity(requestDto, boardHelp, member);
         commentRepository.save(comment);
@@ -118,14 +116,23 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Override
     public BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto) {
 
+        Member member = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
         BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
         boardHelp.setReadCnt(boardHelp.getReadCnt() + 1);
 
+        boolean isSameMember = false;
+        if (Objects.equals(member.getId(), boardHelp.getMember().getId())) {
+            isSameMember = true;
+        }
+
         List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(requestDto.getBoardId());
 
         return BoardHelpDetailDto.builder()
+                .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
                 .boardHelpComment(commentList)
                 .build();
