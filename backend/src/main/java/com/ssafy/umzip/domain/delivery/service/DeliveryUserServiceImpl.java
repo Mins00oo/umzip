@@ -12,6 +12,8 @@ import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.*;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
+import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -25,8 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 
@@ -183,22 +186,37 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         CodeSmall codeSmall = codeSmallRepository.findById(105L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
         deliveryMapping.setCodeSmall(codeSmall);//업데이트
     }
+    /*
+        용달 기사 매칭
+     */
 
     @Override
-    public void companyListDelivery(DeliveryCompanyListRequestDto dto) {
+    public List<DeliveryMatchingCompanyDto> companyMatchingListDelivery(DeliveryCompanyListRequestDto dto) {
         //1. 시간 파싱
         LocalDateTime startTime = getLocalDateTime(dto.getStartTime());
         LocalDateTime endTime = getLocalDateTime(dto.getEndTime());
 
         //2. 시간 연산은 쿼리에서
         List<DeliveryMatchingCompanyDto> list = deliveryMappingCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu(),dto.getLimit());
+        List<Long> memberIdList = list.stream() //company->memberId만 List로 뽑아옴.
+                .map(DeliveryMatchingCompanyDto::getMemberId)
+                .toList();
 
-        for(DeliveryMatchingCompanyDto companyDto:list){
-            List<String> tagList = reviewReceiverRepository
-                    .findTopTagsByMemberId(companyDto.getMemberId(), 3, Role.DELIVER);
-            companyDto.setTopTagList(tagList);
-            System.out.println("companyDto = " + companyDto);
+        TopTagListRequest request = TopTagListRequest.builder()
+                .memberId(memberIdList)
+                .role(Role.DELIVER.toString())
+                .limit(dto.getLimit())
+                .build();
+
+        List<TopTagListResponse> tagList = reviewReceiverRepository.findTopTagsListByMemberIdAndRole(request);
+        Map<Long, List<String>> tagGroupedByCompanyId = tagList.stream()
+                .collect(Collectors.groupingBy(TopTagListResponse::getCompanyId,
+                        Collectors.mapping(TopTagListResponse::getTag, Collectors.flatMapping(List::stream, Collectors.toList()))));
+
+        for(DeliveryMatchingCompanyDto companyDto: list){
+            companyDto.setTopTagList(tagGroupedByCompanyId.get(companyDto.getCompanyId()));
         }
+        return list;
 
     }
     /*

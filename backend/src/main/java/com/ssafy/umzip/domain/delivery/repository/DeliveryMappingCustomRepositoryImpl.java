@@ -121,7 +121,9 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                 .where(company.id.eq(companyId))
                 .fetch();
     }
-
+    /*
+        매칭
+     */
     @Override
     public List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime, int sigungu,int limit) {
         List<DeliveryMatchingCompanyDto> list = queryFactory

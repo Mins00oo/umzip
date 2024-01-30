@@ -34,7 +34,7 @@ public class DeliveryMatchingCompanyDto {
     private LocalDateTime experience;
     private String imageUrl;
     private String ceo;
-
+    private List<String> topTagList;
     public DeliveryMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo) {
         this.companyId = companyId;
         this.memberId = memberId;
@@ -43,5 +43,5 @@ public class DeliveryMatchingCompanyDto {
         this.ceo = ceo;
     }
 
-    private List<String> topTagList;
+
 }
