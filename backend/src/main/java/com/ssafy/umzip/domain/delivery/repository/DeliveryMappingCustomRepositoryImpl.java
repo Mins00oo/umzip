@@ -123,7 +123,7 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
     }
 
     @Override
-    public List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime, int sigungu) {
+    public List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime, int sigungu,int limit) {
         List<DeliveryMatchingCompanyDto> list = queryFactory
                 .selectDistinct(
                         Projections.constructor(
@@ -151,6 +151,7 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                 )
                 .orderBy(company.experience.asc())
                 .distinct()
+                .limit(limit)
                 .fetch();
 
         return list;

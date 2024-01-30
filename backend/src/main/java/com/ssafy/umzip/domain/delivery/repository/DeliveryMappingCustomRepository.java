@@ -12,5 +12,5 @@ public interface DeliveryMappingCustomRepository {
      List<UserReservationDto> findUserReservationInfo(Long memberId);
      List<CompanyReservationDto> findCompanyReservationInfo(Long companyId);
      Boolean updateDeliveryMappingDetailAndReissuingAndCodeSmall(DeliveryQuotationRequestDto dto,CodeSmall codeSmall);
-     List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime,int sigungu);
+     List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime,int sigungu,int limit);
 }

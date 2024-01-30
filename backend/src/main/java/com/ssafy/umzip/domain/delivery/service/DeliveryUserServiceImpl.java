@@ -45,7 +45,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final CustomReviewReceiverRepository reviewReceiverRepository;
 
 
-    //departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu, String departureDetail, String destinationDetail) {
+
     /*
         예약 신청
      */
@@ -191,7 +191,8 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         LocalDateTime endTime = getLocalDateTime(dto.getEndTime());
 
         //2. 시간 연산은 쿼리에서
-        List<DeliveryMatchingCompanyDto> list = deliveryMappingCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu());
+        List<DeliveryMatchingCompanyDto> list = deliveryMappingCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu(),dto.getLimit());
+
         for(DeliveryMatchingCompanyDto companyDto:list){
             List<String> tagList = reviewReceiverRepository
                     .findTopTagsByMemberId(companyDto.getMemberId(), 3, Role.DELIVER);
