@@ -5,16 +5,16 @@ import com.ssafy.umzip.domain.chat.dto.ChatMessageRequestDto;
 import com.ssafy.umzip.domain.chat.entity.ChatRoom;
 import com.ssafy.umzip.domain.chat.service.ChatService;
 import com.ssafy.umzip.global.common.BaseResponse;
-import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatService chatService;
+    private final SimpMessagingTemplate template;
 
     @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public ResponseEntity<Object> sendMessage(@Payload ChatMessageRequestDto messageRequestDto) {
-      log.info("chat send success" + messageRequestDto.getContent());
-      return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(messageRequestDto.getContent()));
+    public void sendMessage(@Payload ChatMessageRequestDto messageRequestDto) {
+      template.convertAndSend("/topic/greetings", messageRequestDto.getContent());
     }
 
     @PostMapping("/chat/deliver/{receiverId}")
@@ -64,8 +63,8 @@ public class ChatController {
     }
 
 
-    @MessageMapping("/chat/{chatRoomId}/message")
-    public void send(ChatMessage message) {
-
+    @MessageMapping("/chat/{chatRoomId}")
+    public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId) {
+        template.convertAndSend("/topic/chatroom/" + chatRoomId, message.getContent());
     }
 }
