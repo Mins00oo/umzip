@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class TopTagListResponse {
     private List<String> tag;
     private Long companyId;

@@ -53,10 +53,6 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
         QTag tag = QTag.tag;
         QCompany company = QCompany.company;
 
-        System.out.println(companyList.getMemberId().get(0));
-        System.out.println(companyList.getRole());
-        System.out.println(companyList.getLimit());
-
         List<TopTagListResponse> topTags = new ArrayList<>();
         for (int i = 0; i < companyList.getMemberId().size(); i++) {
             /*
@@ -84,12 +80,12 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
 
             Long companyId = queryFactory.select(company.id)
                     .from(company)
-                    .where(company.member.id.eq(companyList.getMemberId().get(i)))
+                    .where(company.role.eq(Role.valueOf(companyList.getRole()))
+                            .and(company.member.id.eq(companyList.getMemberId().get(i))))
                     .fetchFirst();
 
             if (companyId != null) {
                 topTags.add(new TopTagListResponse(tags, companyId));
-                System.out.println(new TopTagListResponse(tags, companyId));
             }
         }
 
