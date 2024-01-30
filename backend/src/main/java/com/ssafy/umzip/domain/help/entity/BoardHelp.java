@@ -38,16 +38,17 @@ public class BoardHelp extends BaseTimeEntity {
     @Column(name="board_help_point")
     private int point;
 
+    @Setter
     @Column(name="board_help_read_count")
     private int readCnt;
 
+    // board_help로 수정
     @Column(name="board_sigungu")
     private int sigungu;
 
     @Column(name="board_adopted")
     private Boolean isAdopted;
 
-    // 글 작성
     @Builder
     public BoardHelp(String title, String content, int point, int readCnt,
                      int sigungu, Boolean isAdopted,
@@ -61,19 +62,4 @@ public class BoardHelp extends BaseTimeEntity {
         this.codeSmall = codeSmall;
         this.member = member;
     }
-
-    // 글 목록 조회 결과( 카테고리(전체), 검색, 시군구 )
-//    @Builder
-//    public BoardHelp(Long id, Member member, CodeSmall codeSmall,
-//                     String title, int point, int readCnt, int sigungu) {
-//        this.id = id;
-//        this.member = member;           // 작성자 이름을 가져오기 위함
-//        this.codeSmall = codeSmall;
-//        this.title = title;
-//        this.point = point;
-//        this.readCnt = readCnt;
-//        this.sigungu = sigungu;
-//        // 날짜 정보도 필요한데 어떻게 가져오지?
-//        // getCreateDt()
-//    }
 }

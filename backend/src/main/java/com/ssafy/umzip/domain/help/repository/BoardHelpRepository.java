@@ -15,9 +15,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BoardHelpRepository extends JpaRepository<BoardHelp, Long> {
-    Page<BoardHelp> findPageByTitleContaining(String title, Pageable pageable);
-
-    Page<BoardHelp> findPageByTitleContainingAndSigungu(String title, int sigungu, Pageable pageable);
 
     @Query("SELECT b FROM BoardHelp b " +
             "WHERE ((:codeSmall = 401L AND b.codeSmall.id in (401L, 403L)) AND b.title LIKE %:title% AND b.sigungu = :sigungu)" +
