@@ -11,6 +11,8 @@ import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ import java.util.List;
 public class BoardHelpController {
 
     private final BoardHelpService service;
+    // private final JwtTokenProvider jwtTokenProvider;
 
     /*
     * 도움 게시글 작성
@@ -41,6 +44,9 @@ public class BoardHelpController {
             @RequestPart(value="imageFileList", required = false)List<MultipartFile> files) { // , required = false 꼭 필요한게 아니다.
 
         // 1. 사용자 token에서 시군구와 member_id 가져오기
+        // 인자로 HttpServletRequest request 가져와야 함
+        // Long memberId = jwtTokenProvider.getId(request);
+
         // 2. boardHelp에 member_id 연결하기
 
 

@@ -19,7 +19,7 @@ public class BoardHelpImage extends BaseTimeEntity {
     @Column(name="board_help_image_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_help_id")
     private BoardHelp boardHelp;
 
