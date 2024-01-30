@@ -152,6 +152,11 @@ public class JwtTokenProvider {
         return extractClaims(token).get("id", Long.class);
     }
 
+    public String getRole(HttpServletRequest request) {
+        String token = this.getToken(request);
+        return extractClaims(token).get("role", String.class);
+    }
+
     public String getToken(HttpServletRequest request) {
         return request.getHeader("Authorization").split(" ")[1].trim();
     }
