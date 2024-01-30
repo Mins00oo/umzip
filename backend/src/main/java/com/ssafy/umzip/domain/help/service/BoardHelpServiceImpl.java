@@ -131,7 +131,6 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(requestDto.getBoardId());
 
-        // isAdopted 전달
         return BoardHelpDetailDto.builder()
                 .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
