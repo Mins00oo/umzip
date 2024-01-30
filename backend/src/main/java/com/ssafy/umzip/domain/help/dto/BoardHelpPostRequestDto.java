@@ -26,7 +26,7 @@ public class BoardHelpPostRequestDto {
     public BoardHelp toEntity(
             BoardHelpPostRequestDto requestDto,
             Member member,
-            int curMemberSigungu,
+            int sigungu,
             CodeSmall codeSmall) {
         // 도움 게시판에 저장할 데이터
         return BoardHelp.builder()
@@ -34,7 +34,7 @@ public class BoardHelpPostRequestDto {
                 .content(requestDto.getContent())
                 .point(requestDto.getPoint())
                 .readCnt(0)
-                .sigungu(curMemberSigungu)
+                .sigungu(sigungu)
                 .isAdopted(false)
                 .codeSmall(codeSmall)
                 .member(member)

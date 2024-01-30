@@ -137,9 +137,9 @@ public class JwtTokenProvider {
         return extractClaims(token).get("email", String.class);
     }
 
-    public String getSigungu(HttpServletRequest request) {
+    public int getSigungu(HttpServletRequest request) {
         String token = this.getToken(request);
-        return extractClaims(token).get("sigungu", String.class);
+        return extractClaims(token).get("sigungu", Integer.class);
     }
 
     public String getMemberEmail(HttpServletRequest request) {
