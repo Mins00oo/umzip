@@ -7,10 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DeliveryCancleRequestDto {
+public class DeliveryCancelRequestDto {
     private Long mappingId;
 
-    public DeliveryCancleRequestDto(Long mappingId) {
+    public DeliveryCancelRequestDto(Long mappingId) {
         this.mappingId = mappingId;
     }
 }

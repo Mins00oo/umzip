@@ -12,6 +12,7 @@ import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.*;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -41,6 +42,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryMappingRepository deliveryMappingRepository;
     private final DeliveryMappingCustomRepository deliveryMappingCustomRepository;
+    private final CustomReviewReceiverRepository reviewReceiverRepository;
 
 
     //departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String movelist, int sigungu, String departureDetail, String destinationDetail) {
@@ -183,7 +185,19 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     }
 
     @Override
-    public void companyListDelivery() {
+    public void companyListDelivery(DeliveryCompanyListRequestDto dto) {
+        //1. 시간 파싱
+        LocalDateTime startTime = getLocalDateTime(dto.getStartTime());
+        LocalDateTime endTime = getLocalDateTime(dto.getEndTime());
+
+        //2. 시간 연산은 쿼리에서
+        List<DeliveryMatchingCompanyDto> list = deliveryMappingCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu());
+        for(DeliveryMatchingCompanyDto companyDto:list){
+            List<String> tagList = reviewReceiverRepository
+                    .findTopTagsByMemberId(companyDto.getMemberId(), 3, Role.DELIVER);
+            companyDto.setTopTagList(tagList);
+            System.out.println("companyDto = " + companyDto);
+        }
 
     }
     /*
@@ -191,11 +205,8 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
      */
     @Override
     public List<UserReservationDto> userReservationDelivery(Long memberId) {
-
         //distinct한 deliveryId
-        List<UserReservationDto> userReservationInfo = deliveryMappingCustomRepository.findUserReservationInfo(memberId);
-
-        return userReservationInfo;
+        return deliveryMappingCustomRepository.findUserReservationInfo(memberId);
     }
 
     //s3

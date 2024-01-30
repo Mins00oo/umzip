@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,13 +68,19 @@ public class DeliveryUserController {
         고객 : 취소 API
      */
     @PutMapping("/cancel")
-    public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancleRequestDto cancleRequestDto){
+    public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancelRequestDto cancleRequestDto){
         deliveryUserService.cancelDelivery(cancleRequestDto.getMappingId());
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
         고객 : 매칭 API
      */
+    @PostMapping("/company-list")
+    public ResponseEntity<Object> companyListDelivery(@RequestBody DeliveryCompanyListRequestDto deliveryCompanyListRequestDto){
+        deliveryUserService.companyListDelivery(deliveryCompanyListRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
 
 
     /*

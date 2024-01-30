@@ -43,9 +43,7 @@ public class DeliveryCompanyController {
      */
     @GetMapping("/reservation")
     public ResponseEntity<Object> companyReservationDelivery(){
-        //업체 id 임시
-        Long companyId= 1L;
-
+        Long companyId = 1L;
         List<CompanyReservationDto> companyReservationDtos = deliveryCompanyService.companyReservationDelivery(companyId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(companyReservationDtos));
     }
