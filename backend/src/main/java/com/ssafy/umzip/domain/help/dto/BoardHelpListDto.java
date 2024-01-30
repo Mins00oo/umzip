@@ -18,8 +18,6 @@ import java.util.Objects;
 @Getter
 public class BoardHelpListDto {
 
-
-
     private Long id;
     private String writerName;
     private String title;

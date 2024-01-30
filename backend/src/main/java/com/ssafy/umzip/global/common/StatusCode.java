@@ -37,6 +37,7 @@ public enum StatusCode {
     CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
     NOT_EXIST_CODE(false, 501, "해당 코드 소분류가 존재하지 않습니다."),
     NOT_EXIST_BOARD(false, 502, "존재하지 않는 게시글 입니다."),
+    NOT_VALID_BOARD_PK(false, 503, "해당 ID로 게시글을 찾을 수 없습니다."),
 
     // DELIVERY : 600
     NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다."),

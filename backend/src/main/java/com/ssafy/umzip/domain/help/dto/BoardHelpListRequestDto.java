@@ -12,11 +12,8 @@ import lombok.ToString;
 @Getter
 public class BoardHelpListRequestDto {
 
-    // 카테고리
     private String codeSmallName;
     private Long codeSmallId;
-
-    // 시군구 + 전체 + 검색
     private int sigungu;
     private String keyword;
 
@@ -35,14 +32,4 @@ public class BoardHelpListRequestDto {
         else if (codeSmallId == 403) { this.codeSmallName = "도와줬어요"; }
         else if (codeSmallId == 0) { this.codeSmallName = "전체"; }
     }
-
-    // 카테고리에서 사용
-//    @Builder
-//    public BoardHelpListRequestDto(int sigungu, int codeSmallId, String keyword) {
-//        this.sigungu = sigungu;
-//        setCodeSmallName(codeSmallId);
-//        this.codeSmallId = codeSmallId;
-//        this.keyword = keyword;
-//    }
-
 }

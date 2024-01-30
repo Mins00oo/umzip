@@ -2,10 +2,7 @@ package com.ssafy.umzip.domain.help.service;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
-import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
-import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
-import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
-import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
+import com.ssafy.umzip.domain.help.dto.*;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
 import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
@@ -50,7 +47,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         // Token에서 member_id와 sigungu(int)를 가져와서 사용한다.
 
         Member member = memberRepository.findById(1L)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
@@ -108,13 +105,30 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     public void postComment(CommentRequestDto requestDto) {
 
         Member member = memberRepository.findById(1L)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_EMAIL));
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_BOARD));
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
         BoardHelpComment comment = requestDto.toEntity(requestDto, boardHelp, member);
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    @Override
+    public BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto) {
+
+        BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        boardHelp.setReadCnt(boardHelp.getReadCnt() + 1);
+
+        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(requestDto.getBoardId());
+
+        return BoardHelpDetailDto.builder()
+                .boardHelp(boardHelp)
+                .boardHelpComment(commentList)
+                .build();
     }
 
 

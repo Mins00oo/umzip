@@ -1,10 +1,7 @@
 package com.ssafy.umzip.domain.help.controller;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
-import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
-import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
-import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
-import com.ssafy.umzip.domain.help.dto.CommentRequestDto;
+import com.ssafy.umzip.domain.help.dto.*;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
@@ -36,7 +33,7 @@ public class BoardHelpController {
     // private final JwtTokenProvider jwtTokenProvider;
 
     /*
-    * 도움 게시글 작성
+    * [ 도움 게시글 작성 ]
     * */
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
@@ -58,7 +55,8 @@ public class BoardHelpController {
     }
 
     /*
-    * 도움 게시글 목록 조회 + 도움 게시글 검색
+    * [ 도움 게시글 목록 조회 ]
+    *
     * 현재 사용자의 시군구 데이터를 토대로 근처 게시글만 조회한다.
     * 검색어를 입력 받으면 like 방식으로 제목을 조회한다.
     * page는 service에서 -1 처리
@@ -96,7 +94,9 @@ public class BoardHelpController {
                 .body(new BaseResponse<>(boards));
     }
 
-    // 댓글 작성
+    /* [ 댓글 작성 ]
+     *
+     */
     @PostMapping("detail/comments/{boardId}")
     public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
                                               @RequestParam("comment") String comment) {
@@ -108,5 +108,20 @@ public class BoardHelpController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /* [ 도움 게시글 상세보기 ]
+    *
+    * */
+    @GetMapping("/detail/{boardId}")
+    public ResponseEntity<Object> detailBoardHelp(@PathVariable("boardId") Long boardId) {
+
+        BoardHelpDetailDto responseDto = service.detailBoardHelp(BoardHelpDetailRequestDto.builder()
+                        .boardId(boardId)
+                        .build());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(responseDto));
     }
 }
