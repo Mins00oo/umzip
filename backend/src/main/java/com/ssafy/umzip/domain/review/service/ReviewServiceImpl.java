@@ -2,10 +2,13 @@ package com.ssafy.umzip.domain.review.service;
 
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.review.dto.AllReviewRequest;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
 import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.domain.review.repository.ReviewRepository;
+import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
+import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepositoryImpl;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
 import com.ssafy.umzip.domain.reviewtag.entity.ReviewTag;
 import com.ssafy.umzip.domain.reviewtag.repository.ReviewTagRepository;
@@ -34,6 +37,9 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
 
+    /*
+    * 리뷰작성
+    * */
     @Override
     @Transactional
     public ResponseEntity<Object> creaetReviwe(CreateReviewRequest createReviewRequest) {
@@ -72,6 +78,16 @@ public class ReviewServiceImpl implements ReviewService {
                 })
                 .collect(Collectors.toList());
         reviewTagRepository.saveAll(reviewTags);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*
+     * 전체 리뷰 정보 반환 with pagination
+     * */
+    @Override
+    public ResponseEntity<Object> resiveReviewPage(AllReviewRequest allReviewRequest) {
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
