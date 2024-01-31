@@ -59,7 +59,7 @@ function sendMessage(chatRoomId) {
     if(messageContent && stompClient.active) { // 메시지 내용이 있고, stompClient가 활성화 상태인지 확인
         console.log('메시지 보낸다')
         stompClient.publish({
-            destination: `/api/message/chat/${chatRoomId}`,
+            destination: `/app/chat/${chatRoomId}`,
             body: JSON.stringify({
                 content: messageContent,
                 type: 'TALK'
@@ -81,7 +81,7 @@ function showReceivedMessage(message) {
 function leaveChatRoom(chatRoomId) {
     console.log('채팅방 나간다')
     stompClient.publish({
-        destination: `/api/message/chat/${chatRoomId}`,
+        destination: `/app/chat/${chatRoomId}`,
         body: JSON.stringify({
             type: 'LEAVE'
         }),

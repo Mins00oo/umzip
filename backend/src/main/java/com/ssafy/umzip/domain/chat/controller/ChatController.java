@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.chat.controller;
 
 import com.ssafy.umzip.domain.chat.dto.ChatMessageRequestDto;
 import com.ssafy.umzip.domain.chat.service.ChatRoomService;
+import com.ssafy.umzip.domain.chat.service.ChatService;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class ChatController {
     private final SimpMessagingTemplate template;
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
 
     @MessageMapping("/chat/{chatRoomId}")
     public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
@@ -29,8 +31,11 @@ public class ChatController {
             chatRoomService.leaveChatRoom(chatRoomId, requestId);
             message.setContent("상대방이 나갔습니다.");
         }
+        chatService.saveMessage(message, chatRoomId, requestId);
+
 
         log.info(String.valueOf(message));
         template.convertAndSend("/topic/chatroom/" + chatRoomId, message.getContent());
     }
+
 }
