@@ -59,7 +59,48 @@ function showGreeting(message) {
 
 $(function () {
     $("form").on('submit', (e) => e.preventDefault());
-    $( "#connect" ).click(() => connect());
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendName());
+    $("#connect").click(() => connect());
+    $("#disconnect").click(() => disconnect());
+
+    // 채팅방 생성 버튼 클릭 이벤트 처리
+    $("#createChatRoom").click(() => {
+        const receiverId = $("#receiverId").val();
+        createAndSubscribeChatRoom(receiverId);
+    });
+
+    // 메시지 전송 버튼 클릭 이벤트 처리 (채팅방 ID 필요)
+    $("#send").click(() => {
+        const chatRoomId = 1;
+        sendName(chatRoomId);
+    });
 });
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjY2MTU5NiwiZXhwIjoxNzA2NjY1MTk2fQ.HgOW__xZaNsT6gchMAe0GgGjlWxsbPwgZQsm0j8UFpo'
+
+// 채팅방 생성 및 구독
+function createAndSubscribeChatRoom(receiverId) {
+    // 채팅방 생성 요청
+    // receiverId는 2로 잠시 고정
+    $.ajax({
+        type: "POST",
+        url: `/api/chat/user/2`,
+        headers: {
+            "Authorization" : `Bearer ${accessToken}`
+        },
+        success: function(response) {
+            console.log(response)
+            // 채팅방 생성 성공 시 구독
+            subscribeChatRoom(response.result);
+        },
+        error: function(error) {
+            console.error('Chat room creation failed:', error);
+        }
+    });
+}
+
+function subscribeChatRoom(subscriptionPath) {
+    stompClient.subscribe(subscriptionPath, (message) => {
+        console.log(message.body);
+        showGreeting(message.body);
+    });
+    console.log(`Subscribed to chat room: ${subscriptionPath}`);
+}

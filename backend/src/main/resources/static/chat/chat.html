@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">  <!-- 문자 인코딩을 UTF-8로 설정 -->
+    <title>채팅방</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="chatRoom.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>채팅방</h2>
+    <div id="messages">
+        <!-- 메시지가 여기에 표시됩니다. -->
+    </div>
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+        <button type="submit" class="btn btn-primary">보내기</button>
+    </form>
+    <button id="leaveChatRoom" class="btn btn-danger">나가기</button>
+</div>
+</body>
+</html>

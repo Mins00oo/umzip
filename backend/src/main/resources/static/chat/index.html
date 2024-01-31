@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>  <!-- SockJS 스크립트 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="chatList.js"></script>
+</head>
+
+
+<body>
+<div class="container">
+    <h2>채팅방 목록</h2>
+    <button id="createChatRoom" class="btn btn-primary">채팅방 생성</button>
+    <div id="chatRoomList">
+        <!-- 채팅방 목록이 여기에 표시됩니다. -->
+    </div>
+</div>
+</body>
+</html>
