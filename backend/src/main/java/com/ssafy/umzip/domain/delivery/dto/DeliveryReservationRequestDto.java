@@ -13,6 +13,7 @@ import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class DeliveryReservationRequestDto {
     private Long price;
@@ -30,7 +31,7 @@ public class DeliveryReservationRequestDto {
     private String destinationDetail;
     private String movelist;
     private int sigungu;
-
+    @Builder
     public DeliveryReservationRequestDto(Long price, Long carId, String departure, String destination, boolean packaging, boolean move, boolean elevator, boolean parking, String startTime, String endTime, String departureDetail, String destinationDetail, String movelist, int sigungu) {
         this.price = price;
         this.carId = carId;

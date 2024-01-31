@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,5 +35,15 @@ public class CleanMapping {
     private Long reissuing;
     @Column(name = "clean_mapping_detail")
     private String detail;
-
+    @Builder
+    public CleanMapping(Long id, Clean clean, Company company, Member member, CodeSmall codeSmall, Long price, Long reissuing, String detail) {
+        this.id = id;
+        this.clean = clean;
+        this.company = company;
+        this.member = member;
+        this.codeSmall = codeSmall;
+        this.price = price;
+        this.reissuing = reissuing;
+        this.detail = detail;
+    }
 }

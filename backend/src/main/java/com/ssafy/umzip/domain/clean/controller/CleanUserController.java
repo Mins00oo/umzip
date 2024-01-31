@@ -1,24 +1,31 @@
 package com.ssafy.umzip.domain.clean.controller;
 
 import com.ssafy.umzip.domain.clean.dto.user.CleanCalRequestDto;
+import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
+import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
+import com.ssafy.umzip.domain.clean.service.CleanUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
+import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.function.LongSupplier;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/clean/user")
 public class CleanUserController {
+    private final CleanUserService cleanUserService;
+    private final JwtTokenProvider jwtTokenProvider;
     /*
         유저 : 청소 계산기 API
-
      */
     @PostMapping("/calculation")
     public ResponseEntity<Object> calculateClean(@RequestBody CleanCalRequestDto cleanCalRequestDto) {
@@ -46,7 +53,25 @@ public class CleanUserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(calResult));
     }
+    /*
+         유저 : 청소 예약 API
+     */
+    @PostMapping("/reservation")
+    public ResponseEntity<Object> createClean(@RequestPart(name = "companys") List<CleanReservationCompanyDto> companys,
+                                              @RequestPart(name = "imageFileList",required = false) List<MultipartFile> imageFileList,
+                                              @RequestPart(name = "price") Long price,
+                                              @RequestPart(name = "clean")CleanReservationRequestDto reservationRequestDto,
+                                              HttpServletRequest request
+                                              ){
 
+        Long memberId = jwtTokenProvider.getId(request);
+        cleanUserService.createClean(companys,imageFileList,price,reservationRequestDto,memberId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*
+        계산기 필요 메서드들
+     */
     private static Long getDefaultPrice(int roomSize) {
         if (roomSize <= 7) {
             return 150000L;

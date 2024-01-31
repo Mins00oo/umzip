@@ -80,9 +80,6 @@ public class DeliveryUserController {
         deliveryUserService.companyMatchingListDelivery(deliveryCompanyListRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
-
-
-
     /*
         고객 : 용달 유저 예약 확인 API
      */
