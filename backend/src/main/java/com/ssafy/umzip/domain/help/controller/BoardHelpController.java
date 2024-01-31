@@ -107,7 +107,7 @@ public class BoardHelpController {
                 .body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 
-    /* [ 도움 게시글 상세보기 ]
+    /* [ 도움 게시글 상세조회 ]
     *
     * */
     @GetMapping("/detail/{boardId}")
@@ -124,5 +124,24 @@ public class BoardHelpController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(responseDto));
+    }
+    
+    /*[ 도움 게시글 상세조회 - 채택 기능 ]
+    * 
+    * */
+    @PostMapping("/detail/comments/adopt/{commentId}")
+    public ResponseEntity<Object> adoptedBoardHelp(@PathVariable("commentId") Long commentId,
+                                                   HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
+
+        service.adoptedBoardHelp(BoardHelpAdopt.builder()
+                                .memberId(memberId)
+                                .commentId(commentId)
+                                .build());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 }
