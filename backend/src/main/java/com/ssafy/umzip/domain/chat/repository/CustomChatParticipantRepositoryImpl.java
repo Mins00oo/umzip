@@ -39,7 +39,8 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
                                 .select(cp2.chatRoom.id)
                                 .from(cp2)
                                 .where(cp2.member.id.eq(memberId),
-                                        cp2.role.eq(role))
+                                        cp2.role.eq(role),
+                                        cp2.activated.isTrue())
                 ))
                 .where(cp.member.id.ne(memberId),
                         cp.role.eq(role))

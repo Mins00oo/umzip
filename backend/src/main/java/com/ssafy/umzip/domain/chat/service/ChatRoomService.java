@@ -9,4 +9,6 @@ public interface ChatRoomService {
     ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, String role);
 
     List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role);
+
+    void leaveChatRoom(Long chatRoomId, Long requestId);
 }

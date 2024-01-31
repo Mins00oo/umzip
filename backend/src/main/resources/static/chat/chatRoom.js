@@ -34,7 +34,7 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjY4OTk4NCwiZXhwIjoxNzA2NjkzNTg0fQ.otgMV2evMAXMymY3FV9HryUjVysTvMfvhygvxIIFyIg'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NSwic2lndW5ndSI6MSwiaWF0IjoxNzA2NzI0NDg0LCJleHAiOjE3MDcxNTY0ODR9.MJe1fypLv-W2mAgEHmoU5o5tgXL3ha_cRSp3CeXPGAk'
 
 function connectToChatRoom(chatRoomId) {
     // WebSocket 연결 및 채팅방 구독
@@ -79,28 +79,15 @@ function showReceivedMessage(message) {
 }
 
 function leaveChatRoom(chatRoomId) {
-    $.post(`/api/message/chat/${chatRoomId}`, function() {
-        // 채팅방 나가기 처리
-        window.location.href = '/index.html';
-    });
-
-    $.ajax({
-        url: `/api/message/chat/${chatRoomId}`,
-        type: 'POST',
-        contentType: 'application/json',
+    console.log('채팅방 나간다')
+    stompClient.publish({
+        destination: `/api/message/chat/${chatRoomId}`,
+        body: JSON.stringify({
+            type: 'LEAVE'
+        }),
         headers: {
-            'Authorization': `Bearer ${accessToken}` // Bearer 토큰을 헤더에 추가
-        },
-        success: function(response) {
-            // 성공 시, 서버로부터 반환된 구독 경로로 구독 시작
-            if(response.isSuccess) {
-                window.location.href = '/index.html';
-            } else {
-                console.error('Chat room creation failed:', response.message);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Chat room creation failed:', textStatus, errorThrown);
+            'Authorization': `Bearer ${accessToken}` // 필요한 경우 헤더 추가
         }
     });
+    window.location.href = 'index.html';
 }

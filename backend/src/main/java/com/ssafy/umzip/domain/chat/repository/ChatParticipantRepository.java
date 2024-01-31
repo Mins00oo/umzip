@@ -6,6 +6,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -13,4 +14,8 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     @Query("select cp.chatRoom FROM ChatParticipant cp where cp.member.id=:memberId AND " +
             "cp.role=:role")
     List<ChatRoom> findAllByMemberIdAndRole(@Param("memberId") Long memberId,@Param("role") String role);
+
+    @Query("select cp FROM ChatParticipant cp where cp.chatRoom.id=:chatRoomId AND " +
+            "cp.member.id=:memberId")
+    ChatParticipant findByChatRoomAndMember(@Param("chatRoomId") Long chatRoomId, @Param("memberId") Long memberId);
 }

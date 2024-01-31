@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
@@ -25,13 +27,21 @@ public class ChatParticipant {
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
-    @Column(name = "chat_role")
+    @Column(name = "chat_participant_role")
     private String role;
+
+    @Column(name = "chat_participant_activated")
+    private boolean activated;
 
     @Builder
     public ChatParticipant(Member member, ChatRoom chatRoom, String role) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.role = role;
+        this.activated = true;
+    }
+
+    public void leaveChatRoom() {
+        this.activated = false;
     }
 }

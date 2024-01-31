@@ -58,9 +58,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return chatRoom;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
-        // memberId가 company라면
         return customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(memberId, role);
+    }
+
+    @Transactional
+    @Override
+    public void leaveChatRoom(Long chatRoomId, Long requestId) {
+        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, requestId);
+        log.info(String.valueOf(chatParticipant.getId()));
+        chatParticipant.leaveChatRoom();
     }
 }
