@@ -77,7 +77,7 @@ public class DeliveryUserController {
      */
     @PostMapping("/company-list")
     public ResponseEntity<Object> companyListDelivery(@RequestBody DeliveryCompanyListRequestDto deliveryCompanyListRequestDto){
-        deliveryUserService.companyListDelivery(deliveryCompanyListRequestDto);
+        deliveryUserService.companyMatchingListDelivery(deliveryCompanyListRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 

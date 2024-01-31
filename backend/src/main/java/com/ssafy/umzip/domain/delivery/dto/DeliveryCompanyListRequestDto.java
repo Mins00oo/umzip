@@ -13,4 +13,5 @@ public class DeliveryCompanyListRequestDto {
     private String startTime;
     private String endTime;
     private int sigungu;
+    private int limit;
 }
