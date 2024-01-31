@@ -49,7 +49,7 @@ public enum StatusCode {
     FAIL_API_REQUEST(false,603,"외부 API 요청의 반환값이 없습니다."),
     NOT_EXIST_DELIVERY(false,604,"존재하지 않는 용달 주문건입니다."),
     FAIL_TO_QUOTATION(false,605,"견적 제안 요청이 실패했습니다."),
-    INVALID_ACCESS_DELIVERY(false,606,"요청한 업체와 수정 적용 대상이 업체입니다"),
+    INVALID_ACCESS_DELIVERY(false,606,"요청한 업체와 수정 적용 대상이 다른 업체입니다"),
     
 
 
