@@ -1,15 +1,13 @@
 package com.ssafy.umzip.domain.review.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ssafy.umzip.global.common.Role;
+import lombok.*;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AllReviewRequest {
+public class MyReceiveReviewRequest {
     private long memberId;
     private String role;
     private int offset;
