@@ -9,6 +9,8 @@ import com.ssafy.umzip.domain.delivery.service.DeliveryUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -27,6 +29,7 @@ public class DeliveryUserController {
     private final DeliveryUserService deliveryUserService;
     // car Service가 없어도 될정도 이므로 바로 Repository 소환
     private final CarRepository carRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     private static String kakaoApiKey;
     private static String fuelApiKey;
     @Value("${kakao.api.key}")
@@ -44,9 +47,12 @@ public class DeliveryUserController {
     public ResponseEntity<Object> createDelivery(@RequestPart(value = "delivery") DeliveryReservationRequestDto delivery,
                                                  @RequestPart(value = "companys") List<DeliveryRequestCompanyDto> companys,
                                                  @RequestPart(value="imageFileList",required = false) List<MultipartFile> imageFileList,
-                                                 @RequestPart(value="price") Long price
+                                                 @RequestPart(value="price") Long price,
+                                                 HttpServletRequest request
+
     ){
-        deliveryUserService.createDelivery(delivery,companys,imageFileList,price);
+        Long memberId = jwtTokenProvider.getId(request);
+        deliveryUserService.createDelivery(delivery,companys,imageFileList,price,memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 
@@ -84,10 +90,9 @@ public class DeliveryUserController {
         고객 : 용달 유저 예약 확인 API
      */
     @GetMapping("/reservation")
-    public ResponseEntity<Object>  userReservationDelivery(){
+    public ResponseEntity<Object>  userReservationDelivery(HttpServletRequest request){
         //memberID는 JWT토큰에서 가져온다.
-        //임시 memberId
-        Long memberId = 1L;
+        Long memberId = jwtTokenProvider.getId(request);
         List<UserReservationDto> deliveryList = deliveryUserService.userReservationDelivery(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryList));
     }
