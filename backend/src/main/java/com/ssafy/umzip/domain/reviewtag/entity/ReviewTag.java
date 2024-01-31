@@ -18,11 +18,11 @@ public class ReviewTag {
     @Column(name = "review_tag_id")
     private long id;
 
-    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name="tag_id")
     private Tag tag;
 
-    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name="review_id")
     private Review review;
 

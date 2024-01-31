@@ -10,8 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AllReviewRequest {
-    private long memberId;
-    private String role;
-    private int offset;
-    private int limit;
+    long memberId;
+    String role;
+    int offest;
+    int limit;
 }
