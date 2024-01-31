@@ -22,4 +22,6 @@ public interface BoardHelpService {
     void postComment(CommentRequestDto requestDto);
 
     BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto);
+
+    void adoptedBoardHelp(BoardHelpAdopt requestDto);
 }

@@ -138,5 +138,31 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .build();
     }
 
+    @Transactional
+    @Override
+    public void adoptedBoardHelp(BoardHelpAdopt requestDto) {
+        memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
+        BoardHelpComment boardHelpComment = commentRepository.findById(requestDto.getCommentId())
+                .orElseThrow(()-> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK));
+
+        if (boardHelpComment.getBoardHelp().getIsAdopted()) {
+            throw new BaseException(StatusCode.ALREADY_ADOPT_BOARD);
+        }
+
+        BoardHelp boardHelp = boardHelpRepository.findById(boardHelpComment.getBoardHelp().getId())
+                        .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        Long COMPLETE_HELP_CODE_ID = 403L;
+        CodeSmall codeSmall = codeSmallRepository.findById(COMPLETE_HELP_CODE_ID)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+
+        boardHelp.setIsAdopted(true);
+        boardHelp.setCodeSmall(codeSmall);
+
+        boardHelpRepository.save(boardHelp);
+    }
+
 
 }

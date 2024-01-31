@@ -25,6 +25,7 @@ public class BoardHelp extends BaseTimeEntity {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="code_small_id")
     private CodeSmall codeSmall;
@@ -45,6 +46,7 @@ public class BoardHelp extends BaseTimeEntity {
     @Column(name="board_help_sigungu")
     private int sigungu;
 
+    @Setter
     @Column(name="board_help_adopted")
     private Boolean isAdopted;
 
