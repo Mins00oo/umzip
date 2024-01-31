@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ReviewTagRepository extends JpaRepository<ReviewTag, Long> {
     // 리뷰ID로 매칭되는 TagID 받아오기
     Optional<List<ReviewTag>> findByReview_Id(Long reviewId);
+
 }
