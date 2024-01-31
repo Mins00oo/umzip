@@ -10,7 +10,8 @@ public interface DeliveryUserService {
      void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                          List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
                          List<MultipartFile> deliveryImages,
-                         Long price);
+                         Long price,
+                         Long memberId);
      DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice);
      void cancelDelivery(Long mappingId);
      List<DeliveryMatchingCompanyDto> companyMatchingListDelivery(DeliveryCompanyListRequestDto dto);

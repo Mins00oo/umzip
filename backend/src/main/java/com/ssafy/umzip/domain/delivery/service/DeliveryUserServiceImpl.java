@@ -56,7 +56,8 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     public void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                                List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
                                List<MultipartFile> deliveryImages,
-                               Long price
+                               Long price,
+                               Long memberId
     ) {
         deliveryReservationRequestDto.setPrice(price);
         //Delivery Entity 생성
@@ -69,49 +70,13 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         //image Setting
         deliveryImgSetting(deliveryImages, delivery);
         //mapping Setting
-        deliveryMappingSetting(deliveryRequestCompanyDtoList, price, delivery);
+        deliveryMappingSetting(deliveryRequestCompanyDtoList, price, delivery,memberId);
 
         //저장
         deliveryRepository.save(delivery);
     }
     /*
-        Mapping 연결 저장
-     */
-    private void deliveryMappingSetting(List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList, Long price, Delivery delivery) {
-        // code small 용달은 항상 101(신청중)
-        CodeSmall codeSmall = codeSmallRepository.findById(101L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
-        // member 가져오기-- 추후 jwt 도입시 변경 필요
-        Member member = memberRepository.findById(1L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
-
-        for(DeliveryRequestCompanyDto company : deliveryRequestCompanyDtoList){
-            Company resultCompany = companyRepository.findByMemberIdAndRole(company.getMemberId(), Role.DELIVER).orElseThrow(()->new BaseException(StatusCode.NOT_EXIST_COMPANY));
-            DeliveryMapping deliveryMapping = DeliveryMapping.builder()
-                    .company(resultCompany)
-                    .member(member) //member 임시
-                    .codeSmall(codeSmall)
-                    .price(price)
-                    .delivery(delivery)
-                    .reissuing(0L) // 초기값 0
-                    .build();
-
-            delivery.addMapping(deliveryMapping);
-        }
-    }
-    /*
-        delivery Image 세팅
-     */
-    private void deliveryImgSetting(List<MultipartFile> deliveryImages, Delivery delivery) {
-        for(MultipartFile file: deliveryImages){
-            S3UploadDto deliveryImg = uploadFile(file, "deliverImg");
-            DeliveryImage deliveryImage = DeliveryImage.builder()
-                    .dto(deliveryImg).delivery(delivery)
-                    .build();
-            delivery.addImage(deliveryImage);
-        }
-    }
-
-    /*
-        계산기
+        계산기 API
      */
     @Override
     public DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice) {
@@ -142,41 +107,6 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
 
         return new DeliveryCalResponseDto(result,end);
     }
-    /*
-        시간당 부가세 계산
-     */
-    private static Long getTimeFee(DeliveryCalRequestDto calDto, Long price) {
-        String time = calDto.getStartTime().split(" ")[1].split(":")[0];
-        Integer startTime = Integer.valueOf(time);
-        //출퇴근이면 5%
-        if(startTime==7||startTime==8||startTime==18||startTime==19){
-            price = Math.round(price *1.05);
-            //야간 10%
-        }else if(startTime>=22||(startTime>=0&&startTime<=5)){
-            price = Math.round(price *1.10);
-        }
-        return price;
-    }
-    /*
-        현재 평균 유가 당 거리 가격 계산
-     */
-    @NotNull
-    private static Long getDistancePrice(MobilityDto mobilityDto, double OilPrice, Car car) {
-        double distanceKm = Math.ceil((double) mobilityDto.getDistance() /1000); //몇 Km?
-        return (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
-    }
-    /*
-        거리 계산 결과를 가지고 endTime 계산
-     */
-    @NotNull
-    private static LocalDateTime getEndTime(MobilityDto mobilityDto, DeliveryCalRequestDto calDto) {
-        //모빌리티 API로 End Time 계산
-        Long hour = (long) Math.ceil(mobilityDto.getDuration() / 3600.0);
-        //날짜 포맷
-        LocalDateTime start = getLocalDateTime(calDto.getStartTime());
-        return start.plusHours(hour);
-    }
-
     @Override
     public void cancelDelivery(Long mappingId) {
         //1. delivery_mapping 가져옴.
@@ -228,6 +158,81 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         return deliveryMappingCustomRepository.findUserReservationInfo(memberId);
     }
 
+
+
+    /*
+        Mapping 연결 저장
+     */
+    private void deliveryMappingSetting(List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList, Long price, Delivery delivery,Long memberId) {
+        // code small 용달은 항상 101(신청중)
+        CodeSmall codeSmall = codeSmallRepository.findById(101L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+        // member 가져오기-- 추후 jwt 도입시 변경 필요
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
+
+        for(DeliveryRequestCompanyDto company : deliveryRequestCompanyDtoList){
+            Company resultCompany = companyRepository.findByMemberIdAndRole(company.getMemberId(), Role.DELIVER).orElseThrow(()->new BaseException(StatusCode.NOT_EXIST_COMPANY));
+            DeliveryMapping deliveryMapping = DeliveryMapping.builder()
+                    .company(resultCompany)
+                    .member(member) //member 임시
+                    .codeSmall(codeSmall)
+                    .price(price)
+                    .delivery(delivery)
+                    .reissuing(0L) // 초기값 0
+                    .build();
+
+            delivery.addMapping(deliveryMapping);
+        }
+    }
+    /*
+        delivery Image 세팅
+     */
+    private void deliveryImgSetting(List<MultipartFile> deliveryImages, Delivery delivery) {
+        for(MultipartFile file: deliveryImages){
+            S3UploadDto deliveryImg = uploadFile(file, "deliverImg");
+            DeliveryImage deliveryImage = DeliveryImage.builder()
+                    .dto(deliveryImg).delivery(delivery)
+                    .build();
+            delivery.addImage(deliveryImage);
+        }
+    }
+
+    /*
+       계산기 관련 메소드
+    */
+    /*
+        시간당 부가세 계산
+     */
+    private static Long getTimeFee(DeliveryCalRequestDto calDto, Long price) {
+        String time = calDto.getStartTime().split(" ")[1].split(":")[0];
+        Integer startTime = Integer.valueOf(time);
+        //출퇴근이면 5%
+        if(startTime==7||startTime==8||startTime==18||startTime==19){
+            price = Math.round(price *1.05);
+            //야간 10%
+        }else if(startTime>=22||(startTime>=0&&startTime<=5)){
+            price = Math.round(price *1.10);
+        }
+        return price;
+    }
+    /*
+        현재 평균 유가 당 거리 가격 계산
+     */
+    @NotNull
+    private static Long getDistancePrice(MobilityDto mobilityDto, double OilPrice, Car car) {
+        double distanceKm = Math.ceil((double) mobilityDto.getDistance() /1000); //몇 Km?
+        return (long) (( distanceKm / car.getMileage() ) * OilPrice)+ mobilityDto.getToll();
+    }
+    /*
+        거리 계산 결과를 가지고 endTime 계산
+     */
+    @NotNull
+    private static LocalDateTime getEndTime(MobilityDto mobilityDto, DeliveryCalRequestDto calDto) {
+        //모빌리티 API로 End Time 계산
+        Long hour = (long) Math.ceil(mobilityDto.getDuration() / 3600.0);
+        //날짜 포맷
+        LocalDateTime start = getLocalDateTime(calDto.getStartTime());
+        return start.plusHours(hour);
+    }
     //s3
     private S3UploadDto uploadFile(MultipartFile file, String fileNamePrefix) {
         if (file != null && !file.isEmpty()) {
@@ -235,4 +240,5 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         }
         return null;
     }
+
 }

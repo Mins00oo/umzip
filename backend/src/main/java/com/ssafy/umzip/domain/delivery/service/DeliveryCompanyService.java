@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DeliveryCompanyService {
     //업체
-    void rejectionDelivery(Long mappingId);
-    Boolean quotationDelivery(DeliveryQuotationRequestDto dto);
+    void rejectionDelivery(Long mappingId,Long companyId);
+    Boolean quotationDelivery(DeliveryQuotationRequestDto dto,Long companyId);
     List<CompanyReservationDto> companyReservationDelivery(Long companyId);
 }

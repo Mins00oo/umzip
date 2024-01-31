@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -23,15 +24,22 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryMappingCustomRepository deliveryMappingCustomRepository;
     @Override
-    public void rejectionDelivery(Long mappingId) {
+    public void rejectionDelivery(Long mappingId,Long companyId) {
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
+        if(!Objects.equals(deliveryMapping.getCompany().getId(), companyId)){
+            throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
+        }
         CodeSmall codeSmall = codeSmallRepository.findById(104L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
         deliveryMapping.setCodeSmall(codeSmall);
     }
 
     @Override
-    public Boolean quotationDelivery(DeliveryQuotationRequestDto dto) {
+    public Boolean quotationDelivery(DeliveryQuotationRequestDto dto,Long companyId) {
         CodeSmall codeSmall = codeSmallRepository.findById(102L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+        DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(dto.getMappingId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
+        if(!Objects.equals(deliveryMapping.getCompany().getId(), companyId)){
+            throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
+        }
         return deliveryMappingCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
     }
 
