@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.trade.entity;
 
 import com.ssafy.umzip.global.common.BaseTimeEntity;
+import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,12 +33,12 @@ public class BoardTradeImage extends BaseTimeEntity {
     private String path;
 
     @Builder
-    public BoardTradeImage(Long id, BoardTrade boardTrade,
-                           String originName, String savedName, String path) {
-        this.id = id;
+    public BoardTradeImage(S3UploadDto s3UploadDto, BoardTrade boardTrade) {
+
+        this.originName = s3UploadDto.getOriginName();
+        this.savedName = s3UploadDto.getSaveName();
+        this.path = s3UploadDto.getImgUrl();
+
         this.boardTrade = boardTrade;
-        this.originName = originName;
-        this.savedName = savedName;
-        this.path = path;
     }
 }
