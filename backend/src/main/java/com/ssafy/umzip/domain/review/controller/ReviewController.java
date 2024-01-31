@@ -1,17 +1,13 @@
 package com.ssafy.umzip.domain.review.controller;
 
-import com.ssafy.umzip.domain.member.service.MemberService;
-import com.ssafy.umzip.domain.review.dto.AllReviewRequest;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
+import com.ssafy.umzip.domain.review.dto.MyReceiveReviewRequest;
+import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
 import com.ssafy.umzip.domain.review.service.ReviewService;
-import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
-import com.ssafy.umzip.global.common.BaseResponse;
-import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,9 +35,8 @@ public class ReviewController {
         createReviewRequest.setFrom(userId);
         return reviewService.creaetReviwe(createReviewRequest);
     }
-
-    @PostMapping("/all")
-    public ResponseEntity<Object> resiveReviewPage(@RequestBody AllReviewRequest allReviewRequest) {
-        return reviewService.resiveReviewPage(allReviewRequest);
+    @PostMapping("/test")
+    public ResponseEntity<List<MyReceiveReviewResponse>> test(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
+        return reviewService.myReceiveReviewRequest(myReceiveReviewRequest);
     }
 }

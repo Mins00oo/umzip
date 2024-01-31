@@ -21,11 +21,11 @@ public class ReviewReceiver {
     @Enumerated(EnumType.STRING)
     private Role receiverRole;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="review_id")
     Review review;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="member_id")
     Member member;
 

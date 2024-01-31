@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: env
+    active: local
   data:
     redis:
       host: ${REDIS_HOST}

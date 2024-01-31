@@ -2,15 +2,9 @@ package com.ssafy.umzip.domain.review.entity;
 
 
 import com.ssafy.umzip.domain.member.entity.Member;
-import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
-import com.ssafy.umzip.domain.reviewtag.entity.ReviewTag;
 import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -27,7 +21,7 @@ public class Review extends BaseTimeEntity {
     @Column(name = "review_content")
     private String content;
 
-    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @ManyToOne(cascade= CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name="member_id")
     private Member member;
 
