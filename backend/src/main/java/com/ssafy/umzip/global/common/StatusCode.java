@@ -33,7 +33,7 @@ public enum StatusCode {
     NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),
     NOT_VALID_BUSINESS_NUMBER(false, 401, "등록되지 않은 사업자 번호입니다."),
 
-    // BoardHelp: 500
+    // BoardHelp, BoardTrade: 500
     CODE_DOES_NOT_EXIST(false, 500, "해당 코드 소분류가 존재하지 않습니다."),
     NOT_EXIST_CODE(false, 501, "해당 코드 소분류가 존재하지 않습니다."),
     NOT_EXIST_BOARD(false, 502, "존재하지 않는 게시글 입니다."),

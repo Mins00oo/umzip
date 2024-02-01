@@ -2,9 +2,7 @@ package com.ssafy.umzip.domain.trade.controller;
 
 import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
 import com.ssafy.umzip.domain.member.entity.Member;
-import com.ssafy.umzip.domain.trade.dto.ListDto;
-import com.ssafy.umzip.domain.trade.dto.ListRequestDto;
-import com.ssafy.umzip.domain.trade.dto.PostRequestDto;
+import com.ssafy.umzip.domain.trade.dto.*;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import com.ssafy.umzip.domain.trade.service.BoardTradeService;
 import com.ssafy.umzip.global.common.BaseResponse;
@@ -76,4 +74,23 @@ public class BoardTradeController {
                 .body(new BaseResponse<>(listDto));
     }
 
+    /*[ 중고 게시글 상세조회 ]
+    *
+    * */
+    @GetMapping("/detail/{boardId}")
+    public ResponseEntity<Object> detailBoardTrade(@PathVariable("boardId") Long boardId,
+                                                   HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
+        DetailRequestDto requestDto = DetailRequestDto.builder()
+                .memberId(memberId)
+                .boardId(boardId)
+                .build();
+
+        DetailDto detailDto = service.detailBoardTrade(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(detailDto));
+    }
 }
