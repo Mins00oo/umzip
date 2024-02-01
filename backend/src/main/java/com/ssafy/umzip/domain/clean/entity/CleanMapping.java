@@ -46,4 +46,8 @@ public class CleanMapping {
         this.reissuing = reissuing;
         this.detail = detail;
     }
+    public void setCodeSmall (CodeSmall codeSmall){
+        this.codeSmall = codeSmall;
+    }
+
 }
