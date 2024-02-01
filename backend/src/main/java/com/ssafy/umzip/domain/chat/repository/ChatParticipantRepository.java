@@ -18,4 +18,10 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     @Query("select cp FROM ChatParticipant cp where cp.chatRoom.id=:chatRoomId AND " +
             "cp.member.id=:memberId")
     ChatParticipant findByChatRoomAndMember(@Param("chatRoomId") Long chatRoomId, @Param("memberId") Long memberId);
+
+    @Query("select cp.member FROM ChatParticipant cp where cp.chatRoom.id=:chatRoomId AND " +
+            "cp.member.id!=:memberId")
+    Member findByChatRoomAndMemberId(@Param("chatRoomId") Long chatRoomId, @Param("memberId") Long memberId);
+
+    List<ChatParticipant> findByChatRoomId(Long chatRoomId);
 }

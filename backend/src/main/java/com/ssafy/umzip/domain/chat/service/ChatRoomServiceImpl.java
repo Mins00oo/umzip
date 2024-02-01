@@ -1,8 +1,10 @@
 package com.ssafy.umzip.domain.chat.service;
 
 import com.ssafy.umzip.domain.chat.dto.ChatRoomListResponseDto;
+import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.entity.ChatParticipant;
 import com.ssafy.umzip.domain.chat.entity.ChatRoom;
+import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.umzip.domain.chat.repository.CustomChatParticipantRepository;
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final CustomChatParticipantRepository customChatParticipantRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     @Override
@@ -61,7 +67,34 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional(readOnly = true)
     @Override
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
-        return customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(memberId, role);
+
+        List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(memberId, role);
+        // 채팅방 ID 목록 가져오기
+        List<Long> chatRoomIds = chatRooms.stream()
+                .map(ChatRoomListResponseDto::getChatRoomId)
+                .collect(Collectors.toList());
+
+        // 채팅방 ID 목록으로 최근 메시지 가져오기
+        List<ChatMessage> recentMessages = customChatParticipantRepository.findRecentMessagesByChatRoomIds(chatRoomIds);
+
+        for (ChatMessage cm : recentMessages) {
+            System.out.println("cm = " + cm);
+        }
+
+        // 최근 메시지를 채팅방 ID를 기준으로 매핑
+        Map<Long, ChatMessage> recentMessageMap = recentMessages.stream()
+                .collect(Collectors.toMap(ChatMessage::getChatRoomId, Function.identity()));
+
+
+
+        // 채팅방 정보와 최근 메시지 병합
+        chatRooms.forEach(chatRoom -> {
+            ChatMessage recentMessage = recentMessageMap.get(chatRoom.getChatRoomId());
+            if (recentMessage != null) {
+                chatRoom.setLastContent(recentMessage.getContent());
+            }
+        });
+        return chatRooms;
     }
 
     @Transactional

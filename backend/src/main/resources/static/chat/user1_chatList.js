@@ -68,9 +68,11 @@ function displayChatRooms(rooms) {
         chatRoomList.append(
             `<a href="chat.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
                 <div class="chat-room-info">
-                    <div class="receiver-id">${chatRoom.chatRoomId}</div>
-                    <div class="receiver-name">${chatRoom.receiverName}</div>
                     <div class="receiver-profile-image"><img src="${chatRoom.receiverProfileImage}" alt="Profile Image"></div>
+                    <div class="chat-info">
+                        <div class="receiver-name">${chatRoom.receiverName}</div>
+                        <div class="last-message">${chatRoom.lastContent}</div>
+                    </div>
                     <div class="update-dt">${chatRoom.updateDt}</div>
                 </div>
             </a>`

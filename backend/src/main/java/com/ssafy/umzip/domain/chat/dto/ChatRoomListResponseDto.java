@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.chat.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,12 +19,15 @@ public class ChatRoomListResponseDto {
 
     private String receiverName;
 
+    @Setter
     private String updateDt;
 
-    // 최근 메시지가 추가되어야 함
+    @Setter
+    private String lastContent;
 
     @Builder
-    public ChatRoomListResponseDto(Long chatRoomId,Long receiverId, String receiverProfileImage, String receiverName, LocalDateTime updateDt) {
+    public ChatRoomListResponseDto(Long chatRoomId,Long receiverId, String receiverProfileImage, String receiverName,
+                                   LocalDateTime updateDt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.chatRoomId = chatRoomId;
         this.receiverId = receiverId;

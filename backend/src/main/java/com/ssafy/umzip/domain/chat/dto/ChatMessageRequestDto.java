@@ -1,7 +1,6 @@
 package com.ssafy.umzip.domain.chat.dto;
 
 import com.ssafy.umzip.domain.chat.entity.ChatMessage;
-import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
 import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,8 +24,6 @@ public class ChatMessageRequestDto {
         return ChatMessage.builder()
                 .content(requestDto.content)
                 .chatRoomId(chatRoomId)
-                .senderName(member.getName())
-                .senderProfileImage(member.getImageUrl())
                 .senderId(String.valueOf(member.getId()))
                 .build();
     }

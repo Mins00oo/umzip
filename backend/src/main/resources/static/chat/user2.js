@@ -70,11 +70,13 @@ function displayChatRooms(rooms) {
     rooms.forEach(function (chatRoom) {
         // 채팅방 상세 정보를 포함한 HTML 요소 생성 및 추가
         chatRoomList.append(
-            `<a href="chat2.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
+            `<a href="chat.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
                 <div class="chat-room-info">
-                    <div class="receiver-id">${chatRoom.chatRoomId}</div>
-                    <div class="receiver-name">${chatRoom.receiverName}</div>
                     <div class="receiver-profile-image"><img src="${chatRoom.receiverProfileImage}" alt="Profile Image"></div>
+                    <div class="chat-info">
+                        <div class="receiver-name">${chatRoom.receiverName}</div>
+                        <div class="last-message">${chatRoom.lastContent}</div>
+                    </div>
                     <div class="update-dt">${chatRoom.updateDt}</div>
                 </div>
             </a>`

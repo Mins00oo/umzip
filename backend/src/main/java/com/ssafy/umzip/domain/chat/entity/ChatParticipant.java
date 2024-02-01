@@ -31,17 +31,22 @@ public class ChatParticipant {
     private String role;
 
     @Column(name = "chat_participant_activated")
-    private boolean activated;
+    @Enumerated(EnumType.STRING)
+    private ChatRoomStatus status;
 
     @Builder
     public ChatParticipant(Member member, ChatRoom chatRoom, String role) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.role = role;
-        this.activated = true;
+        this.status = ChatRoomStatus.ENTER;
     }
 
     public void leaveChatRoom() {
-        this.activated = false;
+        this.status = ChatRoomStatus.LEAVE;
+    }
+
+    public void talkWithChatRoom() {
+        this.status = ChatRoomStatus.TALK;
     }
 }
