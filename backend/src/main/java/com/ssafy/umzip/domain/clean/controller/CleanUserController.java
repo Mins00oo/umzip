@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.clean.controller;
 import com.ssafy.umzip.domain.clean.dto.user.CleanCalRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
+import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
 import com.ssafy.umzip.domain.clean.service.CleanUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -68,7 +69,15 @@ public class CleanUserController {
         cleanUserService.createClean(companys,imageFileList,price,reservationRequestDto,memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
-
+    /*
+        유저 : 예약 전체 조회 API
+     */
+    @GetMapping("/reservation")
+    public ResponseEntity<Object> userReservationClean(HttpServletRequest request){
+        Long memberId = jwtTokenProvider.getId(request);
+        List<UserCleanReservationResponseDto> cleans = cleanUserService.userReservationClean(memberId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleans));
+    }
     /*
         계산기 필요 메서드들
      */

@@ -2,7 +2,7 @@ package com.ssafy.umzip.domain.clean.service;
 
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
-import org.springframework.web.bind.annotation.RequestPart;
+import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,4 +14,5 @@ public interface CleanUserService {
                      CleanReservationRequestDto reservationRequestDto,
                      Long memberId
     );
+    List<UserCleanReservationResponseDto> userReservationClean(Long memberId);
 }
