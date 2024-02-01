@@ -4,12 +4,10 @@ import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="board_trade")
@@ -41,8 +39,9 @@ public class BoardTrade extends BaseTimeEntity {
     @Column(name="board_trade_is_direct")
     private boolean isDirect;
 
-    @Column(name="board_trade_place")
-    private String place;
+    // address: 기본 주소 - 경기 성남시 분당구 판교역로 166
+    @Column(name="board_trade_address")
+    private String address;
 
     @Column(name="board_trade_read_count")
     private int readCnt;
@@ -56,7 +55,7 @@ public class BoardTrade extends BaseTimeEntity {
     @Builder
     public BoardTrade(Long id, CodeSmall codeSmall, Member member,
                       String title, String content, Long price,
-                      boolean isDirect, String place, int readCnt,
+                      boolean isDirect, String address, int readCnt,
                       int sigungu, String sigunguName) {
         this.id = id;
         this.codeSmall = codeSmall;
@@ -65,7 +64,7 @@ public class BoardTrade extends BaseTimeEntity {
         this.content = content;
         this.price = price;
         this.isDirect = isDirect;
-        this.place = place;
+        this.address = address;
         this.readCnt = readCnt;
         this.sigungu = sigungu;
         this.sigunguName = sigunguName;

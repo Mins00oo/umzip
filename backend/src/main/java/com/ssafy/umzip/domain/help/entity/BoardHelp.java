@@ -50,10 +50,6 @@ public class BoardHelp extends BaseTimeEntity {
     @Column(name="board_help_adopted")
     private Boolean isAdopted;
 
-    // 지금은 필요 없는 데이터지만, 나중에 확장성을 위해 남겨둠
-    @Column(name="board_help_sigungu_name")
-    private String sigunguName;
-
     @Builder
     public BoardHelp(String title, String content, int point, int readCnt,
                      int sigungu, Boolean isAdopted,
