@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.alarm.controller;
 
+import com.ssafy.umzip.domain.alarm.dto.AlarmResponse;
 import com.ssafy.umzip.domain.alarm.service.AlarmService;
 import com.ssafy.umzip.domain.tag.dto.TagListByLargeCodeResponce;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
@@ -19,10 +20,9 @@ public class AlarmController {
     private final JwtTokenProvider jwtTokenProvider;
     private final AlarmService alarmService;
     @GetMapping()
-    public ResponseEntity<Object> createReview(@RequestParam int limit, @RequestParam int offset, HttpServletRequest request) {
-        // token값에서 작성자 ID 획득
-        Long userId = jwtTokenProvider.getId(request);
-        
-        return null;
+    public ResponseEntity<List<AlarmResponse>> createReview(@RequestParam int limit, @RequestParam int offset, HttpServletRequest request) {
+        Long memberId = jwtTokenProvider.getId(request);
+
+        return alarmService.alarmList(limit, offset, memberId);
     }
 }
