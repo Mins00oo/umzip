@@ -13,5 +13,6 @@ public interface ReviewService {
     ResponseEntity<Object> creaetReviwe(CreateReviewRequest createReviewRequest);
 
     ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest);
+    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest);
 }
 

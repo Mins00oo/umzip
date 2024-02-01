@@ -35,8 +35,14 @@ public class ReviewController {
         createReviewRequest.setFrom(userId);
         return reviewService.creaetReviwe(createReviewRequest);
     }
-    @PostMapping("/test")
-    public ResponseEntity<List<MyReceiveReviewResponse>> test(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
+    @PostMapping("/myReceive")
+    public ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
         return reviewService.myReceiveReviewRequest(myReceiveReviewRequest);
+    }
+    @PostMapping("/myWrite")
+    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getId(request);
+        myReceiveReviewRequest.setMemberId(userId);
+        return reviewService.myWriteReviewRequest(myReceiveReviewRequest);
     }
 }
