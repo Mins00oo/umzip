@@ -16,11 +16,11 @@ public class BoardTradeActive {
     @Column(name="board_trade_active_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_trade_id")
     private BoardTrade boardTrade;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
