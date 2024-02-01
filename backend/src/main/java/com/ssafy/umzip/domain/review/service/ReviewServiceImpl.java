@@ -117,4 +117,29 @@ public class ReviewServiceImpl implements ReviewService {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(customReviewRepository.findReviewsForUser(myReceiveReviewRequest));
     }
 
+    @Override
+    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
+        Pageable pageable = PageRequest.of(myReceiveReviewRequest.getOffset(), myReceiveReviewRequest.getLimit());
+        Optional<List<MyReceiveReviewResponse>> reviewResponses = reviewRepository.findWriteReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), pageable);
+
+        if (reviewResponses.isPresent()) {
+
+            List<MyReceiveReviewResponse> reviewList = reviewResponses.get();
+
+            // 태그 정보 획득
+            for (int i = 0; i < reviewList.size(); i++) {
+                List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewList.get(i).getId()).get();
+                List<String> tagNames = new ArrayList<>();
+                for (int j = 0; j < tags.size(); j++) {
+                    tagNames.add(tags.get(j).getTag().getTagName());
+                }
+                reviewList.get(i).setTag(tagNames);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(reviewResponses.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

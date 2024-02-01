@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class MyReceiveReviewResponse {
     private Long id;
@@ -21,7 +21,7 @@ public class MyReceiveReviewResponse {
     private String content;
     private float score;
     private LocalDateTime createDt;
-    private List<String> tag;
+    private List<String> tag = new ArrayList<>();
 
     public MyReceiveReviewResponse(Long id, String memberName, String memberImageUrl,
                                    Role receiverRole, String content, float score,
@@ -33,5 +33,17 @@ public class MyReceiveReviewResponse {
         this.content = content;
         this.score = score;
         this.createDt = createDt;
+    }
+    public MyReceiveReviewResponse(Long id, String memberName, String memberImageUrl,
+                                   Role receiverRole, String content, float score,
+                                   LocalDateTime createDt, String tag) {
+        this.id = id;
+        this.memberName = memberName;
+        this.memberImageUrl = memberImageUrl;
+        this.receiverRole = receiverRole;
+        this.content = content;
+        this.score = score;
+        this.createDt = createDt;
+        this.tag.add(tag);
     }
 }
