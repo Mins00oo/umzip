@@ -41,6 +41,15 @@ public class DeliveryUserController {
         DeliveryUserController.fuelApiKey = fuelApiKey;
     }
     /*
+        프론트 : 차 List
+     */
+    @GetMapping("/car")
+    public ResponseEntity<Object> getCarInfo(){
+        List<CarResponseDto> carInfo = deliveryUserService.getCarInfo();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(carInfo));
+    }
+
+    /*
         고객 : 예약 신청
      */
     @PostMapping("/reservation")

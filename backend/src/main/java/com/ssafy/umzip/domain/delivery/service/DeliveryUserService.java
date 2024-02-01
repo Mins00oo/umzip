@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface DeliveryUserService {
+     //프론트
+     List<CarResponseDto> getCarInfo();
      //사용자
      void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                          List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,

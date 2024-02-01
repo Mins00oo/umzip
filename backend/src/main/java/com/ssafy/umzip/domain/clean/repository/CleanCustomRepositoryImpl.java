@@ -17,7 +17,6 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
 
     @Override
     public Boolean updateCodeAndReissuingAndDetail(CleanQuotationRequestDto dto, CodeSmall codeSmall) {
-
         long result = queryFactory
                 .update(cleanMapping)
                 .set(cleanMapping.detail, dto.getDetail())

@@ -44,14 +44,18 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final S3Service s3Service;
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryMappingRepository deliveryMappingRepository;
-    private final DeliveryMappingCustomRepository deliveryMappingCustomRepository;
+    private final DeliveryCustomRepository deliveryCustomRepository;
     private final CustomReviewReceiverRepository reviewReceiverRepository;
 
 
+    @Override
+    public List<CarResponseDto> getCarInfo() {
+        return deliveryCustomRepository.getCarInfo();
+    }
 
     /*
-        예약 신청
-     */
+            예약 신청
+         */
     @Override
     public void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                                List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
@@ -127,7 +131,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         LocalDateTime endTime = getLocalDateTime(dto.getEndTime());
 
         //2. 시간 연산은 쿼리에서
-        List<DeliveryMatchingCompanyDto> list = deliveryMappingCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu(),dto.getLimit());
+        List<DeliveryMatchingCompanyDto> list = deliveryCustomRepository.findCompanyMatchingList(startTime, endTime, dto.getSigungu(),dto.getLimit());
         List<Long> memberIdList = list.stream() //company->memberId만 List로 뽑아옴.
                 .map(DeliveryMatchingCompanyDto::getMemberId)
                 .toList();
@@ -155,7 +159,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @Override
     public List<UserDeliveryReservationDto> userReservationDelivery(Long memberId) {
         //distinct한 deliveryId
-        return deliveryMappingCustomRepository.findUserReservationInfo(memberId);
+        return deliveryCustomRepository.findUserReservationInfo(memberId);
     }
 
 

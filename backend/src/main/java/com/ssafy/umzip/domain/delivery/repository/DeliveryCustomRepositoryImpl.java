@@ -14,14 +14,30 @@ import java.util.stream.Collectors;
 
 import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
+import static com.ssafy.umzip.domain.delivery.entity.QCar.car;
 import static com.ssafy.umzip.domain.delivery.entity.QDelivery.delivery;
 import static com.ssafy.umzip.domain.delivery.entity.QDeliveryMapping.deliveryMapping;
 import static com.ssafy.umzip.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 @Repository
-public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCustomRepository {
+public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<CarResponseDto> getCarInfo() {
+        return queryFactory
+                .select(Projections.constructor(
+                                CarResponseDto.class,
+                                car.id.as("carId"),
+                                car.name.as("name"),
+                                car.description.as("description")
+                        )
+                )
+                .from(car)
+                .fetch();
+    }
+
     @Override
     public List<UserDeliveryReservationDto> findUserReservationInfo(Long memberId) {
 
