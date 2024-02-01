@@ -18,13 +18,13 @@ public class PostRequestDto {
     private boolean isDirect;
     private int sigungu;
     private String sigunguName;
-    private String place;
+    private String address;
 
     @Builder
     public PostRequestDto(Long memberId, int memberSigungu,
                           String title, Long price, String content,
                           boolean isDirect, int sigungu, String sigunguName,
-                          String place) {
+                          String address) {
         setMemeber(memberId, memberSigungu);
         this.title = title;
         this.price = price;
@@ -32,7 +32,7 @@ public class PostRequestDto {
         this.isDirect = isDirect;
         this.sigungu = sigungu;
         this.sigunguName = sigunguName;
-        this.place = place;
+        this.address = address;
     }
 
     public void setMemeber(Long memberId, int memberSigungu) {
@@ -50,7 +50,7 @@ public class PostRequestDto {
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
                 .isDirect(requestDto.isDirect())
-                .place(requestDto.getPlace())
+                .address(requestDto.getAddress())
                 .readCnt(readCnt)
                 .sigungu(requestDto.getSigungu())
                 .sigunguName(requestDto.getSigunguName())
