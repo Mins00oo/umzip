@@ -15,4 +15,5 @@ public interface CleanUserService {
                      Long memberId
     );
     List<UserCleanReservationResponseDto> userReservationClean(Long memberId);
+    Boolean cancelClean(Long mappingId,Long memberId);
 }

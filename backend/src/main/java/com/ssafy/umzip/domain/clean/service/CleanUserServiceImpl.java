@@ -70,6 +70,19 @@ public class CleanUserServiceImpl implements CleanUserService{
     public List<UserCleanReservationResponseDto> userReservationClean(Long memberId) {
         return cleanCustomRepository.findUserReservationInfo(memberId);
     }
+    /*
+        유저 : 예약 취소 API
+     */
+    @Override
+    public Boolean cancelClean(Long mappingId, Long memberId) {
+        CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
+        if(cleanMapping.getMember().getId()!=memberId){
+            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        }
+        CodeSmall codeSmall = codeSmallRepository.findById(205L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+        cleanMapping.setCodeSmall(codeSmall);
+        return true;
+    }
 
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {
         for(MultipartFile file: imageFileList){
