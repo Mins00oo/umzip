@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,6 +95,7 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     public ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
+
         Pageable pageable = PageRequest.of(myReceiveReviewRequest.getOffset(), myReceiveReviewRequest.getLimit());
         Optional<List<MyReceiveReviewResponse>> reviewResponses = reviewRepository.findReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), Role.valueOf(myReceiveReviewRequest.getRole()), pageable);
 
@@ -101,15 +103,14 @@ public class ReviewServiceImpl implements ReviewService {
 
             List<MyReceiveReviewResponse> reviewList = reviewResponses.get();
 
-            // 태그 정보 획득
-            for (int i = 0; i < reviewList.size(); i++) {
-                List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewList.get(i).getId()).get();
-                List<String> tagNames = new ArrayList<>();
-                for (int j = 0; j < tags.size(); j++) {
-                    tagNames.add(tags.get(j).getTag().getTagName());
-                }
-                reviewList.get(i).setTag(tagNames);
-            }
+            // 각 리뷰에 대한 태그 정보 가져오기
+            reviewList.forEach(reviewResponse -> {
+                List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewResponse.getId()).orElse(Collections.emptyList());
+                List<String> tagNames = tags.stream()
+                        .map(tag -> tag.getTag().getTagName())
+                        .collect(Collectors.toList());
+                reviewResponse.setTag(tagNames);
+            });
             return ResponseEntity.status(HttpStatus.OK).body(reviewResponses.get());
         } else {
             return ResponseEntity.notFound().build();
@@ -126,19 +127,19 @@ public class ReviewServiceImpl implements ReviewService {
 
             List<MyReceiveReviewResponse> reviewList = reviewResponses.get();
 
-            // 태그 정보 획득
-            for (int i = 0; i < reviewList.size(); i++) {
-                List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewList.get(i).getId()).get();
-                List<String> tagNames = new ArrayList<>();
-                for (int j = 0; j < tags.size(); j++) {
-                    tagNames.add(tags.get(j).getTag().getTagName());
-                }
-                reviewList.get(i).setTag(tagNames);
-            }
+            // 각 리뷰에 대한 태그 정보 가져오기
+            reviewList.forEach(reviewResponse -> {
+                List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewResponse.getId()).orElse(Collections.emptyList());
+                List<String> tagNames = tags.stream()
+                        .map(tag -> tag.getTag().getTagName())
+                        .collect(Collectors.toList());
+                reviewResponse.setTag(tagNames);
+            });
             return ResponseEntity.status(HttpStatus.OK).body(reviewResponses.get());
         } else {
             return ResponseEntity.notFound().build();
         }
+
     }
 
 

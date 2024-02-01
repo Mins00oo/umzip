@@ -34,7 +34,7 @@ public interface ReviewRepository  extends JpaRepository<Review, Long>, CustomRe
             "r.createDt) " +
             "FROM Review r " +
             "JOIN ReviewReceiver rr ON r.id = rr.review.id " +
-            "LEFT JOIN Company c ON rr.member.id = c.member.id AND c.role = rr.receiverRole " +
+            "LEFT JOIN Company c ON rr.member.id = c.member.id  AND c.role = 'USER' OR  c.role = rr.receiverRole " +
             "LEFT JOIN Member m ON rr.member.id = m.id AND c.role IS NULL " +
             "WHERE r.member.id = :memberId " +
             "ORDER BY r.createDt DESC")
