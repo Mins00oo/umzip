@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 @Setter
 @NoArgsConstructor
 public class CleanQuotationRequestDto {
+    private Long mappingId;
     private Long reissuing;
     private String detail;
     @Builder
-    public CleanQuotationRequestDto(Long reissuing, String detail) {
+    public CleanQuotationRequestDto(Long mappingId, Long reissuing, String detail) {
+        this.mappingId = mappingId;
         this.reissuing = reissuing;
         this.detail = detail;
     }

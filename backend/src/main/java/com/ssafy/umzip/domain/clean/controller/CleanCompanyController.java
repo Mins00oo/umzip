@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,22 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class CleanCompanyController {
     private final CleanCompanyService cleanCompanyService;
     private final JwtTokenProvider jwtTokenProvider;
-    @PutMapping("/rejection")
+    @PostMapping("/rejection")
     public ResponseEntity<Object> rejectionClean(@RequestBody CleanRejectionRequestDto rejectionRequestDto,
                                                  HttpServletRequest request
     ){
         Long companyId = jwtTokenProvider.getId(request);
         Boolean result = cleanCompanyService.rejectionClean(rejectionRequestDto.getMappingId(),companyId);
-
         return result?ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS)):
                 ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.FAIL_TO_REJECTION));
     }
-    @PutMapping("/quotation")
+    @PostMapping("/quotation")
     public ResponseEntity<Object> quotationClean(@RequestBody CleanQuotationRequestDto requestDto,
                                                  HttpServletRequest request){
         Long id = jwtTokenProvider.getId(request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+        Boolean result = cleanCompanyService.quotationClean(requestDto, id);
+        return result?ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS))
+                :ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.FAIL_TO_QUOTATION));
     }
 
 
