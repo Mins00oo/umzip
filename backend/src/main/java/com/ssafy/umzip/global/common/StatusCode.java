@@ -41,6 +41,7 @@ public enum StatusCode {
     NOT_POST_COMMENT(false, 504, "채택된 글에 댓글을 작성할 수 없습니다."),
     NOT_EXIST_COMMENT_PK(false, 505, "해당 ID로 댓글을 찾을 수 없습니다."),
     ALREADY_ADOPT_BOARD(false, 506, "이미 채택된 글입니다."),
+    NOT_PURCHASED_FROM_POST(false, 507, "현재 회원은 해당 게시글에서 중고 물품을 구매하지 않았습니다."),
 
     // DELIVERY : 600
     NOT_EXIST_CAR(false,600, "존재하지 않는 차종입니다."),
