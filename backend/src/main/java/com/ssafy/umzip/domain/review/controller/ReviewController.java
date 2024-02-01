@@ -40,7 +40,9 @@ public class ReviewController {
         return reviewService.myReceiveReviewRequest(myReceiveReviewRequest);
     }
     @PostMapping("/myWrite")
-    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
+    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getId(request);
+        myReceiveReviewRequest.setMemberId(userId);
         return reviewService.myWriteReviewRequest(myReceiveReviewRequest);
     }
 }
