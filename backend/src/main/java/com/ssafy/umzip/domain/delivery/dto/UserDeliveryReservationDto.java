@@ -11,34 +11,34 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
-public class UserReservationDto {
+public class UserDeliveryReservationDto {
     private Long id;
     private LocalDateTime createDt;
     private LocalDateTime startTime;
-    private int sigungu;
+    private String departure;
     private Long status;
     private List<UserDeliveryMappingDto> list= new ArrayList<>();
     @Builder
-    public UserReservationDto(Delivery delivery) {
+    public UserDeliveryReservationDto(Delivery delivery) {
         this.id = delivery.getId();
         this.createDt = delivery.getCreateDt();
         this.startTime = delivery.getStartTime();
-        this.sigungu = delivery.getSigungu();
+        this.departure = delivery.getDeparture();
     }
     @Builder
-    public UserReservationDto(Long id, LocalDateTime createDt, LocalDateTime startTime, int sigungu, Long status) {
+    public UserDeliveryReservationDto(Long id, LocalDateTime createDt, LocalDateTime startTime, String departure, Long status) {
         this.id = id;
         this.createDt = createDt;
         this.startTime = startTime;
-        this.sigungu = sigungu;
+        this.departure = departure;
         this.status = status;
     }
     @Builder
-    public UserReservationDto(Long id, LocalDateTime createDt, LocalDateTime startTime, int sigungu) {
+    public UserDeliveryReservationDto(Long id, LocalDateTime createDt, LocalDateTime startTime, String departure) {
         this.id = id;
         this.createDt = createDt;
         this.startTime = startTime;
-        this.sigungu = sigungu;
+        this.departure = departure;
     }
     public void addUserDeliveryMapping(UserDeliveryMappingDto dto){
         list.add(dto);

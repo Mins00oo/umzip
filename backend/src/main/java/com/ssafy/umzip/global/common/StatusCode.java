@@ -51,12 +51,19 @@ public enum StatusCode {
     NOT_EXIST_DELIVERY(false,604,"존재하지 않는 용달 주문건입니다."),
     FAIL_TO_QUOTATION(false,605,"견적 제안 요청이 실패했습니다."),
     INVALID_ACCESS_DELIVERY(false,606,"요청한 업체와 수정 적용 대상이 다른 업체입니다"),
+    FAIL_TO_REJECTION(false,607,"업체의 견적 거절 요청이 실패했습니다."),
     
 
 
     // REVIEW & TAG : 700
     NOT_EXIST_REVIEW(false,700, "존재하지 않는 리뷰입니다."),
-    NOT_EXIST_TAG(false,701, "존재하지 않는 태그입니다.");
+    NOT_EXIST_TAG(false,701, "존재하지 않는 태그입니다."),
+
+    // CLEAN : 800
+    NOT_EXIST_CLEAN_MAPPING(false,801,"존재하지 않는 청소 매칭건입니다."),
+    NOT_EXIST_CLEAN(false,802,"존재하지 않는 청소 주문건입니다."),
+    INVALID_ACCESS_CLEAN(false,803,"요청한 업체와 수정 적용 대상이 다른 업체입니다"),
+    INVALID_ACCESS_CLEAN_MAPPING(false,804,"요청한 유저와 수정 적용 대상이 다른 유저입니다.");
 
 
 

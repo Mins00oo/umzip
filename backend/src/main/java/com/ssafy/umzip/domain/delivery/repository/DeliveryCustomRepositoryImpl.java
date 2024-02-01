@@ -14,24 +14,40 @@ import java.util.stream.Collectors;
 
 import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
+import static com.ssafy.umzip.domain.delivery.entity.QCar.car;
 import static com.ssafy.umzip.domain.delivery.entity.QDelivery.delivery;
 import static com.ssafy.umzip.domain.delivery.entity.QDeliveryMapping.deliveryMapping;
 import static com.ssafy.umzip.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 @Repository
-public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCustomRepository {
+public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
     private final JPAQueryFactory queryFactory;
-    @Override
-    public List<UserReservationDto> findUserReservationInfo(Long memberId) {
 
-        List<UserReservationDto> result = queryFactory
+    @Override
+    public List<CarResponseDto> getCarInfo() {
+        return queryFactory
                 .select(Projections.constructor(
-                        UserReservationDto.class,
+                                CarResponseDto.class,
+                                car.id.as("carId"),
+                                car.name.as("name"),
+                                car.description.as("description")
+                        )
+                )
+                .from(car)
+                .fetch();
+    }
+
+    @Override
+    public List<UserDeliveryReservationDto> findUserReservationInfo(Long memberId) {
+
+        List<UserDeliveryReservationDto> result = queryFactory
+                .select(Projections.constructor(
+                        UserDeliveryReservationDto.class,
                         delivery.id.as("id"),
                         delivery.createDt.as("createDt"),
                         delivery.startTime.as("startTime"),
-                        delivery.sigungu.as("sigungu")
+                        delivery.departure.as("departure")
                 ))
                 .from(deliveryMapping)
                 .join(deliveryMapping.delivery, delivery)
@@ -48,7 +64,9 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                         deliveryMapping.codeSmall.id.as("codeSmallId"),
                         company.id.as("companyId"),
                         company.name.as("companyName"),
-                        company.imageUrl.as("imageUrl")
+                        company.imageUrl.as("imageUrl"),
+                        deliveryMapping.price.as("price"),
+                        deliveryMapping.reissuing.as("reissuing")
                 ))
                 .from(deliveryMapping)
                 .join(deliveryMapping.delivery, delivery)
@@ -66,6 +84,8 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                                         .imageUrl(dto.getImageUrl())
                                         .detail(dto.getDetail())
                                         .codeSmallId(dto.getCodeSmallId())
+                                        .reissuing(dto.getReissuing())
+                                        .price(dto.getPrice())
                                         .build(), Collectors.toList())
                 ));
 

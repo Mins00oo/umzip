@@ -5,7 +5,7 @@ import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.delivery.dto.CompanyReservationDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
-import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingCustomRepository;
+import com.ssafy.umzip.domain.delivery.repository.DeliveryCustomRepository;
 import com.ssafy.umzip.domain.delivery.repository.DeliveryMappingRepository;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     private final DeliveryMappingRepository deliveryMappingRepository;
     private final CodeSmallRepository codeSmallRepository;
-    private final DeliveryMappingCustomRepository deliveryMappingCustomRepository;
+    private final DeliveryCustomRepository deliveryCustomRepository;
     @Override
     public void rejectionDelivery(Long mappingId,Long companyId) {
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
@@ -40,12 +40,12 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
         if(!Objects.equals(deliveryMapping.getCompany().getId(), companyId)){
             throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
         }
-        return deliveryMappingCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
+        return deliveryCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
     }
 
     @Override
     public List<CompanyReservationDto> companyReservationDelivery(Long companyId) {
-        return deliveryMappingCustomRepository.findCompanyReservationInfo(companyId);
+        return deliveryCustomRepository.findCompanyReservationInfo(companyId);
     }
 }
 

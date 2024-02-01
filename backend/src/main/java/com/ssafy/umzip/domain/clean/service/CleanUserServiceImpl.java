@@ -2,9 +2,13 @@ package com.ssafy.umzip.domain.clean.service;
 
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
+import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
 import com.ssafy.umzip.domain.clean.entity.Clean;
 import com.ssafy.umzip.domain.clean.entity.CleanImage;
 import com.ssafy.umzip.domain.clean.entity.CleanMapping;
+import com.ssafy.umzip.domain.clean.repository.CleanCustomRepository;
+import com.ssafy.umzip.domain.clean.repository.CleanCustomRepositoryImpl;
+import com.ssafy.umzip.domain.clean.repository.CleanMappingRepository;
 import com.ssafy.umzip.domain.clean.repository.CleanRepository;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
@@ -35,6 +39,8 @@ public class CleanUserServiceImpl implements CleanUserService{
     private final CodeSmallRepository codeSmallRepository;
     private final MemberRepository memberRepository;
     private final CompanyRepository companyRepository;
+    private final CleanMappingRepository cleanMappingRepository;
+    private final CleanCustomRepository cleanCustomRepository;
 
     @Override
     public void createClean(List<CleanReservationCompanyDto> companys,
@@ -55,6 +61,27 @@ public class CleanUserServiceImpl implements CleanUserService{
         setImages(imageFileList, clean);
 
         cleanRepository.save(clean);
+    }
+    /*
+        유저 : 예약 정보 확인
+     */
+
+    @Override
+    public List<UserCleanReservationResponseDto> userReservationClean(Long memberId) {
+        return cleanCustomRepository.findUserReservationInfo(memberId);
+    }
+    /*
+        유저 : 예약 취소 API
+     */
+    @Override
+    public Boolean cancelClean(Long mappingId, Long memberId) {
+        CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
+        if(cleanMapping.getMember().getId()!=memberId){
+            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        }
+        CodeSmall codeSmall = codeSmallRepository.findById(205L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+        cleanMapping.setCodeSmall(codeSmall);
+        return true;
     }
 
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {

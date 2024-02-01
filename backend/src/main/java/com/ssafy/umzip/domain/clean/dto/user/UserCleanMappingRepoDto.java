@@ -1,11 +1,13 @@
-package com.ssafy.umzip.domain.delivery.dto;
+package com.ssafy.umzip.domain.clean.dto.user;
 
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDeliveryMappingDto {
+public class UserCleanMappingRepoDto {
+    private Long cleanId;
     private Long mappingId;
     private Long companyId;
     private String companyName;
@@ -14,10 +16,9 @@ public class UserDeliveryMappingDto {
     private Long codeSmallId;
     private Long price;
     private Long reissuing;
-
     @Builder
-
-    public UserDeliveryMappingDto(Long mappingId, Long companyId, String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
+    public UserCleanMappingRepoDto(Long cleanId, Long mappingId, Long companyId, String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
+        this.cleanId = cleanId;
         this.mappingId = mappingId;
         this.companyId = companyId;
         this.companyName = companyName;

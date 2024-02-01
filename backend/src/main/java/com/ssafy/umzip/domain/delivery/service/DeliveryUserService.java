@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface DeliveryUserService {
+     //프론트
+     List<CarResponseDto> getCarInfo();
      //사용자
      void createDelivery(DeliveryReservationRequestDto deliveryReservationRequestDto,
                          List<DeliveryRequestCompanyDto> deliveryRequestCompanyDtoList,
@@ -15,6 +17,6 @@ public interface DeliveryUserService {
      DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice);
      void cancelDelivery(Long mappingId);
      List<DeliveryMatchingCompanyDto> companyMatchingListDelivery(DeliveryCompanyListRequestDto dto);
-     List<UserReservationDto> userReservationDelivery(Long memberId);
+     List<UserDeliveryReservationDto> userReservationDelivery(Long memberId);
 
 }
