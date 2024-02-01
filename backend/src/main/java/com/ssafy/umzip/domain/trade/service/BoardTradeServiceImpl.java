@@ -9,7 +9,9 @@ import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
 import com.ssafy.umzip.domain.trade.dto.*;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
+import com.ssafy.umzip.domain.trade.entity.BoardTradeActive;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeImage;
+import com.ssafy.umzip.domain.trade.repository.BoardTradeActiveRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeImageRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeRepository;
 import com.ssafy.umzip.global.common.Role;
@@ -37,6 +39,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
     private final BoardTradeRepository boardTradeRepository;
     private final BoardTradeImageRepository boardTradeImageRepository;
+    private final BoardTradeActiveRepository boardTradeActiveRepository;
     private final MemberRepository memberRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final ReviewReceiverRepository reviewReceiverRepository;
@@ -44,6 +47,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     private final S3Service s3Service;
 
     private final Long IS_ON_SALE = 301L;   // 판매중
+    private final Long IS_COMPLETE_SALE = 302L; // 판매 완료
 
     @Transactional
     @Override
@@ -97,34 +101,45 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     @Override
     public DetailDto detailBoardTrade(DetailRequestDto requestDto) {
 
-        Member member = memberRepository.findById(requestDto.getMemberId())
+        Long curMemberId = requestDto.getMemberId();
+        Long curBoardId = requestDto.getBoardId();
+        Member member = memberRepository.findById(curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
-
-
-        BoardTrade boardTrade = boardTradeRepository.findById(requestDto.getBoardId())
+        BoardTrade boardTrade = boardTradeRepository.findById(curBoardId)
                 .orElseThrow(()-> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
         boardTrade.setReadCnt(boardTrade.getReadCnt() + 1);
 
-        Double rating = reviewReceiverRepository.findAverageScoreReceivedByMemberIdAndReceiverRole(boardTrade.getMember().getId(), Role.USER)
+        Long boardWriterId = boardTrade.getMember().getId();
+
+        Double rating = reviewReceiverRepository.findAverageScoreReceivedByMemberIdAndReceiverRole(boardWriterId, Role.USER)
                 .orElse(0.0);
 
         boolean isWriter = false;
-        if (Objects.equals(member.getId(), boardTrade.getMember().getId())) {
+        if (Objects.equals(curMemberId, boardWriterId)) {
             isWriter = true;
         }
-        // 중고 게시글 table 의 하나의 column 에 판매완료, 구매완료 상태가 공존할 수 없음
-        // 판매중, 판매완료 2개만 저장
-        // 판매완료인 경우 구매자는 구매완료로 보인다.
 
-        List<BoardTradeImage> boardTradeImageList = boardTradeImageRepository.findAllByBoardTradeId(requestDto.getBoardId());
+        boolean isActive = false;
+        if (Objects.equals(boardTrade.getCodeSmall().getId(), IS_COMPLETE_SALE)) {
+            // BoardTrade에는 302로 저장하지만, 보여줄 때는 302 또는 303으로 구분한다.
+            BoardTradeActive boardTradeActive = boardTradeActiveRepository
+                    .findByMemberIdAndBoardTradeId(curMemberId, curBoardId)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_PURCHASED_FROM_POST));
+
+            if (boardTradeActive.getIsActive()) {
+                isActive = true;
+            }
+        }
+
+        List<BoardTradeImage> boardTradeImageList = boardTradeImageRepository.findAllByBoardTradeId(curBoardId);
         List<String> filePathList = new ArrayList<>();
         for (BoardTradeImage boardTradeImage : boardTradeImageList) {
             filePathList.add(boardTradeImage.getPath());
         }
 
-        DetailDto detailDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter);
+        DetailDto detailDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter, isActive);
 
 
         return detailDto;
@@ -133,10 +148,5 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
     // 판매 완료 상태로 전환 - 작성자 + 판매완료 버튼 클릭
 
-    // 남의 프로필 페이지 - 판매물품( 판매중, 판매완료 ), 구매물품
-    //                 - 도움구인, 도움내역
-    // 댓글을 작성한 글은 안 보여주나?
-    
-    // 중고 게시글 - 판매중, 판매완료
-    // 구며여부 테이블 - 구매 여부
+    // 구매여부 테이블 - 구매 여부: 후기작성을 끝내면 구매완료 테이블에 추가한다.
 }
