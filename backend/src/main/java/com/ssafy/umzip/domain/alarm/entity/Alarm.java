@@ -4,7 +4,6 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

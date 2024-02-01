@@ -12,22 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
 
     private final AlarmRepository alarmRepository;
-    private final MemberRepository memberRepository;
 
     @Override
     public ResponseEntity<List<AlarmResponse>> alarmList(int limit, int offset, Long memberId) {
-
         Pageable pageable = PageRequest.of(offset, limit);
-
         Page<AlarmResponse> alarmPage = alarmRepository.findAlarmResponseByMemberId(memberId, pageable);
-//        List<AlarmResponse> alarmList = alarmPage.getContent();
 
         return ResponseEntity.status(HttpStatus.OK).body(alarmPage.getContent());
     }

@@ -9,9 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Optional;
-
     public interface AlarmRepository extends JpaRepository<Alarm, Long> {
         @Query("SELECT new com.ssafy.umzip.domain.alarm.dto.AlarmResponse(a.id, a.content, a.isRead, a.createDt) FROM Alarm a WHERE a.member.id = :memberId Order By a.createDt desc")
         Page<AlarmResponse> findAlarmResponseByMemberId(@Param("memberId") Long memberId, Pageable pageable);

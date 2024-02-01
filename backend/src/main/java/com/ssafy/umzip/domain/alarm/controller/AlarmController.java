@@ -2,7 +2,6 @@ package com.ssafy.umzip.domain.alarm.controller;
 
 import com.ssafy.umzip.domain.alarm.dto.AlarmResponse;
 import com.ssafy.umzip.domain.alarm.service.AlarmService;
-import com.ssafy.umzip.domain.tag.dto.TagListByLargeCodeResponce;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
