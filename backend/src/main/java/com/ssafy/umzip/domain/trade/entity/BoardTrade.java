@@ -43,6 +43,7 @@ public class BoardTrade extends BaseTimeEntity {
     @Column(name="board_trade_address")
     private String address;
 
+    @Setter
     @Column(name="board_trade_read_count")
     private int readCnt;
 

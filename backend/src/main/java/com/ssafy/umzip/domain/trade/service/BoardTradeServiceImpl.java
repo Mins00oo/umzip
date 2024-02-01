@@ -6,13 +6,13 @@ import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
-import com.ssafy.umzip.domain.trade.dto.ListDto;
-import com.ssafy.umzip.domain.trade.dto.ListRequestDto;
-import com.ssafy.umzip.domain.trade.dto.PostRequestDto;
+import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
+import com.ssafy.umzip.domain.trade.dto.*;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeImage;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeImageRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeRepository;
+import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     private final BoardTradeImageRepository boardTradeImageRepository;
     private final MemberRepository memberRepository;
     private final CodeSmallRepository codeSmallRepository;
+    private final ReviewReceiverRepository reviewReceiverRepository;
 
     private final S3Service s3Service;
 
@@ -90,7 +93,50 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         return listDto;
     }
 
+    @Transactional
+    @Override
+    public DetailDto detailBoardTrade(DetailRequestDto requestDto) {
 
-    // 판매 완료 상태로 전환
-    // 구매 완료 상태로 전환
+        Member member = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
+
+
+        BoardTrade boardTrade = boardTradeRepository.findById(requestDto.getBoardId())
+                .orElseThrow(()-> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        boardTrade.setReadCnt(boardTrade.getReadCnt() + 1);
+
+        Double rating = reviewReceiverRepository.findAverageScoreReceivedByMemberIdAndReceiverRole(boardTrade.getMember().getId(), Role.USER)
+                .orElse(0.0);
+
+        boolean isWriter = false;
+        if (Objects.equals(member.getId(), boardTrade.getMember().getId())) {
+            isWriter = true;
+        }
+        // 중고 게시글 table 의 하나의 column 에 판매완료, 구매완료 상태가 공존할 수 없음
+        // 판매중, 판매완료 2개만 저장
+        // 판매완료인 경우 구매자는 구매완료로 보인다.
+
+        List<BoardTradeImage> boardTradeImageList = boardTradeImageRepository.findAllByBoardTradeId(requestDto.getBoardId());
+        List<String> filePathList = new ArrayList<>();
+        for (BoardTradeImage boardTradeImage : boardTradeImageList) {
+            filePathList.add(boardTradeImage.getPath());
+        }
+
+        DetailDto detailDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter);
+
+
+        return detailDto;
+    }
+
+
+    // 판매 완료 상태로 전환 - 작성자 + 판매완료 버튼 클릭
+
+    // 남의 프로필 페이지 - 판매물품( 판매중, 판매완료 ), 구매물품
+    //                 - 도움구인, 도움내역
+    // 댓글을 작성한 글은 안 보여주나?
+    
+    // 중고 게시글 - 판매중, 판매완료
+    // 구며여부 테이블 - 구매 여부
 }

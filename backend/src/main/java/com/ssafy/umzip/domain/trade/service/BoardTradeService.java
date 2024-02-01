@@ -1,8 +1,6 @@
 package com.ssafy.umzip.domain.trade.service;
 
-import com.ssafy.umzip.domain.trade.dto.ListDto;
-import com.ssafy.umzip.domain.trade.dto.ListRequestDto;
-import com.ssafy.umzip.domain.trade.dto.PostRequestDto;
+import com.ssafy.umzip.domain.trade.dto.*;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,4 +13,6 @@ public interface BoardTradeService {
     void PostBoardTrade(PostRequestDto requestDto, List<MultipartFile> files);
 
     Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable);
+
+    DetailDto detailBoardTrade(DetailRequestDto requestDto);
 }
