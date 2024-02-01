@@ -15,6 +15,6 @@ public interface DeliveryUserService {
      DeliveryCalResponseDto calculateDelivery(MobilityDto mobilityDto, DeliveryCalRequestDto calDto, Double OilPrice);
      void cancelDelivery(Long mappingId);
      List<DeliveryMatchingCompanyDto> companyMatchingListDelivery(DeliveryCompanyListRequestDto dto);
-     List<UserReservationDto> userReservationDelivery(Long memberId);
+     List<UserDeliveryReservationDto> userReservationDelivery(Long memberId);
 
 }

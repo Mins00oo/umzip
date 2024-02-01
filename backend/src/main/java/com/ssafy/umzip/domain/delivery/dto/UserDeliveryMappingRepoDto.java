@@ -14,9 +14,11 @@
         private Long companyId;
         private String companyName;
         private String imageUrl;
+        private Long price;
+        private Long reissuing;
 
 
-        public UserDeliveryMappingRepoDto(Long deliveryId, Long mappingId, String detail, Long codeSmallId, Long companyId, String companyName, String imageUrl) {
+        public UserDeliveryMappingRepoDto(Long deliveryId, Long mappingId, String detail, Long codeSmallId, Long companyId, String companyName, String imageUrl, Long price, Long reissuing) {
             this.deliveryId = deliveryId;
             this.mappingId = mappingId;
             this.detail = detail;
@@ -24,5 +26,7 @@
             this.companyId = companyId;
             this.companyName = companyName;
             this.imageUrl = imageUrl;
+            this.price = price;
+            this.reissuing = reissuing;
         }
     }

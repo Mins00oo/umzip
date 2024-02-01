@@ -153,7 +153,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         용달 유저 예약 전체 조회
      */
     @Override
-    public List<UserReservationDto> userReservationDelivery(Long memberId) {
+    public List<UserDeliveryReservationDto> userReservationDelivery(Long memberId) {
         //distinct한 deliveryId
         return deliveryMappingCustomRepository.findUserReservationInfo(memberId);
     }

@@ -23,15 +23,15 @@ import static com.ssafy.umzip.domain.member.entity.QMember.member;
 public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCustomRepository {
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<UserReservationDto> findUserReservationInfo(Long memberId) {
+    public List<UserDeliveryReservationDto> findUserReservationInfo(Long memberId) {
 
-        List<UserReservationDto> result = queryFactory
+        List<UserDeliveryReservationDto> result = queryFactory
                 .select(Projections.constructor(
-                        UserReservationDto.class,
+                        UserDeliveryReservationDto.class,
                         delivery.id.as("id"),
                         delivery.createDt.as("createDt"),
                         delivery.startTime.as("startTime"),
-                        delivery.sigungu.as("sigungu")
+                        delivery.departure.as("departure")
                 ))
                 .from(deliveryMapping)
                 .join(deliveryMapping.delivery, delivery)
@@ -48,7 +48,9 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                         deliveryMapping.codeSmall.id.as("codeSmallId"),
                         company.id.as("companyId"),
                         company.name.as("companyName"),
-                        company.imageUrl.as("imageUrl")
+                        company.imageUrl.as("imageUrl"),
+                        deliveryMapping.price.as("price"),
+                        deliveryMapping.reissuing.as("reissuing")
                 ))
                 .from(deliveryMapping)
                 .join(deliveryMapping.delivery, delivery)
@@ -66,6 +68,8 @@ public class DeliveryMappingCustomRepositoryImpl implements DeliveryMappingCusto
                                         .imageUrl(dto.getImageUrl())
                                         .detail(dto.getDetail())
                                         .codeSmallId(dto.getCodeSmallId())
+                                        .reissuing(dto.getReissuing())
+                                        .price(dto.getPrice())
                                         .build(), Collectors.toList())
                 ));
 
