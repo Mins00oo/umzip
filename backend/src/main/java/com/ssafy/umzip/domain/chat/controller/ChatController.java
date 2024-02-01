@@ -1,6 +1,8 @@
 package com.ssafy.umzip.domain.chat.controller;
 
 import com.ssafy.umzip.domain.chat.dto.ChatMessageRequestDto;
+import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
+import com.ssafy.umzip.domain.chat.dto.ChatTradeMessageRequestDto;
 import com.ssafy.umzip.domain.chat.service.ChatRoomService;
 import com.ssafy.umzip.domain.chat.service.ChatService;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
@@ -13,6 +15,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -31,10 +35,22 @@ public class ChatController {
             chatRoomService.leaveChatRoom(chatRoomId, requestId);
             message.setContent("상대방이 나갔습니다.");
         }
-        chatService.saveMessage(message, chatRoomId, requestId);
+        ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId);
+
+        template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
+    }
+
+    @MessageMapping("/chat/trade/{chatRoomId}")
+    public void tradeChat(@Payload ChatTradeMessageRequestDto message, @DestinationVariable Long chatRoomId,
+                          @Header("Authorization") String authToken) {
+        Long requestId = jwtTokenProvider.getIdByToken(authToken);
+        if (message.getType().equals("LEAVE")) {
+            chatRoomService.leaveChatRoom(chatRoomId, requestId);
+            message.setContent("상대방이 나갔습니다.");
+        }
+        chatService.saveTradeMessage(message, chatRoomId, requestId);
 
 
-        log.info(String.valueOf(message));
         template.convertAndSend("/topic/chatroom/" + chatRoomId, message.getContent());
     }
 

@@ -1,3 +1,6 @@
+const stompClient = new StompJs.Client({
+    brokerURL: 'ws://localhost:8080/ws'
+});
 
 $(document).ready(function () {
     // 페이지가 로드되면 채팅방 목록을 가져옵니다.
@@ -8,12 +11,12 @@ $(document).ready(function () {
 $(function () {
     // 채팅방 생성 버튼 클릭 이벤트
     $("#createChatRoom").click(function() {
-        const receiverId = 8
+        const receiverId = 26
         createChatRoom(receiverId);
     });
 });
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjc1MDY5MSwiZXhwIjoxNzA3MTgyNjkxfQ.1AYJFSd9Vsmi3CUx2iTsJAI4EScXqbYbeInqOgZ6xCc'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3Q4Iiwicm9sZSI6IlVTRVIiLCJpZCI6OCwic2lndW5ndSI6MSwiaWF0IjoxNzA2NzY2MDM4LCJleHAiOjE3MDcxOTgwMzh9._uLjNcyP9XBw16fwnphORci6SIXHKq8fehBtqVxXMlw'
 
 function createChatRoom(receiverId) {
     $.ajax({
@@ -27,7 +30,8 @@ function createChatRoom(receiverId) {
             // 성공 시, 서버로부터 반환된 구독 경로로 구독 시작
             if(response.isSuccess) {
                 const chatRoomId = response.result;
-                window.location.href = `chat.html?chatRoomId=${chatRoomId}`;
+                console.log("hi")
+                window.location.href = `chat2.html?chatRoomId=${chatRoomId}`;
             } else {
                 console.error('Chat room creation failed:', response.message);
             }
@@ -66,7 +70,7 @@ function displayChatRooms(rooms) {
     rooms.forEach(function (chatRoom) {
         // 채팅방 상세 정보를 포함한 HTML 요소 생성 및 추가
         chatRoomList.append(
-            `<a href="chat.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
+            `<a href="chat2.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
                 <div class="chat-room-info">
                     <div class="receiver-id">${chatRoom.chatRoomId}</div>
                     <div class="receiver-name">${chatRoom.receiverName}</div>

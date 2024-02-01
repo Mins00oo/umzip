@@ -36,7 +36,24 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjc2NjA1OCwiZXhwIjoxNzA3MTk4MDU4fQ.JxgiXOYDr_HdMgQQM_xl6qsAD3WPHmsGaJcJHEdxX74'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3Q4Iiwicm9sZSI6IlVTRVIiLCJpZCI6OCwic2lndW5ndSI6MSwiaWF0IjoxNzA2NzY2OTYyLCJleHAiOjE3MDcxOTg5NjJ9.bjmP_1HckTNh7kzF_T2IoNktPdOuw3ymwDdqetdWZts'
+
+function connectToChatRoom(chatRoomId) {
+    // WebSocket 연결 및 채팅방 구독
+    stompClient.activate();
+
+    stompClient.onConnect = function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe(`/topic/chatroom/${chatRoomId}`, function (message) {
+            showReceivedMessage(message.body);
+        });
+    };
+
+    stompClient.onStompError = function (frame) {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+    };
+}
 
 function fetchMyMessages(chatRoomId) {
     $.ajax({
@@ -56,7 +73,7 @@ function fetchMyMessages(chatRoomId) {
     });
 }
 
-const currentUserId = 26
+const currentUserId = 8
 
 function displayMessage(message) {
     const messageElement = $("<div>").addClass("message");
@@ -75,26 +92,6 @@ function displayMessage(message) {
     messageElement.append(senderProfileImageElement, senderNameElement, contentElement, timeElement);
     $("#messages").append(messageElement);
 }
-
-function connectToChatRoom(chatRoomId) {
-    // WebSocket 연결 및 채팅방 구독
-    stompClient.activate();
-
-    stompClient.onConnect = function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe(`/topic/chatroom/${chatRoomId}`, function (message) {
-            console.log(message + "보내줄게~")
-            console.log(message)
-            showReceivedMessage(message.body);
-        });
-    };
-
-    stompClient.onStompError = function (frame) {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-    };
-}
-
 function sendMessage(chatRoomId) {
     console.log(chatRoomId)
     const messageContent = $("#messageInput").val();

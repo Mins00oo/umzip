@@ -1,8 +1,10 @@
 package com.ssafy.umzip.domain.chat.controller;
 
+import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
 import com.ssafy.umzip.domain.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.umzip.domain.chat.entity.ChatRoom;
 import com.ssafy.umzip.domain.chat.service.ChatRoomService;
+import com.ssafy.umzip.domain.chat.service.ChatService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ChatRoomController {
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
 
     @PostMapping("/deliver/{receiverId}")
     public ResponseEntity<Object> createDeliverChat(HttpServletRequest request, @PathVariable Long receiverId) {
@@ -57,5 +60,15 @@ public class ChatRoomController {
         List<ChatRoomListResponseDto> response = chatRoomService.retrieveChatRoom(memberId, role);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(response));
     }
+
+    @GetMapping("/rooms/{chatRoomId}")
+    public ResponseEntity<Object> retrieveChatRoomMessage(@PathVariable Long chatRoomId, HttpServletRequest request) {
+        Long requestId = jwtTokenProvider.getId(request);
+        List<ChatMessageResponseDto> response = chatService.retrieveChatRoomMessages(chatRoomId, requestId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(response));
+    }
+
+
 
 }
