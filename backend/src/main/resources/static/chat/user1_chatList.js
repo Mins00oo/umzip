@@ -13,7 +13,7 @@ $(function () {
     });
 });
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjc1MDY5MSwiZXhwIjoxNzA3MTgyNjkxfQ.1AYJFSd9Vsmi3CUx2iTsJAI4EScXqbYbeInqOgZ6xCc'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImdvZ29AbmF2ZXIuY29tIiwicm9sZSI6IkNMRUFOIiwiaWQiOjksInNpZ3VuZ3UiOjQ1NDU0LCJpYXQiOjE3MDY5MDEzMTQsImV4cCI6MTcwNzMzMzMxNH0.KSa61ZgZJ7a4sxcb5r4eTH5Ntal9PKHwTHECWONOA34'
 
 function createChatRoom(receiverId) {
     $.ajax({

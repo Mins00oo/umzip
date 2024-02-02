@@ -51,7 +51,7 @@ public class ChatController {
         chatService.saveTradeMessage(message, chatRoomId, requestId);
 
 
-        template.convertAndSend("/topic/chatroom/" + chatRoomId, message.getContent());
+        template.convertAndSend("/topic/tradeChatroom/" + chatRoomId, message.getContent());
     }
 
 }

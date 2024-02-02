@@ -36,7 +36,7 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjc2NjA1OCwiZXhwIjoxNzA3MTk4MDU4fQ.JxgiXOYDr_HdMgQQM_xl6qsAD3WPHmsGaJcJHEdxX74'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImdvZ29AbmF2ZXIuY29tIiwicm9sZSI6IkNMRUFOIiwiaWQiOjksInNpZ3VuZ3UiOjQ1NDU0LCJpYXQiOjE3MDY5MDEzMTQsImV4cCI6MTcwNzMzMzMxNH0.KSa61ZgZJ7a4sxcb5r4eTH5Ntal9PKHwTHECWONOA34'
 
 function fetchMyMessages(chatRoomId) {
     $.ajax({
