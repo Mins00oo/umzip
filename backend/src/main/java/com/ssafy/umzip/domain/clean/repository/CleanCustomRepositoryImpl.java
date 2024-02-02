@@ -114,15 +114,15 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
         LocalDateTime endTime = startTime.plusHours(4);
         LocalDateTime startTimeMinus4 = startTime.minusHours(4);
         // 2. 시간이 겹치는 Mapping
-        List<Long> notInvalidMappingId = queryFactory.select(
+        List<Long> invalidMapping = queryFactory.select(
                             cleanMapping.id
                 ).from(cleanMapping)
                 .join(cleanMapping.clean, clean)
-                .where(clean.reservationTime.gt(endTime)
-                        .or(clean.reservationTime.gt(startTimeMinus4))
+                .where(clean.reservationTime.between(startTime,endTime)
+                        .or(clean.reservationTime.loe(startTime)
+                                .and(clean.reservationTime.gt(startTimeMinus4))
+                        )
                 ).distinct().fetch();
-
-
 
         List<CleanMatchingCompanyDto> ans = queryFactory.select(
                         Projections.constructor(
@@ -141,7 +141,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                                         company.id
                                 ).from(cleanMapping)
                                 .join(cleanMapping.company, company)
-                                .where(cleanMapping.id.in(notInvalidMappingId), //시간이 겹치고
+                                .where(cleanMapping.id.in(invalidMapping), //시간이 겹치고
                                         cleanMapping.codeSmall.id.eq(203L)  // 예약 완료인 상태인 companyId는
                                 )
                                 .distinct()
