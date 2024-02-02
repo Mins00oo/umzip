@@ -150,6 +150,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         for(DeliveryMatchingCompanyDto companyDto: list){
             companyDto.setTopTagList(tagGroupedByCompanyId.get(companyDto.getCompanyId()));
         }
+
         return list;
 
     }
