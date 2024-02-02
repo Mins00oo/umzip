@@ -1,8 +1,6 @@
 package com.ssafy.umzip.domain.clean.service;
 
-import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
-import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
-import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
+import com.ssafy.umzip.domain.clean.dto.user.*;
 import com.ssafy.umzip.domain.clean.entity.Clean;
 import com.ssafy.umzip.domain.clean.entity.CleanImage;
 import com.ssafy.umzip.domain.clean.entity.CleanMapping;
@@ -16,6 +14,9 @@ import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
+import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
+import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -28,7 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.ssafy.umzip.global.common.Role.CLEAN;
 
 @Service
 @Transactional
@@ -41,6 +46,7 @@ public class CleanUserServiceImpl implements CleanUserService{
     private final CompanyRepository companyRepository;
     private final CleanMappingRepository cleanMappingRepository;
     private final CleanCustomRepository cleanCustomRepository;
+    private final CustomReviewReceiverRepository reviewReceiverRepository;
 
     @Override
     public void createClean(List<CleanReservationCompanyDto> companys,
@@ -84,6 +90,34 @@ public class CleanUserServiceImpl implements CleanUserService{
         return true;
     }
 
+    /**
+     * 유저 : 매칭 API
+     */
+    @Override
+    public List<CleanMatchingCompanyDto> companyListClean(CleanCompanyListRequestDto dto) {
+        List<CleanMatchingCompanyDto> companys = cleanCustomRepository.findCompanyMatchingList(dto);
+        List<Long> memberIdList = companys.stream()
+                .map(CleanMatchingCompanyDto::getMemberId)
+                .toList();
+
+        TopTagListRequest request = TopTagListRequest.builder()
+                .memberId(memberIdList)
+                .role(CLEAN.toString())
+                .limit(3)
+                .build();
+        List<TopTagListResponse> tagList = reviewReceiverRepository.findTopTagsListByMemberIdAndRole(request);
+
+        Map<Long, List<String>> tagGroupedByCompanyId = tagList.stream()
+                .collect(Collectors.groupingBy(TopTagListResponse::getCompanyId,
+                        Collectors.mapping(TopTagListResponse::getTag, Collectors.flatMapping(List::stream, Collectors.toList()))));
+        for(CleanMatchingCompanyDto companyDto : companys){
+            List<String> tags = tagGroupedByCompanyId.get(companyDto.getCompanyId());
+            companyDto.setTags(tags);
+        }
+
+        return companys;
+    }
+
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {
         for(MultipartFile file: imageFileList){
             S3UploadDto cleanImg = uploadFile(file, "cleanImg");
@@ -99,7 +133,7 @@ public class CleanUserServiceImpl implements CleanUserService{
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
         CodeSmall codeSmall = codeSmallRepository.findById(201L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
         for(CleanReservationCompanyDto companyDto: companys){
-            Company company = companyRepository.findByMemberIdAndRole(companyDto.getMemberId(), Role.CLEAN).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
+            Company company = companyRepository.findByMemberIdAndRole(companyDto.getMemberId(), CLEAN).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
             CleanMapping cleanMapping = CleanMapping.builder()
                     .clean(clean)
                     .member(member)
