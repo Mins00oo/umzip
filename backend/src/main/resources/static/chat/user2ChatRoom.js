@@ -36,10 +36,11 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3Q4Iiwicm9sZSI6IlVTRVIiLCJpZCI6OCwic2lndW5ndSI6MSwiaWF0IjoxNzA2NzY2OTYyLCJleHAiOjE3MDcxOTg5NjJ9.bjmP_1HckTNh7kzF_T2IoNktPdOuw3ymwDdqetdWZts'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NCwic2lndW5ndSI6MTAwLCJpYXQiOjE3MDY3NDc2NzYsImV4cCI6MTcwNzE3OTY3Nn0.0UtQe8QKEO6KriOAAGD5iJTkmyWIqM0WCCpslvOJWLg'
 
 function connectToChatRoom(chatRoomId) {
     // WebSocket 연결 및 채팅방 구독
+
     stompClient.activate();
 
     stompClient.onConnect = function (frame) {
@@ -73,7 +74,7 @@ function fetchMyMessages(chatRoomId) {
     });
 }
 
-const currentUserId = 8
+const currentUserId = 4
 
 function displayMessage(message) {
     const messageElement = $("<div>").addClass("message");

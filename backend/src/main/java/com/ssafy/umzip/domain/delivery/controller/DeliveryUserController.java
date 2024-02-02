@@ -92,8 +92,8 @@ public class DeliveryUserController {
      */
     @PostMapping("/company-list")
     public ResponseEntity<Object> companyListDelivery(@RequestBody DeliveryCompanyListRequestDto deliveryCompanyListRequestDto){
-        deliveryUserService.companyMatchingListDelivery(deliveryCompanyListRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+        List<DeliveryMatchingCompanyDto> response = deliveryUserService.companyMatchingListDelivery(deliveryCompanyListRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(response));
     }
     /*
         고객 : 용달 유저 예약 확인 API

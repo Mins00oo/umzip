@@ -8,7 +8,7 @@ $(document).ready(function () {
 $(function () {
     // 채팅방 생성 버튼 클릭 이벤트
     $("#createChatRoom").click(function() {
-        const receiverId = 8
+        const receiverId = 4
         createChatRoom(receiverId);
     });
 });
