@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class PostRequestDto {
@@ -12,14 +13,14 @@ public class PostRequestDto {
     private String title;
     private Long price;
     private String content;
-    private boolean isDirect;
-    private int sigungu;
+    private Boolean isDirect;
+    private Integer sigungu;
     private String sigunguName;
     private String address;
 
     @Builder
     public PostRequestDto(String title, Long price, String content,
-                          boolean isDirect, int sigungu, String sigunguName,
+                          Boolean isDirect, Integer sigungu, String sigunguName,
                           String address) {
         this.title = title;
         this.price = price;
@@ -39,7 +40,7 @@ public class PostRequestDto {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
-                .isDirect(requestDto.isDirect())
+                .isDirect(requestDto.getIsDirect())
                 .address(requestDto.getAddress())
                 .readCnt(readCnt)
                 .sigungu(requestDto.getSigungu())
