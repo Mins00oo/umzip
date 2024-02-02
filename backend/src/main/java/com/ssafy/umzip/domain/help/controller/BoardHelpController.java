@@ -93,12 +93,12 @@ public class BoardHelpController {
      */
     @PostMapping("detail/comments/{boardId}")
     public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
-                                              @RequestParam("comment") String comment,
+                                              @RequestBody PostCommentRequestDto dto,
                                               HttpServletRequest request) {
-
+        System.out.println("comment: " + dto.getComment());
         Long memberId = jwtTokenProvider.getId(request);
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, comment);
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, dto.getComment());
 
         service.postComment(requestDto);
 
