@@ -9,9 +9,6 @@ import lombok.Getter;
 @Getter
 public class PostRequestDto {
 
-    private Long memberId;
-    private int memberSigungu;
-
     private String title;
     private Long price;
     private String content;
@@ -21,11 +18,9 @@ public class PostRequestDto {
     private String address;
 
     @Builder
-    public PostRequestDto(Long memberId, int memberSigungu,
-                          String title, Long price, String content,
+    public PostRequestDto(String title, Long price, String content,
                           boolean isDirect, int sigungu, String sigunguName,
                           String address) {
-        setMemeber(memberId, memberSigungu);
         this.title = title;
         this.price = price;
         this.content = content;
@@ -33,11 +28,6 @@ public class PostRequestDto {
         this.sigungu = sigungu;
         this.sigunguName = sigunguName;
         this.address = address;
-    }
-
-    public void setMemeber(Long memberId, int memberSigungu) {
-        this.memberId = memberId;
-        this.memberSigungu = memberSigungu;
     }
 
     public BoardTrade toEntity(PostRequestDto requestDto,

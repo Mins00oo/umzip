@@ -52,9 +52,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     @Transactional
     @Override
     public void PostBoardTrade(PostRequestDto requestDto,
-                               List<MultipartFile> files) {
+                               List<MultipartFile> files,
+                               Long memberId, int memberSigungu) {
 
-        Member member = memberRepository.findById(requestDto.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
         
         CodeSmall codeSmall = codeSmallRepository.findById(IS_ON_SALE)

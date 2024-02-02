@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BoardTradeService {
 
-    void PostBoardTrade(PostRequestDto requestDto, List<MultipartFile> files);
+    void PostBoardTrade(PostRequestDto requestDto, List<MultipartFile> files, Long memberId, int memberSigungu);
 
     Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable);
 
