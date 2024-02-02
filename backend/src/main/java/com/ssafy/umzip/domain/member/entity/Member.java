@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -44,11 +45,12 @@ public class Member extends BaseTimeEntity {
     private String pwd;
 
     @Builder
-    public Member(String email, String phone, String name, int point, String address, String addressDetail, int sigungu, String pwd) {
+    public Member(String email, String phone, String name, int point,String imageUrl, String address, String addressDetail, int sigungu, String pwd) {
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.point = point;
+        this.imageUrl = imageUrl;
         this.address = address;
         this.addressDetail = addressDetail;
         this.sigungu = sigungu;

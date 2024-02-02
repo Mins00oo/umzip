@@ -1,13 +1,13 @@
 spring:
   profiles:
-    active: local
+    active: env
   data:
     redis:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
       port: 6379
     mongodb:
-      uri: mongodb://localhost:27017/umzip
+      uri: ${MONGO_URI}
   servlet:
     multipart:
       max-file-size: 10MB
