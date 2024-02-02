@@ -21,13 +21,14 @@ public enum StatusCode {
     ALREADY_EXIST_EMAIL(false, 305, "중복된 이메일입니다."),
     COMPANY_ROLE_NOT_MATCH(false, 306, "일치하는 업체의 권한을 찾을 수 없습니다."),
     LOGIN_FAILED(false, 307, "로그인에 실패하였습니다."),
-    INVALID_TOKEN(false, 308, "토큰이 유효하지 않습니다."),
+    INVALID_TOKEN(false, 308, "기존 서명을 확인할 수 없습니다."),
     INVALID_NULL_TOKEN(false, 308, "토큰 값 자체가 유효하지 않습니다."),
     EXPIRED_ACCESS_TOKEN(false, 309, "토큰이 만료되었습니다."),
-    DAMAGED_ACCESS_TOKEN(false, 310, "손상된 토큰입니다."),
+    DAMAGED_ACCESS_TOKEN(false, 310, "올바르게 구성된 JWT 토큰이 아닙니다."),
     UNSUPPORTED_ACCESS_TOKEN(false, 311, "지원하지 않는 토큰입니다."),
     NOT_EXIST_MEMBER(false,312,"존재하지 않는 회원입니다."),
     NOT_VALID_MEMBER_PK(false, 313, "해당 ID로 계정을 찾을 수 없습니다."),
+    ILLEGAL_ARGUMENT_TOKEN(false, 314, "JWT claims이 비어있는 상태입니다."),
 
     // COMPANY : 400
     NOT_EXIST_COMPANY(false,400,"존재하지 않는 회사입니다."),

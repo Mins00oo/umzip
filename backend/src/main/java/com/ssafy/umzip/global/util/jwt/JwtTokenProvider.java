@@ -152,6 +152,11 @@ public class JwtTokenProvider {
         return extractClaims(token).get("id", Long.class);
     }
 
+    public String getRole(HttpServletRequest request) {
+        String token = this.getToken(request);
+        return extractClaims(token).get("role", String.class);
+    }
+
     public String getToken(HttpServletRequest request) {
         return request.getHeader("Authorization").split(" ")[1].trim();
     }
@@ -164,15 +169,20 @@ public class JwtTokenProvider {
 
     public static Claims extractClaims(String token) {
         return Jwts.parserBuilder()
-                    .setSigningKey(getKey(secretKey))
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                .setSigningKey(getKey(secretKey))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public static boolean isExpired(String token) {
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
+    }
+
+    public Long getIdByToken(String BearerToken) {
+        String accessToken = BearerToken.split(" ")[1].trim();
+        return extractClaims(accessToken).get("id", Long.class);
     }
 
 }

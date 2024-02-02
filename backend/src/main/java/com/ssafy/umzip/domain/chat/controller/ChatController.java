@@ -1,22 +1,57 @@
 package com.ssafy.umzip.domain.chat.controller;
 
 import com.ssafy.umzip.domain.chat.dto.ChatMessageRequestDto;
-import com.ssafy.umzip.global.common.BaseResponse;
-import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
+import com.ssafy.umzip.domain.chat.dto.ChatTradeMessageRequestDto;
+import com.ssafy.umzip.domain.chat.service.ChatRoomService;
+import com.ssafy.umzip.domain.chat.service.ChatService;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class ChatController {
+    private final SimpMessagingTemplate template;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
 
-    @MessageMapping("/chat-send")
-    public ResponseEntity<Object> sendMessage(@Payload ChatMessageRequestDto messageRequestDto) {
-      log.info("chat send success" + messageRequestDto.getContent());
-      return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(StatusCode.SUCCESS));
+    @MessageMapping("/chat/{chatRoomId}")
+    public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
+                     @Header("Authorization") String authToken) {
+        Long requestId = jwtTokenProvider.getIdByToken(authToken);
+        if (message.getType().equals("LEAVE")) {
+            chatRoomService.leaveChatRoom(chatRoomId, requestId);
+            message.setContent("상대방이 나갔습니다.");
+        }
+        ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId);
+
+        template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }
+
+    @MessageMapping("/chat/trade/{chatRoomId}")
+    public void tradeChat(@Payload ChatTradeMessageRequestDto message, @DestinationVariable Long chatRoomId,
+                          @Header("Authorization") String authToken) {
+        Long requestId = jwtTokenProvider.getIdByToken(authToken);
+        if (message.getType().equals("LEAVE")) {
+            chatRoomService.leaveChatRoom(chatRoomId, requestId);
+            message.setContent("상대방이 나갔습니다.");
+        }
+        chatService.saveTradeMessage(message, chatRoomId, requestId);
+
+
+        template.convertAndSend("/topic/chatroom/" + chatRoomId, message.getContent());
+    }
+
 }

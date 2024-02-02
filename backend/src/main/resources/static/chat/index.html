@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>  <!-- SockJS 스크립트 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="user1_chatList.js"></script>
+    <style>
+        .chat-room-info {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        .receiver-profile-image img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .chat-info {
+            flex-grow: 1;
+        }
+        .receiver-name {
+            font-weight: bold;
+        }
+        .last-message {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .update-dt {
+            font-size: 0.8em;
+            color: #999;
+        }
+    </style>
+
+</head>
+
+
+<body>
+<div class="container">
+    <h2>채팅방 목록</h2>
+    <button id="createChatRoom" class="btn btn-primary">채팅방 생성</button>
+    <div id="chatRoomList">
+        <!-- 채팅방 목록이 여기에 표시됩니다. -->
+    </div>
+</div>
+</body>
+</html>

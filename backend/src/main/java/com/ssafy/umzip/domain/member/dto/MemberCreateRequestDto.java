@@ -30,6 +30,8 @@ public class MemberCreateRequestDto {
                 .phone(requestDto.getPhone())
                 .name(requestDto.getName())
                 .point(point)
+                .imageUrl("https://umzip-service.s3.ap-northeast-2.amazonaws.com/deliveryCompanyImg/f1fdf575" +
+                        "-abb2-475e-95f9-e9710c54c6cabackenda3b976a0-d918-4f61-a29b-5257e80a49c0.jpg")
                 .address(requestDto.getAddress())
                 .addressDetail(requestDto.getAddressDetail())
                 .sigungu(requestDto.getSigungu())

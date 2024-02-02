@@ -59,7 +59,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
             log.info("Token verification successful. URI: {}", request.getRequestURI());
-            chain.doFilter(request, response);
         } catch (SignatureException e) {
             setErrorResponse(response, StatusCode.INVALID_TOKEN);
             log.error("Invalid JWT signature: {}", e.getMessage());
@@ -74,10 +73,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             setErrorResponse(response, StatusCode.UNSUPPORTED_ACCESS_TOKEN);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
+            setErrorResponse(response, StatusCode.ILLEGAL_ARGUMENT_TOKEN);
         } catch (NullPointerException e) {
             log.error("JWT  is empty: {}", e.getMessage());
             setErrorResponse(response, StatusCode.INVALID_NULL_TOKEN);
         }
+
+        chain.doFilter(request, response);
     }
 
     public static void setErrorResponse(HttpServletResponse response, StatusCode statusCode) throws IOException {

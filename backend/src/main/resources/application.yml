@@ -6,6 +6,8 @@ spring:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
       port: 6379
+    mongodb:
+      uri: ${MONGO_URI}
   servlet:
     multipart:
       max-file-size: 10MB
