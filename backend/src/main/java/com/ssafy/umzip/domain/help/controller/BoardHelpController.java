@@ -38,13 +38,13 @@ public class BoardHelpController {
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
             @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
-            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files,
+            @RequestPart(value="imageFileList", required = false) List<MultipartFile> imageFileList,
             HttpServletRequest request) {
 
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
 
-        service.postBoardHelp(memberId, sigungu, requestDto, files);
+        service.postBoardHelp(memberId, sigungu, requestDto, imageFileList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
