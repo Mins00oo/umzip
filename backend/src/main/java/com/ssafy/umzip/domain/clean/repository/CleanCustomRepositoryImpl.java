@@ -130,7 +130,8 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                                 company.member.id.as("memberId"),
                                 company.experience.as("experience"),
                                 company.imageUrl.as("imageUrl"),
-                                company.ceo.as("ceo")
+                                company.ceo.as("ceo"),
+                                company.name.as("companyName")
                         )
                 ).from(company)
                 .leftJoin(cleanMapping).on(cleanMapping.company.id.eq(company.id))

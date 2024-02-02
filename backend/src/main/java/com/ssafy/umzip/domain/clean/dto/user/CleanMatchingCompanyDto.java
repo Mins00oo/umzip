@@ -18,13 +18,15 @@ public class CleanMatchingCompanyDto {
     private LocalDateTime experience;
     private String imageUrl;
     private String ceo;
+    private String companyName;
     private List<String > tags = new ArrayList<>();
     @Builder
-    public CleanMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo) {
+    public CleanMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo,String companyName) {
         this.companyId = companyId;
         this.memberId = memberId;
         this.experience = experience;
         this.imageUrl = imageUrl;
         this.ceo = ceo;
+        this.companyName = companyName;
     }
 }
