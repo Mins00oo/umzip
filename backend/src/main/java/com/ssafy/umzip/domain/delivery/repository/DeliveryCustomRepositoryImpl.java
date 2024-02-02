@@ -152,17 +152,17 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                                 DeliveryMatchingCompanyDto.class,
                                 company.id.as("companyId"),
                                 company.member.id.as("memberId"),
-                                company.experience.as("expereince"),
+                                company.experience.as("experience"),
                                 company.imageUrl.as("imageUrl"),
-                                company.ceo.as("ceo")
+                                company.ceo.as("ceo"),
+                                company.name.as("companyName")
                         )
                 )
-                .from(deliveryMapping)
-                .join(deliveryMapping.delivery, delivery)
-                .join(deliveryMapping.company, company)
+                .from(company)
+                .leftJoin(deliveryMapping).on(company.id.eq(deliveryMapping.company.id))
                 .where(deliveryMapping.codeSmall.id.ne(103L),
                         company.sigungu.eq(sigungu),
-                        delivery.id.notIn(
+                        deliveryMapping.delivery.id.notIn(
                                 queryFactory
                                         .select(delivery.id)
                                         .from(delivery)

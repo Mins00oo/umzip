@@ -105,7 +105,6 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
 
     /**
      * 유저 : 매칭 Repository
-     *
      */
     @Override
     public List<CleanMatchingCompanyDto> findCompanyMatchingList(CleanCompanyListRequestDto dto) {
