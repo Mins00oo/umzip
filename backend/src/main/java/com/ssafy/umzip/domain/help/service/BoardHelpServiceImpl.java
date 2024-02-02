@@ -127,6 +127,9 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         List<BoardHelpImage> boardHelpImages = boardHelpImageRepository.findAllById(requestDto.getBoardId());
         List<String> imageList = new ArrayList<>();
         for (BoardHelpImage image : boardHelpImages) {
+            if (image.getImageOriginName().isEmpty()) {
+                continue;
+            }
             imageList.add(image.getImagePath());
         }
 
