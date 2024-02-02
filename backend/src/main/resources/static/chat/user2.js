@@ -16,7 +16,7 @@ $(function () {
     });
 });
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3Q4Iiwicm9sZSI6IlVTRVIiLCJpZCI6OCwic2lndW5ndSI6MSwiaWF0IjoxNzA2NzY2MDM4LCJleHAiOjE3MDcxOTgwMzh9._uLjNcyP9XBw16fwnphORci6SIXHKq8fehBtqVxXMlw'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NCwic2lndW5ndSI6MTAwLCJpYXQiOjE3MDY3NDc2NzYsImV4cCI6MTcwNzE3OTY3Nn0.0UtQe8QKEO6KriOAAGD5iJTkmyWIqM0WCCpslvOJWLg'
 
 function createChatRoom(receiverId) {
     $.ajax({

@@ -1,14 +1,11 @@
 package com.ssafy.umzip.domain.chat.entity;
 
 import com.ssafy.umzip.domain.member.entity.Member;
-import com.ssafy.umzip.global.common.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
@@ -33,6 +30,9 @@ public class ChatParticipant {
     @Column(name = "chat_participant_activated")
     @Enumerated(EnumType.STRING)
     private ChatRoomStatus status;
+
+    @Column(name = "chat_participant_last_read")
+    private String messageId;
 
     @Builder
     public ChatParticipant(Member member, ChatRoom chatRoom, String role) {
