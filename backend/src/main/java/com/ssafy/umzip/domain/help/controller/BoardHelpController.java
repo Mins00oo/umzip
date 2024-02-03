@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -43,6 +44,10 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
+
+        if (imageFileList==null){
+            imageFileList = new ArrayList<>();
+        }
 
         service.postBoardHelp(memberId, sigungu, requestDto, imageFileList);
 
