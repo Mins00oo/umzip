@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.clean.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.UserCleanMappingDto;
@@ -21,6 +22,7 @@ import static com.ssafy.umzip.domain.clean.entity.QCleanMapping.cleanMapping;
 import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
 import static com.ssafy.umzip.domain.delivery.entity.QDeliveryMapping.deliveryMapping;
+import static com.ssafy.umzip.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 @Repository
@@ -100,5 +102,29 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
             reservation.setStatus(recentStatus);
         }
         return cleans;
+    }
+
+    @Override
+    public List<CleanCompanyReservationResponseDto> findCompanyReservationInfo(Long companyId) {
+        return queryFactory.selectDistinct(
+                        Projections.constructor(
+                                CleanCompanyReservationResponseDto.class,
+                                cleanMapping.id.as("mappingId"),
+                                clean.id.as("cleanId"),
+                                clean.createDt.as("createDt"),
+                                clean.reservationTime.as("reservationTime"),
+                                cleanMapping.price.as("price"),
+                                cleanMapping.reissuing.as("reissuing"),
+                                cleanMapping.codeSmall.id.as("codeSmallId"),
+                                member.name.as("memberName"),
+                                member.imageUrl.as("memberImg")
+                        )
+                ).from(cleanMapping)
+                .join(cleanMapping.clean, clean)
+                .join(cleanMapping.member, member)
+                .where(
+                        cleanMapping.company.id.eq(companyId)
+                ).distinct()
+                .fetch();
     }
 }

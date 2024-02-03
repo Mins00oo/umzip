@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.clean.service;
 
+import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
 import com.ssafy.umzip.domain.clean.entity.CleanMapping;
 import com.ssafy.umzip.domain.clean.repository.CleanCustomRepository;
@@ -12,6 +13,8 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -54,5 +57,11 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
         }
         CodeSmall codeSmall = codeSmallRepository.findById(202L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
         return cleanCustomRepository.updateCodeAndReissuingAndDetail(dto, codeSmall);
+    }
+
+    @Override
+    public List<CleanCompanyReservationResponseDto> companyReservationClean(Long companyId) {
+        List<CleanCompanyReservationResponseDto> list = cleanCustomRepository.findCompanyReservationInfo(companyId);
+        return list;
     }
 }

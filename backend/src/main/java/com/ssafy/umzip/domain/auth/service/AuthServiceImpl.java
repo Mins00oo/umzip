@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         Company company = companyRepository.findByMemberIdAndRole(requestAuth.getMember().getId(), role)
                 .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
 
-        return jwtTokenProvider.regenerateCompanyToken(company, Role.DELIVER);
+        return jwtTokenProvider.regenerateCompanyToken(company, role);
     }
 
     private boolean isVerify(AuthCodeRequestDto requestDto) {
