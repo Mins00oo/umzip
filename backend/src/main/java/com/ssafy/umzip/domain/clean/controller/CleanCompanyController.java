@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.clean.controller;
 import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanRejectionRequestDto;
+import com.ssafy.umzip.domain.clean.dto.user.CleanDetailResponseDto;
 import com.ssafy.umzip.domain.clean.service.CleanCompanyService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -73,6 +74,23 @@ public class CleanCompanyController {
         }
         List<CleanCompanyReservationResponseDto> list = cleanCompanyService.companyReservationClean(companyId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(list));
+    }
+
+    /**
+     * 업체 : 예약 상세 조회 API
+     *
+     */
+    @GetMapping("/reservation/{cleanId}")
+    public ResponseEntity<Object> companyReservationDetailClean(
+            @PathVariable Long cleanId,
+            HttpServletRequest request){
+        Long companyId = jwtTokenProvider.getId(request);
+        ResponseEntity<Object> BAD_REQUEST = checkRole(request);  // Role check
+        if (BAD_REQUEST != null) {
+            return BAD_REQUEST;
+        }
+        CleanDetailResponseDto cleanDetail = cleanCompanyService.getCleanDetail(companyId, cleanId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleanDetail));
     }
     @Nullable
     private ResponseEntity<Object> checkRole(HttpServletRequest request) {
