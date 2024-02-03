@@ -76,6 +76,15 @@ public class CleanUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleans));
     }
     /*
+        유저 : 예약 상세조회 API
+     */
+    @GetMapping("/reservation/{cleanId}")
+    public ResponseEntity<Object> userDetailReservationClean(@PathVariable Long cleanId, HttpServletRequest request){
+        Long memberId = jwtTokenProvider.getId(request);
+        CleanDetailResponseDto cleanDetail = cleanUserService.getCleanDetail(memberId, cleanId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleanDetail));
+    }
+    /*
         유저 : 취소 API
      */
     @PutMapping("/cancel")

@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.clean.service;
 
+import com.ssafy.umzip.domain.clean.dto.user.CleanDetailResponseDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationCompanyDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
@@ -16,6 +17,7 @@ import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -24,11 +26,15 @@ import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -82,6 +88,37 @@ public class CleanUserServiceImpl implements CleanUserService{
         CodeSmall codeSmall = codeSmallRepository.findById(205L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
         cleanMapping.setCodeSmall(codeSmall);
         return true;
+    }
+    /* 
+        유저 : 유저 청소 예약 상세
+     */
+    @Override
+    public CleanDetailResponseDto getCleanDetail(Long memberId, Long cleanId) {
+        Clean clean = cleanRepository.findById(cleanId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN));
+        if(!cleanMappingRepository.existsByCleanIdAndMemberId(cleanId, memberId)){
+            throw new BaseException(StatusCode.INVALID_GET_CLEAN);
+        }
+
+        List<String> images = clean.getCleanImages().stream()
+                .map(CleanImage::getPath)
+                .collect(Collectors.toList());
+        CleanDetailResponseDto cleanDetail = CleanDetailResponseDto.builder()
+                .id(clean.getId())
+                .reservationTime(clean.getReservationTime())
+                .roomSize(clean.getRoomSize())
+                .balconyExistence(clean.getBalconyExistence())
+                .windowCount(clean.getWindowCount())
+                .duplexRoom(clean.getDuplexRoom())
+                .mold(clean.getMold())
+                .externalWindow(clean.getExternalWindow())
+                .houseSyndrome(clean.getHouseSyndrome())
+                .removeSticker(clean.getRemoveSticker())
+                .sigungu(clean.getSigungu())
+                .address(clean.getAddress())
+                .addressDetail(clean.getAddressDetail())
+                .build();
+        cleanDetail.setCleanImages(images);
+        return cleanDetail;
     }
 
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {
