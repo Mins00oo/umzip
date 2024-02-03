@@ -27,8 +27,6 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
     public Boolean rejectionClean(Long mappingId,Long companyId) {
         CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
         if(cleanMapping.getCompany().getId()!=(companyId)){
-            System.out.println("cleanMapping = " + cleanMapping.getCompany().getId());
-            System.out.println("JWT companyId = " + companyId);
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN);
         }
 

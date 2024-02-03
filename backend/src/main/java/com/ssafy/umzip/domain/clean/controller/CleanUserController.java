@@ -22,7 +22,7 @@ import java.util.function.LongSupplier;
 public class CleanUserController {
     private final CleanUserService cleanUserService;
     private final JwtTokenProvider jwtTokenProvider;
-    /*
+    /**
         유저 : 청소 계산기 API
      */
     @PostMapping("/calculation")
@@ -51,7 +51,7 @@ public class CleanUserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(calResult));
     }
-    /*
+    /**
          유저 : 청소 예약 API
      */
     @PostMapping("/reservation")
@@ -66,7 +66,7 @@ public class CleanUserController {
         cleanUserService.createClean(companys,imageFileList,price,reservationRequestDto,memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
-    /*
+    /**
         유저 : 예약 전체 조회 API
      */
     @GetMapping("/reservation")
@@ -75,7 +75,7 @@ public class CleanUserController {
         List<UserCleanReservationResponseDto> cleans = cleanUserService.userReservationClean(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleans));
     }
-    /*
+    /**
         유저 : 취소 API
      */
     @PutMapping("/cancel")
@@ -86,7 +86,15 @@ public class CleanUserController {
         cleanUserService.cancelClean(dto.getMappingId(),memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
-    /*
+    /**
+     * 유저 : 매칭 API
+     */
+    @PostMapping("/company-list")
+    public ResponseEntity<Object> companyListClean(@RequestBody CleanCompanyListRequestDto dto){
+        List<CleanMatchingCompanyDto> cleans = cleanUserService.companyListClean(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleans));
+    }
+    /**
         계산기 필요 메서드들
      */
     private static Long getDefaultPrice(int roomSize) {
