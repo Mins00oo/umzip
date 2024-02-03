@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.clean.repository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.*;
 import com.ssafy.umzip.domain.clean.entity.QCleanMapping;
@@ -156,4 +157,29 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
 
         return ans;
     }
+
+    @Override
+    public List<CleanCompanyReservationResponseDto> findCompanyReservationInfo(Long companyId) {
+        return queryFactory.selectDistinct(
+                        Projections.constructor(
+                                CleanCompanyReservationResponseDto.class,
+                                cleanMapping.id.as("mappingId"),
+                                clean.id.as("cleanId"),
+                                clean.createDt.as("createDt"),
+                                clean.reservationTime.as("reservationTime"),
+                                cleanMapping.price.as("price"),
+                                cleanMapping.reissuing.as("reissuing"),
+                                cleanMapping.codeSmall.id.as("codeSmallId"),
+                                member.name.as("memberName"),
+                                member.imageUrl.as("memberImg")
+                        )
+                ).from(cleanMapping)
+                .join(cleanMapping.clean, clean)
+                .join(cleanMapping.member, member)
+                .where(
+                        cleanMapping.company.id.eq(companyId)
+                ).distinct()
+                .fetch();
+    }
+
 }
