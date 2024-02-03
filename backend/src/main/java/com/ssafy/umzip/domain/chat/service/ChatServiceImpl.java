@@ -41,8 +41,11 @@ public class ChatServiceImpl implements ChatService {
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
         List<ChatParticipant> chatParticipantList = chatParticipantRepository.findByChatRoomId(chatRoomId);
+
         for (ChatParticipant cp : chatParticipantList) {
-            log.info(String.valueOf(cp.getMember().getId()));
+            if (cp.getMember().getId().equals(requestId)) {
+                cp.updateLastReadMessage(savedMessage.getId());
+            }
             if (!cp.getStatus().equals(ChatRoomStatus.TALK)){
                 cp.talkWithChatRoom();
             }

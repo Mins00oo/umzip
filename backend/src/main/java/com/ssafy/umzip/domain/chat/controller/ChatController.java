@@ -27,6 +27,9 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
 
+    /**
+     * 업체, 도움 글 사용자간의 채팅
+     */
     @MessageMapping("/chat/{chatRoomId}")
     public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
                      @Header("Authorization") String authToken) {
@@ -40,6 +43,9 @@ public class ChatController {
         template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }
 
+    /**
+     * 중고거래 글에서의 채팅
+     */
     @MessageMapping("/chat/trade/{chatRoomId}")
     public void tradeChat(@Payload ChatTradeMessageRequestDto message, @DestinationVariable Long chatRoomId,
                           @Header("Authorization") String authToken) {
