@@ -1,11 +1,10 @@
 const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImdvZ29AbmF2ZXIuY29tIiwicm9sZSI6IkNMRUFOIiwiaWQiOjksInNpZ3VuZ3UiOjQ1NDU0LCJpYXQiOjE3MDY5MDEzMTQsImV4cCI6MTcwNzMzMzMxNH0.KSa61ZgZJ7a4sxcb5r4eTH5Ntal9PKHwTHECWONOA34'
 
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws',
-    connectHeaders: {
-        Authorization: `Bearer ${accessToken}`
-    }
+    brokerURL: `ws://localhost:8080/ws?accessToken=${accessToken}`
 });
+
+let currentUserId = null;
 
 $(function () {
     const chatRoomId = getChatRoomIdFromUrl();
@@ -41,6 +40,29 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
+function connectToChatRoom(chatRoomId) {
+    // WebSocket 연결 및 채팅방 구독
+    stompClient.activate();
+
+    stompClient.onConnect = function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe(`/topic/user/${accessToken}`, function (message) {
+            currentUserId = message.body;
+            console.log(currentUserId + "currentUser")
+        });
+
+        stompClient.subscribe(`/topic/chatroom/${chatRoomId}`, function (message) {
+            console.log(message.body)
+            showReceivedMessage(message.body);
+        });
+    };
+
+    stompClient.onStompError = function (frame) {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+    };
+}
+
 function fetchMyMessages(chatRoomId) {
     $.ajax({
         url: `/api/chat/rooms/${chatRoomId}`,
@@ -59,14 +81,18 @@ function fetchMyMessages(chatRoomId) {
     });
 }
 
-const currentUserId = 9
-
-function displayMessage(message) {
+function displayMessage(message, prevMessage) {
     const messageElement = $("<div>").addClass("message");
     const senderNameElement = $("<div>").addClass("sender-name").text(message.senderName);
     const contentElement = $("<div>").addClass("content").text(message.content);
-    const timeElement = $("<div>").addClass("time").text(message.sendTime);
+    const timeElement = $("<div>").addClass("time").text(message.sendTime.slice(-5)); // 'HH:mm' 형식으로 표시
     const senderProfileImageElement = $("<img>").addClass("sender-profile-image").attr("src", message.senderProfileImage);
+
+    // 날짜가 바뀌는 경우, 날짜 구분선 표시
+    if (!prevMessage || message.sendTime.slice(0, 10) !== prevMessage.sendTime.slice(0, 10)) {
+        const dateElement = $("<div>").addClass("date-separator").text(message.sendTime.slice(0, 10)); // 'YYYY-MM-DD' 형식
+        $("#messages").append(dateElement);
+    }
 
     // 현재 사용자의 메시지인지 확인하여 스타일 적용
     if (message.senderId.toString() === currentUserId.toString()) {
@@ -77,25 +103,6 @@ function displayMessage(message) {
 
     messageElement.append(senderProfileImageElement, senderNameElement, contentElement, timeElement);
     $("#messages").append(messageElement);
-}
-
-function connectToChatRoom(chatRoomId) {
-    // WebSocket 연결 및 채팅방 구독
-    stompClient.activate();
-
-    stompClient.onConnect = function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe(`/topic/chatroom/${chatRoomId}`, function (message) {
-            console.log(message + "보내줄게~")
-            console.log(message)
-            showReceivedMessage(message.body);
-        });
-    };
-
-    stompClient.onStompError = function (frame) {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-    };
 }
 
 function sendMessage(chatRoomId) {

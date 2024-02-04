@@ -1,38 +1,63 @@
 package com.ssafy.umzip.global.util.chat;
 
+import com.ssafy.umzip.domain.chat.entity.ChatMessage;
+import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
+import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
+import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.util.List;
+import java.util.Map;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class WebSocketEventListener{
-    private final SimpMessageSendingOperations messagingTemplate;
+public class WebSocketEventListener {
+    private final SimpMessagingTemplate messagingTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ChatParticipantRepository chatParticipantRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         log.info("Received a new web socket connection");
     }
 
+    @Transactional
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         String destination = event.getMessage().getHeaders().get("simpDestination").toString();
-        Long chatRoomId = parseChatRoomId(destination);
-        String sessionId = event.getMessage().getHeaders().get("simpSessionId").toString();
+        MessageHeaders headers = event.getMessage().getHeaders();
+        Map<String, Object> sessionAttributes = (Map<String, Object>) headers.get(SimpMessageHeaderAccessor.SESSION_ATTRIBUTES);
 
-        // 여기서 사용자의 마지막 읽은 메시지 ID를 갱신하는 등의 처리를 수행할 수 있습니다.
-        // 예: chatRoomService.updateLastReadMessageId(chatRoomId, sessionId);
+        String accessToken = sessionAttributes.get("accessToken").toString();
+        Long memberId = jwtTokenProvider.getIdByAccessToken(accessToken);
+        Long chatRoomId;
 
-        System.out.println("New subscription: " + sessionId + ", room: " + chatRoomId);
+        if (destination.startsWith("/topic/chatroom/")) {
+            chatRoomId = parseChatRoomId(destination);
+            List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomId(chatRoomId);
+            String lastMessageId = null;
+            if (!messageList.isEmpty()) {
+                lastMessageId = messageList.get(messageList.size() - 1).getId();
+            }
+
+            chatParticipantRepository.findByChatRoomAndMember(chatRoomId, memberId).updateLastReadMessage(lastMessageId);
+        }
+
+        messagingTemplate.convertAndSend("/topic/user/" + accessToken, memberId);
+
     }
 
     private Long parseChatRoomId(String destination) {

@@ -24,7 +24,7 @@ public class ChatMessageResponseDto {
 
     @Builder
     public ChatMessageResponseDto(String content, Long requesterId, String senderName, String senderId, String senderProfileImage, LocalDateTime sendTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:mm");
         this.content = content;
         this.requesterId = requesterId;
         this.senderName = senderName;

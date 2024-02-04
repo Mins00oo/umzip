@@ -185,4 +185,8 @@ public class JwtTokenProvider {
         return extractClaims(accessToken).get("id", Long.class);
     }
 
+    public Long getIdByAccessToken(String accessToken) {
+        return extractClaims(accessToken).get("id", Long.class);
+    }
+
 }

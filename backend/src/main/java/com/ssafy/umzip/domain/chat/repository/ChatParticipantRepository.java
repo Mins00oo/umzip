@@ -6,7 +6,6 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -26,4 +25,5 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     List<ChatParticipant> findByChatRoomId(Long chatRoomId);
 
     List<ChatParticipant> findByMemberIdAndChatRoomIdIn(Long memberId, List<Long> chatRoomIds);
+
 }
