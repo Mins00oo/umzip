@@ -16,5 +16,5 @@ public interface BoardTradeService {
 
     DetailDto detailBoardTrade(DetailRequestDto requestDto);
 
-    Page<ProfileListDto> profileListBoardTrade(ProfileListRequestDto profileListRequestDto, Pageable pageable);
+    Page<ProfileSellListDto> profileListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto, Pageable pageable);
 }

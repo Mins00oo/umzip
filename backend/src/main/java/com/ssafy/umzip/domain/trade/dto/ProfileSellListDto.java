@@ -6,10 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 @Getter
-public class ProfileListDto {
+public class ProfileSellListDto {
 
     private Long boardId;
     private String title;
@@ -19,8 +17,8 @@ public class ProfileListDto {
     private String thumbnailPath;
 
     @Builder
-    public ProfileListDto(Long boardId, String title, Long codeSmallId,
-                          Long price, String thumbnailPath) {
+    public ProfileSellListDto(Long boardId, String title, Long codeSmallId,
+                              Long price, String thumbnailPath) {
         this.boardId = boardId;
         this.title = title;
         this.codeSmallId = codeSmallId;
@@ -28,9 +26,9 @@ public class ProfileListDto {
         this.thumbnailPath = thumbnailPath;
     }
 
-    public static Page<ProfileListDto> toDto(Page<BoardTrade> entityPage) {
+    public static Page<ProfileSellListDto> toDto(Page<BoardTrade> entityPage) {
 
-        return entityPage.map(boardTrade -> ProfileListDto.builder()
+        return entityPage.map(boardTrade -> ProfileSellListDto.builder()
                 .boardId(boardTrade.getId())
                 .title(boardTrade.getTitle())
                 .codeSmallId(boardTrade.getCodeSmall().getId())

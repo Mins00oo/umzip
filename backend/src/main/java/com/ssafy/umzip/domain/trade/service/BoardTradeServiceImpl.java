@@ -141,17 +141,17 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     }
 
     @Override
-    public Page<ProfileListDto> profileListBoardTrade(ProfileListRequestDto profileListRequestDto, Pageable pageable) {
+    public Page<ProfileSellListDto> profileListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto, Pageable pageable) {
         
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
-        if (profileListRequestDto.isSameMember()) {
+        if (profileSellListRequestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필");
         }
 
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         // 현재 사용자가 작성한 중고 게시글을 가져오기
-        Page<BoardTrade> entityPage = boardTradeRepository.findAllByMemberId(profileListRequestDto.getViewMemberId(),
+        Page<BoardTrade> entityPage = boardTradeRepository.findAllByMemberId(profileSellListRequestDto.getViewMemberId(),
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 //        List<BoardTradeImage> imageList = boardTradeImageRepository.findAll();
         
@@ -159,13 +159,13 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         // from 게시글
 
         // 썸네일 가져오기
-        Page<ProfileListDto> profileListDto = ProfileListDto.toDto(entityPage);
-        for (ProfileListDto dto : profileListDto) {
+        Page<ProfileSellListDto> profileSellListDto = ProfileSellListDto.toDto(entityPage);
+        for (ProfileSellListDto dto : profileSellListDto) {
             String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
             dto.setThumbnailPath(imagePath);
         }
 
-        return profileListDto;
+        return profileSellListDto;
     }
 
 

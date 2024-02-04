@@ -95,8 +95,8 @@ public class BoardTradeController {
     /*[ 판매 물품 ]
     * - 나의 판매 물품과 상대방의 판매 물품을 구분해야 한다.
     * */
-    @GetMapping("/profiles")
-    public ResponseEntity<Object> profileListBoardTrade(@RequestParam("memberId") Long memberId,
+    @GetMapping("/profiles/sell")
+    public ResponseEntity<Object> profileSellListBoardTrade(@RequestParam("memberId") Long memberId,
                                                         @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                                         HttpServletRequest request) {
 
@@ -106,12 +106,12 @@ public class BoardTradeController {
             isSameMember = true;
         }
 
-        ProfileListRequestDto profileListRequestDto = ProfileListRequestDto.builder()
+        ProfileSellListRequestDto profileSellListRequestDto = ProfileSellListRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileListDto> listDto = service.profileListBoardTrade(profileListRequestDto, pageable);
+        Page<ProfileSellListDto> listDto = service.profileListBoardTrade(profileSellListRequestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
