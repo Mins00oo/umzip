@@ -111,7 +111,7 @@ public class BoardTradeController {
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileSellListDto> listDto = service.profileListBoardTrade(profileSellListRequestDto, pageable);
+        Page<ProfileSellListDto> listDto = service.profileSellListBoardTrade(profileSellListRequestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -120,5 +120,35 @@ public class BoardTradeController {
 
     /*[ 구매 물품 ]
     * - 나의 구매 물품과 상대방의 구매 물품을 구분해야 한다.
+    * */
+    @GetMapping("/profiles/buy")
+    public ResponseEntity<Object> profileBuyListBoardTrade(@RequestParam("memberId") Long memberId,
+                                                           @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                           HttpServletRequest request) {
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileBuyListRequestDto profilebuyListRequestDto = ProfileBuyListRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        // service
+        Page<ProfileBuyListDto> listDto = service.profileBuyListBoardTrade(profilebuyListRequestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(listDto));
+    }
+
+    /*[ 판매 완료 ]
+     * - 판매 완료 버튼을 누르면 해당 중고 게시글의 상태 코드를 302(판매완료)로 변경한다
+     * */
+
+    /*[ 구매 완료 여부 ]
+    * 구매 여부: 후기작성을 끝내면 구매완료 테이블에 추가한다.
     * */
 }

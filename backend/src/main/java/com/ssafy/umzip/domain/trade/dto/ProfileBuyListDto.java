@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.data.domain.Page;
 
 @Getter
-public class ProfileSellListDto {
+public class ProfileBuyListDto {
 
     private Long boardId;
     private String title;
@@ -18,7 +18,7 @@ public class ProfileSellListDto {
     private String thumbnailPath;
 
     @Builder
-    public ProfileSellListDto(Long boardId, String title, Long codeSmallId, String codeSmallName,
+    public ProfileBuyListDto(Long boardId, String title, Long codeSmallId, String codeSmallName,
                               Long price, String thumbnailPath) {
         this.boardId = boardId;
         this.title = title;
@@ -28,13 +28,13 @@ public class ProfileSellListDto {
         this.thumbnailPath = thumbnailPath;
     }
 
-    public static Page<ProfileSellListDto> toDto(Page<BoardTrade> entityPage) {
+    public static Page<ProfileBuyListDto> toDto(Page<BoardTrade> entityPage) {
 
-        return entityPage.map(boardTrade -> ProfileSellListDto.builder()
+        return entityPage.map(boardTrade -> ProfileBuyListDto.builder()
                 .boardId(boardTrade.getId())
                 .title(boardTrade.getTitle())
-                .codeSmallId(boardTrade.getCodeSmall().getId())
-                .codeSmallName(boardTrade.getCodeSmall().getName())
+                .codeSmallId(303L)
+                .codeSmallName("구매완료")
                 .price(boardTrade.getPrice())
                 .build()
         );
