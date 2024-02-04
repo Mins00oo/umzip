@@ -2,8 +2,6 @@ package com.ssafy.umzip.domain.trade.service;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
-import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
-import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
@@ -20,11 +18,7 @@ import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -144,6 +138,34 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
 
         return detailDto;
+    }
+
+    @Override
+    public Page<ProfileListDto> profileListBoardTrade(ProfileListRequestDto profileListRequestDto, Pageable pageable) {
+        
+        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
+        if (profileListRequestDto.isSameMember()) {
+            System.out.println("현재 사용자의 프로필");
+        }
+
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
+        // 현재 사용자가 작성한 중고 게시글을 가져오기
+        Page<BoardTrade> entityPage = boardTradeRepository.findAllByMemberId(profileListRequestDto.getViewMemberId(),
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+//        List<BoardTradeImage> imageList = boardTradeImageRepository.findAll();
+        
+        // left join 이미지
+        // from 게시글
+
+        // 썸네일 가져오기
+        Page<ProfileListDto> profileListDto = ProfileListDto.toDto(entityPage);
+        for (ProfileListDto dto : profileListDto) {
+            String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
+            dto.setThumbnailPath(imagePath);
+        }
+
+        return profileListDto;
     }
 
 

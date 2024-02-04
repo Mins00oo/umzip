@@ -1,7 +1,7 @@
 package com.ssafy.umzip.domain.trade.service;
 
 import com.ssafy.umzip.domain.trade.dto.*;
-import com.ssafy.umzip.domain.trade.entity.BoardTrade;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,4 +15,6 @@ public interface BoardTradeService {
     Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable);
 
     DetailDto detailBoardTrade(DetailRequestDto requestDto);
+
+    Page<ProfileListDto> profileListBoardTrade(ProfileListRequestDto profileListRequestDto, Pageable pageable);
 }

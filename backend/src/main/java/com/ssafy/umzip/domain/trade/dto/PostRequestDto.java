@@ -14,13 +14,13 @@ public class PostRequestDto {
     private Long price;
     private String content;
     private Boolean isDirect;
-    private Integer sigungu;
+    private int sigungu;
     private String sigunguName;
     private String address;
 
     @Builder
     public PostRequestDto(String title, Long price, String content,
-                          Boolean isDirect, Integer sigungu, String sigunguName,
+                          Boolean isDirect, int sigungu, String sigunguName,
                           String address) {
         this.title = title;
         this.price = price;
@@ -46,5 +46,18 @@ public class PostRequestDto {
                 .sigungu(requestDto.getSigungu())
                 .sigunguName(requestDto.getSigunguName())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "PostRequestDto{" +
+                "title='" + title + '\'' +
+                ", price=" + price +
+                ", content='" + content + '\'' +
+                ", isDirect=" + isDirect +
+                ", sigungu='" + sigungu + '\'' +
+                ", sigunguName='" + sigunguName + '\'' +
+                ", address='" + address + '\'' +
+                '}';
     }
 }

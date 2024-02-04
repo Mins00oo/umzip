@@ -1,9 +1,6 @@
 package com.ssafy.umzip.domain.trade.controller;
 
-import com.ssafy.umzip.domain.help.dto.BoardHelpPostRequestDto;
-import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.trade.dto.*;
-import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import com.ssafy.umzip.domain.trade.service.BoardTradeService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -11,6 +8,7 @@ import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/trade-items")
@@ -35,15 +34,14 @@ public class BoardTradeController {
     *
     * */
     @PostMapping
-    public ResponseEntity<Object> postBoardTrade(@RequestPart(value="boardTrade") PostRequestDto requestDto,
-                                                 @RequestPart(value="imageFileList") List<MultipartFile> files,
+    public ResponseEntity<Object> postBoardTrade(@RequestPart("boardTrade") PostRequestDto requestDto,
+                                                 @RequestPart("imageFileList") List<MultipartFile> imageFileList,
                                                  HttpServletRequest request) {
 
         Long memberId = jwtTokenProvider.getId(request);
         int memberSigungu = jwtTokenProvider.getSigungu(request);
 
-        requestDto.setMemeber(memberId, memberSigungu);
-        service.PostBoardTrade(requestDto, files);
+        service.PostBoardTrade(requestDto, imageFileList, memberId, memberSigungu);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -93,4 +91,34 @@ public class BoardTradeController {
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(detailDto));
     }
+
+    /*[ 판매 물품 ]
+    * - 나의 판매 물품과 상대방의 판매 물품을 구분해야 한다.
+    * */
+    @GetMapping("/profiles")
+    public ResponseEntity<Object> profileListBoardTrade(@RequestParam("memberId") Long memberId,
+                                                        @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                        HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileListRequestDto profileListRequestDto = ProfileListRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        Page<ProfileListDto> listDto = service.profileListBoardTrade(profileListRequestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(listDto));
+    }
+
+    /*[ 구매 물품 ]
+    * - 나의 구매 물품과 상대방의 구매 물품을 구분해야 한다.
+    * */
 }
