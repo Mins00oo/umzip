@@ -2,8 +2,6 @@ package com.ssafy.umzip.domain.trade.service;
 
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
-import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
-import com.ssafy.umzip.domain.help.service.BoardHelpService;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
@@ -20,11 +18,7 @@ import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,9 +46,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     @Transactional
     @Override
     public void PostBoardTrade(PostRequestDto requestDto,
-                               List<MultipartFile> files) {
+                               List<MultipartFile> files,
+                               Long memberId, int memberSigungu) {
 
-        Member member = memberRepository.findById(requestDto.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
         
         CodeSmall codeSmall = codeSmallRepository.findById(IS_ON_SALE)
@@ -145,8 +140,56 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         return detailDto;
     }
 
+    @Override
+    public Page<ProfileSellListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto, Pageable pageable) {
+        
+        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
+        if (profileSellListRequestDto.isSameMember()) {
+            System.out.println("현재 사용자의 프로필 - [중고] 판매 목록");
+        }
 
-    // 판매 완료 상태로 전환 - 작성자 + 판매완료 버튼 클릭
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
+        Long viewMemberId = profileSellListRequestDto.getViewMemberId();
+        // 해당 사용자가 작성한 [중고] 판매 목록 가져오기
+        Page<BoardTrade> entityPage = boardTradeRepository.findAllBySellMemberId(viewMemberId,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+        
+        // left join 이미지
+        // from 게시글
 
-    // 구매여부 테이블 - 구매 여부: 후기작성을 끝내면 구매완료 테이블에 추가한다.
+        // 썸네일 가져오기
+        Page<ProfileSellListDto> profileSellListDto = ProfileSellListDto.toDto(entityPage);
+        for (ProfileSellListDto dto : profileSellListDto) {
+            String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
+            dto.setThumbnailPath(imagePath);
+        }
+
+        return profileSellListDto;
+    }
+
+    @Override
+    public Page<ProfileBuyListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
+        if (profileBuyListRequestDto.isSameMember()) {
+            System.out.println("현재 사용자의 프로필 - [중고] 구매 목록");
+        }
+
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
+        Long viewMemberId = profileBuyListRequestDto.getViewMemberId();
+
+        Page<BoardTrade> entityPage = boardTradeRepository.findAllByBuyMemberId(viewMemberId,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+
+        // codeSmallId = 303L(구매완료) 저장
+        // codeSmallName = "구매완료" 저장
+        Page<ProfileBuyListDto> profileBuyListDto = ProfileBuyListDto.toDto(entityPage);
+        for (ProfileBuyListDto dto : profileBuyListDto) {
+            String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
+            dto.setThumbnailPath(imagePath);
+        }
+
+
+        return profileBuyListDto;
+    }
 }

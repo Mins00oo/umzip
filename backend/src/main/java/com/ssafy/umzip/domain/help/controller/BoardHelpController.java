@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,13 +39,17 @@ public class BoardHelpController {
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
             @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
-            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files,
+            @RequestPart(value="imageFileList", required = false) List<MultipartFile> imageFileList,
             HttpServletRequest request) {
 
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
 
-        service.postBoardHelp(memberId, sigungu, requestDto, files);
+        if (imageFileList==null){
+            imageFileList = new ArrayList<>();
+        }
+
+        service.postBoardHelp(memberId, sigungu, requestDto, imageFileList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -93,12 +98,12 @@ public class BoardHelpController {
      */
     @PostMapping("detail/comments/{boardId}")
     public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
-                                              @RequestParam("comment") String comment,
+                                              @RequestBody PostCommentRequestDto dto,
                                               HttpServletRequest request) {
-
+        System.out.println("comment: " + dto.getComment());
         Long memberId = jwtTokenProvider.getId(request);
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, comment);
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, dto.getComment());
 
         service.postComment(requestDto);
 

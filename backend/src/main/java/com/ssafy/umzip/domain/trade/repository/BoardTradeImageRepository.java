@@ -9,4 +9,6 @@ import java.util.List;
 public interface BoardTradeImageRepository extends JpaRepository<BoardTradeImage, Long> {
 
     List<BoardTradeImage> findAllByBoardTradeId(Long boardTradeId);
+
+    List<BoardTradeImage> findAll();
 }

@@ -37,7 +37,7 @@ public class BoardTrade extends BaseTimeEntity {
     private Long price;
 
     @Column(name="board_trade_is_direct")
-    private boolean isDirect;
+    private Boolean isDirect;
 
     // address: 기본 주소 - 경기 성남시 분당구 판교역로 166
     @Column(name="board_trade_address")
@@ -56,7 +56,7 @@ public class BoardTrade extends BaseTimeEntity {
     @Builder
     public BoardTrade(Long id, CodeSmall codeSmall, Member member,
                       String title, String content, Long price,
-                      boolean isDirect, String address, int readCnt,
+                      Boolean isDirect, String address, int readCnt,
                       int sigungu, String sigunguName) {
         this.id = id;
         this.codeSmall = codeSmall;

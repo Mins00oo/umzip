@@ -17,6 +17,7 @@ public class BoardHelpDetailDto {
 
     private Long boardId;
     private String boardTitle;
+    private String boardContent;
     private int rewardPoint;
     private Long codeSmallId;
     private String codeSmallName;
@@ -28,14 +29,16 @@ public class BoardHelpDetailDto {
 
     private boolean isSameMember;
     private boolean isAdopted;
+    private List<String> imagePathList = new ArrayList<>();
 
     @Builder
     BoardHelpDetailDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment,
-                       boolean isSameMember) {
+                       boolean isSameMember, List<String> imagePathList) {
         this.writerId = boardHelp.getMember().getId();
         this.writerName = boardHelp.getMember().getName();
         this.boardId = boardHelp.getId();
         this.boardTitle = boardHelp.getTitle();
+        this.boardContent = boardHelp.getContent();
         this.rewardPoint = boardHelp.getPoint();
         this.codeSmallId = boardHelp.getCodeSmall().getId();
         this.codeSmallName = boardHelp.getCodeSmall().getName();
@@ -49,5 +52,7 @@ public class BoardHelpDetailDto {
 
         this.isSameMember = isSameMember;
         this.isAdopted = boardHelp.getIsAdopted();
+        this.imagePathList = imagePathList;
+
     }
 }

@@ -124,6 +124,15 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         boardHelp.setReadCnt(boardHelp.getReadCnt() + 1);
 
+        List<BoardHelpImage> boardHelpImages = boardHelpImageRepository.findAllById(requestDto.getBoardId());
+        List<String> imageList = new ArrayList<>();
+        for (BoardHelpImage image : boardHelpImages) {
+            if (image.getImageOriginName().isEmpty()) {
+                continue;
+            }
+            imageList.add(image.getImagePath());
+        }
+
         boolean isSameMember = false;
         if (Objects.equals(member.getId(), boardHelp.getMember().getId())) {
             isSameMember = true;
@@ -134,6 +143,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         return BoardHelpDetailDto.builder()
                 .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
+                .imagePathList(imageList)
                 .boardHelpComment(commentList)
                 .build();
     }

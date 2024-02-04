@@ -73,7 +73,7 @@ public class DetailDto {
                 .title(boardTrade.getTitle())
                 .price(boardTrade.getPrice())
                 .createDt(boardTrade.getCreateDt())
-                .isDirect(boardTrade.isDirect())
+                .isDirect(boardTrade.getIsDirect())
                 .content(boardTrade.getContent())
                 .readCnt(boardTrade.getReadCnt())
                 .codeSmallId(boardTrade.getCodeSmall().getId())

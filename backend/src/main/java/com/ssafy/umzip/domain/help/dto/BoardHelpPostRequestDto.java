@@ -5,8 +5,10 @@ import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class BoardHelpPostRequestDto {
 
     private Long codeSmallId;  // 도움주세요(401), 도움줄게요(403)
