@@ -49,4 +49,8 @@ public class ChatParticipant {
     public void talkWithChatRoom() {
         this.status = ChatRoomStatus.TALK;
     }
+
+    public void updateLastReadMessage(String messageId) {
+        this.messageId = messageId;
+    }
 }

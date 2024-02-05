@@ -13,7 +13,7 @@ $(function () {
     });
 });
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6MjYsInNpZ3VuZ3UiOjEsImlhdCI6MTcwNjc1MDY5MSwiZXhwIjoxNzA3MTgyNjkxfQ.1AYJFSd9Vsmi3CUx2iTsJAI4EScXqbYbeInqOgZ6xCc'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImdvZ29AbmF2ZXIuY29tIiwicm9sZSI6IkNMRUFOIiwiaWQiOjksInNpZ3VuZ3UiOjQ1NDU0LCJpYXQiOjE3MDY5MDEzMTQsImV4cCI6MTcwNzMzMzMxNH0.KSa61ZgZJ7a4sxcb5r4eTH5Ntal9PKHwTHECWONOA34'
 
 function createChatRoom(receiverId) {
     $.ajax({
@@ -65,6 +65,7 @@ function displayChatRooms(rooms) {
 
     rooms.forEach(function (chatRoom) {
         // 채팅방 상세 정보를 포함한 HTML 요소 생성 및 추가
+        const unreadCountBadge = chatRoom.unReadCount > 0 ? `<span class="unread-count-badge">${chatRoom.unReadCount}</span>` : '';
         chatRoomList.append(
             `<a href="chat.html?chatRoomId=${chatRoom.chatRoomId}" class="list-group-item list-group-item-action">
                 <div class="chat-room-info">
@@ -74,6 +75,7 @@ function displayChatRooms(rooms) {
                         <div class="last-message">${chatRoom.lastContent}</div>
                     </div>
                     <div class="update-dt">${chatRoom.updateDt}</div>
+                    ${unreadCountBadge}
                 </div>
             </a>`
         );
