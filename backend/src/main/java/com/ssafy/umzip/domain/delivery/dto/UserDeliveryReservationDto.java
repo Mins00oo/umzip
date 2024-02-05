@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.delivery.dto;
 
 import com.ssafy.umzip.domain.dashboard.dto.ReservationDto;
 import com.ssafy.umzip.domain.delivery.entity.Delivery;
+import com.ssafy.umzip.global.common.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,11 @@ public class UserDeliveryReservationDto implements ReservationDto {
     }
     public void addUserDeliveryMapping(UserDeliveryMappingDto dto){
         list.add(dto);
+    }
+
+    @Override
+    public Role getRole() {
+        return Role.DELIVER;
     }
 }
 

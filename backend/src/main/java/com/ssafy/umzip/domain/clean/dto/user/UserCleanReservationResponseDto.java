@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.clean.dto.user;
 
 import com.ssafy.umzip.domain.dashboard.dto.ReservationDto;
+import com.ssafy.umzip.global.common.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,4 +33,8 @@ public class UserCleanReservationResponseDto implements ReservationDto {
         }
     }
 
+    @Override
+    public Role getRole() {
+        return Role.CLEAN;
+    }
 }

@@ -5,6 +5,6 @@ import java.util.Comparator;
 public class ReservationDtoComparator implements Comparator<ReservationDto> {
     @Override
     public int compare(ReservationDto dto1, ReservationDto dto2) {
-        return dto1.getCreateDt().compareTo(dto2.getCreateDt());
+        return dto2.getCreateDt().compareTo(dto1.getCreateDt());
     }
 }
