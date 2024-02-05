@@ -176,4 +176,30 @@ public class BoardHelpController {
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(pageDto));
     }
+
+    /*[ 도움 공고 ]
+    * 나와 상대방의 도움 공고글을 구분한다 - memberId
+    * */
+    @GetMapping("/profiles/help-you")
+    public ResponseEntity<Object> profileBoardHelpYou(@RequestParam("memberId") Long memberId,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                     HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileHelpYouRequestDto requestDto = ProfileHelpYouRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        Page<ProfileHelpYouDto> pageDto = service.listProfileBoardHelpYou(requestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(pageDto));
+    }
 }

@@ -26,4 +26,6 @@ public interface BoardHelpService {
     void adoptedBoardHelp(BoardHelpAdopt requestDto);
 
     Page<ProfileHelpMeDto> listProfileBoardHelpMe(ProfileHelpMeRequestDto requestDto, Pageable pageable);
+
+    Page<ProfileHelpYouDto> listProfileBoardHelpYou(ProfileHelpYouRequestDto requestDto, Pageable pageable);
 }

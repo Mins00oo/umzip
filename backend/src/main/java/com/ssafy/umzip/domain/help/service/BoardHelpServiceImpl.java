@@ -185,10 +185,29 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = requestDto.getViewMemberId();
-        Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberId(viewMemberId,
+        Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdMe(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
         Page<ProfileHelpMeDto> pageDto = ProfileHelpMeDto.toDto(entityPage);
 
         return pageDto;
+    }
+
+    @Override
+    public Page<ProfileHelpYouDto> listProfileBoardHelpYou(ProfileHelpYouRequestDto requestDto, Pageable pageable) {
+
+        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
+        if (requestDto.isSameMember()) {
+            System.out.println("현재 사용자의 프로필 - [도움] 내역 목록");
+        }
+
+        int curPage = pageable.getPageNumber() - 1;
+        int size = pageable.getPageSize();
+        Long viewMemberId = requestDto.getViewMemberId();
+
+        Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdYou(viewMemberId,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+        Page<ProfileHelpYouDto> responseDto = ProfileHelpYouDto.toDto(entityPage);
+        
+        return responseDto;
     }
 }
