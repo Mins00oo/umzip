@@ -5,13 +5,12 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
-@NoArgsConstructor
 @Document
-@ToString
+@NoArgsConstructor
 public class ChatMessage extends BaseTimeDocument {
     @Id
     private String id;
