@@ -1,5 +1,7 @@
 package com.ssafy.umzip.domain.clean.dto.user;
 
+import com.ssafy.umzip.domain.dashboard.dto.ReservationDto;
+import com.ssafy.umzip.global.common.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -8,8 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString//삭제해야함
 @NoArgsConstructor
-public class UserCleanReservationResponseDto {
+public class UserCleanReservationResponseDto implements ReservationDto {
     private Long cleanId;
     private LocalDateTime createDt;
     private LocalDateTime reservationTime;
@@ -30,4 +33,8 @@ public class UserCleanReservationResponseDto {
         }
     }
 
+    @Override
+    public Role getRole() {
+        return Role.CLEAN;
+    }
 }

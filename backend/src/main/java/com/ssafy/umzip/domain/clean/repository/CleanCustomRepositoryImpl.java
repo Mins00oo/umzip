@@ -181,5 +181,4 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 ).distinct()
                 .fetch();
     }
-
 }

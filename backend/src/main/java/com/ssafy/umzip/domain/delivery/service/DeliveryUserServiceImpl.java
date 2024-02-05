@@ -68,6 +68,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         //car 가져옴.
         Car car = carRepository.findById(deliveryReservationRequestDto.getCarId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CAR));
         deliveryReservationRequestDto.setCar(car);//car 세팅
+        if(deliveryReservationRequestDto.getMovelist()==null){ //null check
+            deliveryReservationRequestDto.setMovelist("");
+        }
         //Delivery 생성
         Delivery delivery = DeliveryReservationRequestDto.toEntity(deliveryReservationRequestDto);
 
