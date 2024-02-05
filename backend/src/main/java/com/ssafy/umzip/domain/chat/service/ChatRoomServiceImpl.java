@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -81,12 +82,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .collect(Collectors.toMap(ChatMessage::getChatRoomId, Function.identity()));
 
         chatRooms.forEach(chatRoom -> {
+            long messagesCount;
             ChatMessage recentMessage = recentMessageMap.get(chatRoom.getChatRoomId());
             if (recentMessage != null) {
                 chatRoom.setLastContent(recentMessage.getContent());
             }
             String lastReadMessageId = lastReadMessageIdByRoomId.get(chatRoom.getChatRoomId());
-            long messagesCount = getNewMessagesCount(chatRoom.getChatRoomId(), lastReadMessageId);
+            if (lastReadMessageId.equals("0")) {
+                messagesCount = customChatParticipantRepository.getAllUnReadMessageCount(chatRoom.getChatRoomId());
+            } else {
+                messagesCount = getNewMessagesCount(chatRoom.getChatRoomId(), lastReadMessageId);
+            }
             chatRoom.setUnReadCount(messagesCount);
         });
         return chatRooms;
@@ -95,10 +101,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private Map<Long, String> getLastReadMessageIds(Long memberId, List<Long> chatRoomIds) {
         List<ChatParticipant> participants = chatParticipantRepository.
                 findByMemberIdAndChatRoomIdIn(memberId, chatRoomIds);
+
         return participants.stream()
                 .collect(Collectors.toMap(
                         participant -> participant.getChatRoom().getId(),
-                        ChatParticipant::getMessageId
+                        participant -> Optional.ofNullable(participant.getMessageId()).orElse("0")
                 ));
     }
 

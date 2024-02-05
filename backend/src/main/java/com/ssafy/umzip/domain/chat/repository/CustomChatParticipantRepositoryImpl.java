@@ -85,12 +85,27 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
     }
 
     @Override
+    public long getAllUnReadMessageCount(Long chatRoomId) {
+        Criteria criteria = Criteria.where("chatRoomId").is(chatRoomId);
+        AggregationOperation match = Aggregation.match(criteria);
+
+        AggregationOperation unReadCount = Aggregation.count().as("allUnReadCount");
+        Aggregation aggregation = Aggregation.newAggregation(match, unReadCount);
+
+        AggregationResults<BasicDBObject> results = mongoTemplate.aggregate(
+                aggregation,
+                "chatMessage",
+                BasicDBObject.class
+        );
+        BasicDBObject result = results.getUniqueMappedResult();
+        return result.getLong("allUnReadCount");
+    }
+
+    @Override
     public long getNewMessageCount(Long chatRoomId, String lastReadMessageId) {
         ObjectId objectId = new ObjectId(lastReadMessageId);
         Criteria criteria = Criteria.where("chatRoomId").is(chatRoomId)
                 .andOperator(Criteria.where("_id").gt(objectId));
-
-        log.info(criteria.getKey());
 
         AggregationOperation match = Aggregation.match(criteria);
 
