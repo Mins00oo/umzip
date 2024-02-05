@@ -5,27 +5,23 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class PostRequestDto {
 
-    private Long memberId;
-    private int memberSigungu;
-
     private String title;
     private Long price;
     private String content;
-    private boolean isDirect;
+    private Boolean isDirect;
     private int sigungu;
     private String sigunguName;
     private String address;
 
     @Builder
-    public PostRequestDto(Long memberId, int memberSigungu,
-                          String title, Long price, String content,
-                          boolean isDirect, int sigungu, String sigunguName,
+    public PostRequestDto(String title, Long price, String content,
+                          Boolean isDirect, int sigungu, String sigunguName,
                           String address) {
-        setMemeber(memberId, memberSigungu);
         this.title = title;
         this.price = price;
         this.content = content;
@@ -33,11 +29,6 @@ public class PostRequestDto {
         this.sigungu = sigungu;
         this.sigunguName = sigunguName;
         this.address = address;
-    }
-
-    public void setMemeber(Long memberId, int memberSigungu) {
-        this.memberId = memberId;
-        this.memberSigungu = memberSigungu;
     }
 
     public BoardTrade toEntity(PostRequestDto requestDto,
@@ -49,11 +40,24 @@ public class PostRequestDto {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
-                .isDirect(requestDto.isDirect())
+                .isDirect(requestDto.getIsDirect())
                 .address(requestDto.getAddress())
                 .readCnt(readCnt)
                 .sigungu(requestDto.getSigungu())
                 .sigunguName(requestDto.getSigunguName())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "PostRequestDto{" +
+                "title='" + title + '\'' +
+                ", price=" + price +
+                ", content='" + content + '\'' +
+                ", isDirect=" + isDirect +
+                ", sigungu='" + sigungu + '\'' +
+                ", sigunguName='" + sigunguName + '\'' +
+                ", address='" + address + '\'' +
+                '}';
     }
 }

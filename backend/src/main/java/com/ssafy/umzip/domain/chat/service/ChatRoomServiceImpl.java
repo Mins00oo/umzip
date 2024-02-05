@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final CustomChatParticipantRepository customChatParticipantRepository;
-    private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     @Override
@@ -69,39 +69,54 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
 
         List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(memberId, role);
-        // 채팅방 ID 목록 가져오기
+
         List<Long> chatRoomIds = chatRooms.stream()
                 .map(ChatRoomListResponseDto::getChatRoomId)
                 .collect(Collectors.toList());
 
-        // 채팅방 ID 목록으로 최근 메시지 가져오기
+        Map<Long, String> lastReadMessageIdByRoomId = getLastReadMessageIds(memberId, chatRoomIds);
+
         List<ChatMessage> recentMessages = customChatParticipantRepository.findRecentMessagesByChatRoomIds(chatRoomIds);
 
-        for (ChatMessage cm : recentMessages) {
-            System.out.println("cm = " + cm);
-        }
-
-        // 최근 메시지를 채팅방 ID를 기준으로 매핑
         Map<Long, ChatMessage> recentMessageMap = recentMessages.stream()
                 .collect(Collectors.toMap(ChatMessage::getChatRoomId, Function.identity()));
 
-
-
-        // 채팅방 정보와 최근 메시지 병합
         chatRooms.forEach(chatRoom -> {
+            long messagesCount;
             ChatMessage recentMessage = recentMessageMap.get(chatRoom.getChatRoomId());
             if (recentMessage != null) {
                 chatRoom.setLastContent(recentMessage.getContent());
             }
+            String lastReadMessageId = lastReadMessageIdByRoomId.get(chatRoom.getChatRoomId());
+            if (lastReadMessageId.equals("0")) {
+                messagesCount = customChatParticipantRepository.getAllUnReadMessageCount(chatRoom.getChatRoomId());
+            } else {
+                messagesCount = getNewMessagesCount(chatRoom.getChatRoomId(), lastReadMessageId);
+            }
+            chatRoom.setUnReadCount(messagesCount);
         });
         return chatRooms;
+    }
+
+    private Map<Long, String> getLastReadMessageIds(Long memberId, List<Long> chatRoomIds) {
+        List<ChatParticipant> participants = chatParticipantRepository.
+                findByMemberIdAndChatRoomIdIn(memberId, chatRoomIds);
+
+        return participants.stream()
+                .collect(Collectors.toMap(
+                        participant -> participant.getChatRoom().getId(),
+                        participant -> Optional.ofNullable(participant.getMessageId()).orElse("0")
+                ));
+    }
+
+    private long getNewMessagesCount(Long chatRoomId, String lastReadMessageId) {
+        return customChatParticipantRepository.getNewMessageCount(chatRoomId, lastReadMessageId);
     }
 
     @Transactional
     @Override
     public void leaveChatRoom(Long chatRoomId, Long requestId) {
         ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, requestId);
-        log.info(String.valueOf(chatParticipant.getId()));
         chatParticipant.leaveChatRoom();
     }
 }

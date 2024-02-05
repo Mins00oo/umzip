@@ -1,5 +1,9 @@
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NCwic2lndW5ndSI6MTAwLCJpYXQiOjE3MDY3NDc2NzYsImV4cCI6MTcwNzE3OTY3Nn0.0UtQe8QKEO6KriOAAGD5iJTkmyWIqM0WCCpslvOJWLg'
+
+let currentUserId = null;
+
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws'
+    brokerURL: `ws://localhost:8080/ws?accessToken=${accessToken}`
 });
 
 $(function () {
@@ -36,7 +40,6 @@ function getChatRoomIdFromUrl() {
     return urlParams.get('chatRoomId');
 }
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NCwic2lndW5ndSI6MTAwLCJpYXQiOjE3MDY3NDc2NzYsImV4cCI6MTcwNzE3OTY3Nn0.0UtQe8QKEO6KriOAAGD5iJTkmyWIqM0WCCpslvOJWLg'
 
 function connectToChatRoom(chatRoomId) {
     // WebSocket 연결 및 채팅방 구독
@@ -45,6 +48,12 @@ function connectToChatRoom(chatRoomId) {
 
     stompClient.onConnect = function (frame) {
         console.log('Connected: ' + frame);
+
+        stompClient.subscribe(`/topic/user/${accessToken}`, function (message) {
+            currentUserId = message.body;
+            console.log(currentUserId + "currentUser")
+        });
+
         stompClient.subscribe(`/topic/chatroom/${chatRoomId}`, function (message) {
             showReceivedMessage(message.body);
         });
@@ -74,14 +83,18 @@ function fetchMyMessages(chatRoomId) {
     });
 }
 
-const currentUserId = 4
-
-function displayMessage(message) {
+function displayMessage(message, prevMessage) {
     const messageElement = $("<div>").addClass("message");
     const senderNameElement = $("<div>").addClass("sender-name").text(message.senderName);
     const contentElement = $("<div>").addClass("content").text(message.content);
-    const timeElement = $("<div>").addClass("time").text(message.sendTime);
+    const timeElement = $("<div>").addClass("time").text(message.sendTime.slice(-5)); // 'HH:mm' 형식으로 표시
     const senderProfileImageElement = $("<img>").addClass("sender-profile-image").attr("src", message.senderProfileImage);
+
+    // 날짜가 바뀌는 경우, 날짜 구분선 표시
+    if (!prevMessage || message.sendTime.slice(0, 10) !== prevMessage.sendTime.slice(0, 10)) {
+        const dateElement = $("<div>").addClass("date-separator").text(message.sendTime.slice(0, 10)); // 'YYYY-MM-DD' 형식
+        $("#messages").append(dateElement);
+    }
 
     // 현재 사용자의 메시지인지 확인하여 스타일 적용
     if (message.senderId.toString() === currentUserId.toString()) {
@@ -93,6 +106,8 @@ function displayMessage(message) {
     messageElement.append(senderProfileImageElement, senderNameElement, contentElement, timeElement);
     $("#messages").append(messageElement);
 }
+
+
 function sendMessage(chatRoomId) {
     console.log(chatRoomId)
     const messageContent = $("#messageInput").val();

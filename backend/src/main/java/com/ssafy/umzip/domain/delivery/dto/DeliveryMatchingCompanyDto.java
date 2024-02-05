@@ -34,13 +34,15 @@ public class DeliveryMatchingCompanyDto {
     private LocalDateTime experience;
     private String imageUrl;
     private String ceo;
+    private String companyName;
     private List<String> topTagList;
-    public DeliveryMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo) {
+    public DeliveryMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo,String companyName) {
         this.companyId = companyId;
         this.memberId = memberId;
         this.experience = experience;
         this.imageUrl = imageUrl;
         this.ceo = ceo;
+        this.companyName = companyName;
     }
 
 

@@ -4,7 +4,6 @@
 
     @Getter
     @Setter
-    @ToString
     @NoArgsConstructor
     public class UserDeliveryMappingRepoDto {
         private Long deliveryId;

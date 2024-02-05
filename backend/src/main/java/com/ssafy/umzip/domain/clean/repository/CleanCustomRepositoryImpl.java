@@ -1,18 +1,18 @@
 package com.ssafy.umzip.domain.clean.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
-import com.ssafy.umzip.domain.clean.dto.user.CleanReservationRequestDto;
-import com.ssafy.umzip.domain.clean.dto.user.UserCleanMappingDto;
-import com.ssafy.umzip.domain.clean.dto.user.UserCleanMappingRepoDto;
-import com.ssafy.umzip.domain.clean.dto.user.UserCleanReservationResponseDto;
+import com.ssafy.umzip.domain.clean.dto.user.*;
 import com.ssafy.umzip.domain.clean.entity.QCleanMapping;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
+import com.ssafy.umzip.global.common.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,8 +21,8 @@ import static com.ssafy.umzip.domain.clean.entity.QClean.clean;
 import static com.ssafy.umzip.domain.clean.entity.QCleanMapping.cleanMapping;
 import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
-import static com.ssafy.umzip.domain.delivery.entity.QDeliveryMapping.deliveryMapping;
 import static com.ssafy.umzip.domain.member.entity.QMember.member;
+import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 
 @RequiredArgsConstructor
 @Repository
@@ -102,6 +102,60 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
             reservation.setStatus(recentStatus);
         }
         return cleans;
+    }
+
+    /**
+     * 유저 : 매칭 Repository
+     */
+    @Override
+    public List<CleanMatchingCompanyDto> findCompanyMatchingList(CleanCompanyListRequestDto dto) {
+        // 1. cleanMapping을 기준으로 시간에 해당하지 않는 company찾기
+        LocalDateTime startTime = getLocalDateTime(dto.getReservationTime());
+        LocalDateTime endTime = startTime.plusHours(4);
+        LocalDateTime startTimeMinus4 = startTime.minusHours(4);
+        // 2. 시간이 겹치는 Mapping
+        List<Long> invalidMapping = queryFactory.select(
+                            cleanMapping.id
+                ).from(cleanMapping)
+                .join(cleanMapping.clean, clean)
+                .where(clean.reservationTime.between(startTime,endTime)
+                        .or(clean.reservationTime.loe(startTime)
+                                .and(clean.reservationTime.gt(startTimeMinus4))
+                        )
+                ).distinct().fetch();
+
+        List<CleanMatchingCompanyDto> ans = queryFactory.select(
+                        Projections.constructor(
+                                CleanMatchingCompanyDto.class,
+                                company.id.as("companyId"),
+                                company.member.id.as("memberId"),
+                                company.experience.as("experience"),
+                                company.imageUrl.as("imageUrl"),
+                                company.ceo.as("ceo"),
+                                company.name.as("companyName")
+                        )
+                ).from(company)
+                .leftJoin(cleanMapping).on(cleanMapping.company.id.eq(company.id))
+                .where(company.sigungu.eq(dto.getSigungu())
+                        .and(company.role.eq(Role.CLEAN))
+                        .and(company.id.notIn(queryFactory.select( // 포함되면 안됨.
+                                        company.id
+                                ).from(cleanMapping)
+                                .join(cleanMapping.company, company)
+                                .where(cleanMapping.id.in(invalidMapping), //시간이 겹치고
+                                        cleanMapping.codeSmall.id.eq(203L)  // 예약 완료인 상태인 companyId는
+                                )
+                                .distinct()
+                                .fetch()
+                                )
+                        )
+                )
+                .orderBy(company.experience.asc())
+                .distinct()
+                .fetch();
+
+
+        return ans;
     }
 
     @Override

@@ -25,6 +25,9 @@ public class ChatRoomListResponseDto {
     @Setter
     private String lastContent;
 
+    @Setter
+    private long unReadCount;
+
     @Builder
     public ChatRoomListResponseDto(Long chatRoomId,Long receiverId, String receiverProfileImage, String receiverName,
                                    LocalDateTime updateDt) {

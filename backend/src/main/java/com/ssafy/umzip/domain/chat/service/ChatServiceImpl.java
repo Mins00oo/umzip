@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
 import com.ssafy.umzip.domain.chat.dto.ChatTradeMessageRequestDto;
 import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.entity.ChatParticipant;
+import com.ssafy.umzip.domain.chat.entity.ChatRoomStatus;
 import com.ssafy.umzip.domain.chat.entity.TradeChat;
 import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
@@ -37,11 +38,17 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
         ChatMessage chatMessage = ChatMessageRequestDto.toEntity(message, member, chatRoomId);
 
-        chatMessageRepository.save(chatMessage);
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
         List<ChatParticipant> chatParticipantList = chatParticipantRepository.findByChatRoomId(chatRoomId);
+
         for (ChatParticipant cp : chatParticipantList) {
-            cp.talkWithChatRoom();
+            if (cp.getMember().getId().equals(requestId)) {
+                cp.updateLastReadMessage(savedMessage.getId());
+            }
+            if (!cp.getStatus().equals(ChatRoomStatus.TALK)){
+                cp.talkWithChatRoom();
+            }
         }
 
         return ChatMessageRequestDto.toResponseDto(message.getContent(), member, LocalDateTime.now());

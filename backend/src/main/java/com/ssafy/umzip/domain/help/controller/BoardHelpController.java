@@ -21,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/helps")
@@ -38,13 +40,17 @@ public class BoardHelpController {
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
             @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
-            @RequestPart(value="imageFileList", required = false)List<MultipartFile> files,
+            @RequestPart(value="imageFileList", required = false) List<MultipartFile> imageFileList,
             HttpServletRequest request) {
 
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
 
-        service.postBoardHelp(memberId, sigungu, requestDto, files);
+        if (imageFileList==null){
+            imageFileList = new ArrayList<>();
+        }
+
+        service.postBoardHelp(memberId, sigungu, requestDto, imageFileList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -93,12 +99,12 @@ public class BoardHelpController {
      */
     @PostMapping("detail/comments/{boardId}")
     public ResponseEntity<Object> postComment(@PathVariable("boardId") Long boardId,
-                                              @RequestParam("comment") String comment,
+                                              @RequestBody PostCommentRequestDto dto,
                                               HttpServletRequest request) {
-
+        System.out.println("comment: " + dto.getComment());
         Long memberId = jwtTokenProvider.getId(request);
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, comment);
+        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, dto.getComment());
 
         service.postComment(requestDto);
 
@@ -143,5 +149,57 @@ public class BoardHelpController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*[ 도움 구인 ]
+    * 나와 상대방의 도움 구인글을 구분한다 - memberId
+    * */
+    @GetMapping("/profiles/help-me")
+    public ResponseEntity<Object> profileBoardHelpMe(@RequestParam("memberId") Long memberId,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                     HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileHelpMeRequestDto requestDto = ProfileHelpMeRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        Page<ProfileHelpMeDto> pageDto = service.listProfileBoardHelpMe(requestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(pageDto));
+    }
+
+    /*[ 도움 공고 ]
+    * 나와 상대방의 도움 공고글을 구분한다 - memberId
+    * */
+    @GetMapping("/profiles/help-you")
+    public ResponseEntity<Object> profileBoardHelpYou(@RequestParam("memberId") Long memberId,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                     HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileHelpYouRequestDto requestDto = ProfileHelpYouRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        Page<ProfileHelpYouDto> pageDto = service.listProfileBoardHelpYou(requestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(pageDto));
     }
 }

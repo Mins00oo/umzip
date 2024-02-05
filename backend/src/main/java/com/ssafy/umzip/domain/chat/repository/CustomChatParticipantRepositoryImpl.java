@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.chat.repository;
 
+import com.mongodb.BasicDBObject;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,9 +12,11 @@ import com.ssafy.umzip.domain.chat.entity.QChatRoom;
 import com.ssafy.umzip.domain.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -59,14 +62,11 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
 
     @Override
     public List<ChatMessage> findRecentMessagesByChatRoomIds(List<Long> chatRoomIds) {
-        for (Long id : chatRoomIds) {
-            System.out.println("id = " + id);
-        }
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("chatRoomId").in(chatRoomIds)),
                 Aggregation.sort(Sort.Direction.DESC, "updateDt"),
                 Aggregation.group("chatRoomId").first("$$ROOT").as("recentMessage"),
-                Aggregation.project() // 필드 매핑 조정
+                Aggregation.project()
                         .andExpression("recentMessage.chatRoomId").as("chatRoomId")
                         .andExpression("recentMessage.id").as("id")
                         .andExpression("recentMessage.senderId").as("senderId")
@@ -75,9 +75,6 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
                         .andExpression("recentMessage.createDt").as("createDt")
                         .andExpression("recentMessage.updateDt").as("updateDt")
         );
-
-        log.info(aggregation.toString());
-
         AggregationResults<ChatMessage> results = mongoTemplate.aggregate(
                 aggregation,
                 "chatMessage",
@@ -85,5 +82,43 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
         );
 
         return results.getMappedResults();
+    }
+
+    @Override
+    public long getAllUnReadMessageCount(Long chatRoomId) {
+        Criteria criteria = Criteria.where("chatRoomId").is(chatRoomId);
+        AggregationOperation match = Aggregation.match(criteria);
+
+        AggregationOperation unReadCount = Aggregation.count().as("allUnReadCount");
+        Aggregation aggregation = Aggregation.newAggregation(match, unReadCount);
+
+        AggregationResults<BasicDBObject> results = mongoTemplate.aggregate(
+                aggregation,
+                "chatMessage",
+                BasicDBObject.class
+        );
+        BasicDBObject result = results.getUniqueMappedResult();
+        return result.getLong("allUnReadCount");
+    }
+
+    @Override
+    public long getNewMessageCount(Long chatRoomId, String lastReadMessageId) {
+        ObjectId objectId = new ObjectId(lastReadMessageId);
+        Criteria criteria = Criteria.where("chatRoomId").is(chatRoomId)
+                .andOperator(Criteria.where("_id").gt(objectId));
+
+        AggregationOperation match = Aggregation.match(criteria);
+
+        AggregationOperation count = Aggregation.count().as("newMessagesCount");
+
+        Aggregation aggregation = Aggregation.newAggregation(match, count);
+
+        AggregationResults<BasicDBObject> results = mongoTemplate.aggregate(
+                aggregation,
+                "chatMessage",
+                BasicDBObject.class
+        );
+        BasicDBObject result = results.getUniqueMappedResult();
+        return result != null ? result.getLong("newMessagesCount") : 0;
     }
 }

@@ -9,4 +9,8 @@ public interface CustomChatParticipantRepository {
     List<ChatRoomListResponseDto> findChatRoomDetailsByMemberIdAndRole(Long memberId, String role);
 
     List<ChatMessage> findRecentMessagesByChatRoomIds(List<Long> chatRoomIds);
+
+    long getAllUnReadMessageCount(Long chatRoomId);
+
+    long getNewMessageCount(Long chatRoomId, String lastReadMessageId);
 }
