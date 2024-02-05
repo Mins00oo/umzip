@@ -52,7 +52,6 @@ public class BoardHelpDetailDto {
 
         this.isSameMember = isSameMember;
         this.isAdopted = boardHelp.getIsAdopted();
-        this.imagePathList = imagePathList;
-
+        this.imagePathList.addAll(imagePathList);
     }
 }
