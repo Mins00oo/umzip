@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.help.dto.BoardHelpListDto;
 import com.ssafy.umzip.domain.help.dto.BoardHelpListRequestDto;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
+import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,9 @@ public interface BoardHelpRepository extends JpaRepository<BoardHelp, Long> {
                                                                     @Param("sigungu") int sigungu,
                                                                     @Param("codeSmall") Long codeSmall,
                                                                     Pageable pageable);
+
+    @Query("select b from BoardHelp b " +
+            "where b.member.id = :memberId " +
+            "and (b.codeSmall.id = 401L or b.codeSmall.id = 402L ) ")
+    Page<BoardHelp> findAllByMemberId(Long memberId, Pageable pageable);
 }

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/helps")
@@ -148,5 +149,31 @@ public class BoardHelpController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*[ 도움 구인 ]
+    * 나와 상대방의 도움 구인글을 구분한다 - memberId
+    * */
+    @GetMapping("/profiles/help-me")
+    public ResponseEntity<Object> profileBoardHelpMe(@RequestParam("memberId") Long memberId,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                     HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        boolean isSameMember = false;
+        if (Objects.equals(curMemberId, memberId)) {
+            isSameMember = true;
+        }
+
+        ProfileHelpMeRequestDto requestDto = ProfileHelpMeRequestDto.builder()
+                .viewMemberId(memberId)
+                .isSameMember(isSameMember)
+                .build();
+
+        Page<ProfileHelpMeDto> pageDto = service.listProfileBoardHelpMe(requestDto, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(pageDto));
     }
 }
