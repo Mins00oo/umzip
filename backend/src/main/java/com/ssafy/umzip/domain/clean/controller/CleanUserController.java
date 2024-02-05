@@ -13,6 +13,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.LongSupplier;
 
@@ -63,6 +64,9 @@ public class CleanUserController {
                                               ){
 
         Long memberId = jwtTokenProvider.getId(request);
+        if(imageFileList==null){ // check null
+            imageFileList = new ArrayList<>();
+        }
         cleanUserService.createClean(companys,imageFileList,price,reservationRequestDto,memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }

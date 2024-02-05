@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -61,6 +62,9 @@ public class DeliveryUserController {
 
     ){
         Long memberId = jwtTokenProvider.getId(request);
+        if(imageFileList==null){ // check null
+            imageFileList = new ArrayList<>();
+        }
         deliveryUserService.createDelivery(delivery,companys,imageFileList,price,memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
