@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.delivery.dto;
 
+import com.ssafy.umzip.domain.dashboard.dto.ReservationDto;
 import com.ssafy.umzip.domain.delivery.entity.Delivery;
 import lombok.*;
 
@@ -9,9 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString//삭제해야함.
 @NoArgsConstructor
-public class UserDeliveryReservationDto {
+public class UserDeliveryReservationDto implements ReservationDto {
     private Long id;
     private LocalDateTime createDt;
     private LocalDateTime startTime;
