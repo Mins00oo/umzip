@@ -11,12 +11,12 @@ $(document).ready(function () {
 $(function () {
     // 채팅방 생성 버튼 클릭 이벤트
     $("#createChatRoom").click(function() {
-        const receiverId = 9
+        const receiverId = 12
         createChatRoom(receiverId);
     });
 });
 
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IlVTRVIiLCJpZCI6NCwic2lndW5ndSI6MTAwLCJpYXQiOjE3MDY3NDc2NzYsImV4cCI6MTcwNzE3OTY3Nn0.0UtQe8QKEO6KriOAAGD5iJTkmyWIqM0WCCpslvOJWLg'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxMjM0Iiwicm9sZSI6IkNMRUFOIiwiaWQiOjQsInNpZ3VuZ3UiOjEyMzQ1LCJpYXQiOjE3MDcxMTY0ODUsImV4cCI6MTcwNzU0ODQ4NX0.si9TTTDBfkYoxiRC5liOo6ZlIiuA30eHVMUOZATqYGk'
 
 function createChatRoom(receiverId) {
     $.ajax({

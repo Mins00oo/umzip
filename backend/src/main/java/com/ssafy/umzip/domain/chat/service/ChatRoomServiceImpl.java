@@ -4,7 +4,7 @@ import com.ssafy.umzip.domain.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.entity.ChatParticipant;
 import com.ssafy.umzip.domain.chat.entity.ChatRoom;
-import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
+import com.ssafy.umzip.domain.chat.entity.ChatRoomType;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.umzip.domain.chat.repository.CustomChatParticipantRepository;
@@ -34,35 +34,56 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Transactional
     @Override
-    public ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, String role) {
-        Member sender = memberRepository.findById(senderId)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
-        Member receiver = memberRepository.findById(receiverId)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
+    public ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, Long tradeId, String role) {
+        Member sender = findMember(senderId);
+        Member receiver = findMember(receiverId);
 
-
-        ChatRoom chatRoom = ChatRoom.builder()
-                .build();
-
+        ChatRoom chatRoom = buildChatRoom(role, tradeId);
         chatRoomRepository.save(chatRoom);
 
-        ChatParticipant senderParticipant = ChatParticipant.builder()
-                .chatRoom(chatRoom)
-                .member(sender)
-                .role(senderRole)
-                .build();
+        saveChatParticipant(chatRoom, sender, senderRole);
+        saveChatParticipant(chatRoom, receiver, role);
 
-        chatParticipantRepository.save(senderParticipant);
-
-        ChatParticipant receiverParticipant = ChatParticipant.builder()
-                .chatRoom(chatRoom)
-                .member(receiver)
-                .role(role)
-                .build();
-
-        chatParticipantRepository.save(receiverParticipant);
         return chatRoom;
     }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
+    }
+
+    private ChatRoom buildChatRoom(String role, Long tradeId) {
+        ChatRoomType roomType = getRoomType(role);
+        ChatRoom chatRoom = ChatRoom.builder().roomType(roomType).build();
+
+        if (tradeId != null && roomType == ChatRoomType.TRADE) {
+            chatRoom.setTradeId(tradeId);
+        }
+        return chatRoom;
+    }
+
+    private ChatRoomType getRoomType(String role) {
+        return switch (role) {
+            case "DELIVER" -> ChatRoomType.DELIVER;
+            case "CLEAN" -> ChatRoomType.CLEAN;
+            case "TRADE" -> ChatRoomType.TRADE;
+            default -> ChatRoomType.HELP;
+        };
+    }
+
+    private void saveChatParticipant(ChatRoom chatRoom, Member member, String role) {
+        String r = role;
+        if (role.equals("TRADE") || role.equals("HELP")) {
+            r = "USER";
+        }
+        ChatParticipant participant = ChatParticipant.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .role(r)
+                .build();
+        chatParticipantRepository.save(participant);
+    }
+
 
     @Transactional(readOnly = true)
     @Override

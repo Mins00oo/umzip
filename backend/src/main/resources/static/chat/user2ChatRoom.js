@@ -73,7 +73,8 @@ function fetchMyMessages(chatRoomId) {
             'Authorization': `Bearer ${accessToken}`
         },
         success: function (response) {
-            response.result.forEach(function (message) {
+            console.log(response)
+            response.result.chatMessages.forEach(function (message) {
                 displayMessage(message);
             });
         },

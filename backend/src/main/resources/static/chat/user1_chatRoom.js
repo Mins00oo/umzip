@@ -1,4 +1,4 @@
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImdvZ29AbmF2ZXIuY29tIiwicm9sZSI6IkNMRUFOIiwiaWQiOjksInNpZ3VuZ3UiOjQ1NDU0LCJpYXQiOjE3MDY5MDEzMTQsImV4cCI6MTcwNzMzMzMxNH0.KSa61ZgZJ7a4sxcb5r4eTH5Ntal9PKHwTHECWONOA34'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNsZWFuVGVzdFVzZXJAbmF2ZXIuY29tIiwicm9sZSI6IlVTRVIiLCJpZCI6OSwic2lndW5ndSI6MSwiaWF0IjoxNzA3MTEzMzIwLCJleHAiOjE3MDc1NDUzMjB9.1FkdaPoUhYR1E_w5JdhFly-G_Dr6Ugc9tiZ339kEvlw'
 
 const stompClient = new StompJs.Client({
     brokerURL: `ws://localhost:8080/ws?accessToken=${accessToken}`
@@ -71,7 +71,7 @@ function fetchMyMessages(chatRoomId) {
             'Authorization': `Bearer ${accessToken}`
         },
         success: function (response) {
-            response.result.forEach(function (message) {
+            response.result.chatMessages.forEach(function (message) {
                 displayMessage(message);
             });
         },
