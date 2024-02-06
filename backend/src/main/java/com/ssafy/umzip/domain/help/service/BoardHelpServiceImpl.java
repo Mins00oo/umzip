@@ -80,9 +80,9 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .findPageByTitleContainingAndSigunguAndCodeSmall(keyword, sigungu, codeSmallId,
                         PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        Page<BoardHelpListDto> boardDtoList = BoardHelpListDto.toDto(boards);
+        Page<BoardHelpListDto> responseDto = BoardHelpListDto.toDto(boards);
 
-        boardDtoList.getContent().forEach(dto -> {
+        responseDto.getContent().forEach(dto -> {
             Long id = dto.getId();
             Long commentCnt = commentRepository.countAllByBoardIdGroupBy(id);
             if (commentCnt == null) {
@@ -91,7 +91,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             dto.setCommentCnt(commentCnt);
         });
 
-        return boardDtoList;
+        return responseDto;
     }
 
     @Transactional
@@ -187,9 +187,9 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         Long viewMemberId = requestDto.getViewMemberId();
         Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdMe(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        Page<ProfileHelpMeDto> pageDto = ProfileHelpMeDto.toDto(entityPage);
+        Page<ProfileHelpMeDto> responseDto = ProfileHelpMeDto.toDto(entityPage);
 
-        return pageDto;
+        return responseDto;
     }
 
     @Override

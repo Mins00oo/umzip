@@ -87,11 +87,11 @@ public class BoardHelpController {
                 .memberId(memberId)
                 .build();
 
-        Page<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
+        Page<BoardHelpListDto> responseDto = service.listBoardHelp(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(boards));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /* [ 댓글 작성 ]
@@ -170,11 +170,11 @@ public class BoardHelpController {
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpMeDto> pageDto = service.listProfileBoardHelpMe(requestDto, pageable);
+        Page<ProfileHelpMeDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(pageDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 도움 공고 ]
@@ -196,10 +196,10 @@ public class BoardHelpController {
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpYouDto> pageDto = service.listProfileBoardHelpYou(requestDto, pageable);
+        Page<ProfileHelpYouDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(pageDto));
+                .body(new BaseResponse<>(responseDto));
     }
 }

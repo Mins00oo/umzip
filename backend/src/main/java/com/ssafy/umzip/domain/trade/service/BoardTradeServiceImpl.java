@@ -95,7 +95,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
         Long curMemberId = requestDto.getMemberId();
         Long curBoardId = requestDto.getBoardId();
-        Member member = memberRepository.findById(curMemberId)
+        memberRepository.findById(curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         BoardTrade boardTrade = boardTradeRepository.findById(curBoardId)
@@ -131,10 +131,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
             filePathList.add(boardTradeImage.getPath());
         }
 
-        DetailDto detailDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter, isActive);
+        DetailDto responseDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter, isActive);
 
 
-        return detailDto;
+        return responseDto;
     }
 
     @Override
@@ -149,10 +149,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileSellListRequestDto.getViewMemberId();
-        List<ProfileListDto> listDto = customRepository.findProfileSellMatchingImageList(viewMemberId,
+        List<ProfileListDto> responseDto = customRepository.findProfileSellMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        return listDto;
+        return responseDto;
     }
 
     @Override
@@ -164,9 +164,9 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileBuyListRequestDto.getViewMemberId();
-        List<ProfileListDto> litsDto = customRepository.findProfileBuyMatchingImageList(viewMemberId,
+        List<ProfileListDto> responseDto = customRepository.findProfileBuyMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        return litsDto;
+        return responseDto;
     }
 }
