@@ -6,6 +6,9 @@ import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +28,9 @@ public class BoardTrade extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "boardTrade", fetch = FetchType.LAZY)
+    private List<BoardTradeImage> images = new ArrayList<>();
 
     @Column(name="board_trade_title")
     private String title;

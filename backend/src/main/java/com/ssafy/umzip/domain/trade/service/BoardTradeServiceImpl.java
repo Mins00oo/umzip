@@ -10,6 +10,7 @@ import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeActive;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeImage;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeActiveRepository;
+import com.ssafy.umzip.domain.trade.repository.BoardTradeCustomRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeImageRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeRepository;
 import com.ssafy.umzip.global.common.Role;
@@ -37,6 +38,8 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     private final MemberRepository memberRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final ReviewReceiverRepository reviewReceiverRepository;
+
+    private final BoardTradeCustomRepository customRepository;
 
     private final S3Service s3Service;
 
@@ -69,7 +72,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
     @Transactional(readOnly = true)
     @Override
-    public Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable) {
+    public List<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable) {
 
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
@@ -80,16 +83,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
 
-        Slice<BoardTrade> boardTradeList = boardTradeRepository.findBoardTradeList(keyword, sigungu, IS_ON_SALE,
-                        PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+        List<ListDto> responseDto = customRepository.findBoardMatchingImageList(keyword, sigungu, IS_ON_SALE,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        Slice<ListDto> listDto = ListDto.toDto(boardTradeList);
-        for (ListDto dto : listDto) {
-            List<BoardTradeImage> thumbnailList = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId());
-            dto.setThumbnailPath(thumbnailList.get(0).getPath());
-        }
-
-        return listDto;
+        return responseDto;
     }
 
     @Transactional
@@ -141,7 +138,8 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     }
 
     @Override
-    public Page<ProfileSellListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto, Pageable pageable) {
+    public List<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto,
+                                                          Pageable pageable) {
         
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (profileSellListRequestDto.isSameMember()) {
@@ -151,25 +149,14 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileSellListRequestDto.getViewMemberId();
-        // 해당 사용자가 작성한 [중고] 판매 목록 가져오기
-        Page<BoardTrade> entityPage = boardTradeRepository.findAllBySellMemberId(viewMemberId,
+        List<ProfileListDto> listDto = customRepository.findProfileSellMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        
-        // left join 이미지
-        // from 게시글
 
-        // 썸네일 가져오기
-        Page<ProfileSellListDto> profileSellListDto = ProfileSellListDto.toDto(entityPage);
-        for (ProfileSellListDto dto : profileSellListDto) {
-            String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
-            dto.setThumbnailPath(imagePath);
-        }
-
-        return profileSellListDto;
+        return listDto;
     }
 
     @Override
-    public Page<ProfileBuyListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
+    public List<ProfileListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
         if (profileBuyListRequestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필 - [중고] 구매 목록");
         }
@@ -177,19 +164,9 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileBuyListRequestDto.getViewMemberId();
-
-        Page<BoardTrade> entityPage = boardTradeRepository.findAllByBuyMemberId(viewMemberId,
+        List<ProfileListDto> litsDto = customRepository.findProfileBuyMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        // codeSmallId = 303L(구매완료) 저장
-        // codeSmallName = "구매완료" 저장
-        Page<ProfileBuyListDto> profileBuyListDto = ProfileBuyListDto.toDto(entityPage);
-        for (ProfileBuyListDto dto : profileBuyListDto) {
-            String imagePath = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId()).get(0).getPath();
-            dto.setThumbnailPath(imagePath);
-        }
-
-
-        return profileBuyListDto;
+        return litsDto;
     }
 }
