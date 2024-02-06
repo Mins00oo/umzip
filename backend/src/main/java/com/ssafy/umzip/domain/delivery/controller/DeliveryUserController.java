@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.delivery.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ssafy.umzip.domain.clean.dto.user.CleanCompleteReservationDto;
 import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.repository.CarRepository;
@@ -111,7 +112,14 @@ public class DeliveryUserController {
         List<UserDeliveryReservationDto> deliveryList = deliveryUserService.userReservationDelivery(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryList));
     }
+    /*
+        고객 : 용달 예약 확정 API
+     */
+    @PostMapping("/reservation-complete")
+    public ResponseEntity<Object> completeReservation(@RequestBody DeliveryCompleteReservationDto dto){
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
     /*
         KAKAO Mobility 길찾기 API
      */

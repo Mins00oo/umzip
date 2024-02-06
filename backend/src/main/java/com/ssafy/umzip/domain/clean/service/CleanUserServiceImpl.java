@@ -175,6 +175,33 @@ public class CleanUserServiceImpl implements CleanUserService{
     }
 
 
+    @Override
+    public Boolean completeReservation(Long mappingId, Long memberId) {
+        CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
+        CodeSmall codeSmall = codeSmallRepository.findById(203L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+
+        Member member = cleanMapping.getMember();
+        if(member.getId().equals(memberId)){
+            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        }
+
+        cleanMapping.setCodeSmall(codeSmall);
+        //알람
+        AlarmDto alarm = AlarmDto.builder()
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .alarmType(AlarmType.CLEAN)
+                .member(member)
+                .build();
+        Alarm companyAlarm = alarm.toCompanyDeliveryAndCleanAlarmEntity(cleanMapping.getCompany());
+        alarmRepository.save(companyAlarm);
+
+        return true;
+    }
+
+    /**
+     * 예약 완료 API
+     */
 
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {
         for(MultipartFile file: imageFileList){
