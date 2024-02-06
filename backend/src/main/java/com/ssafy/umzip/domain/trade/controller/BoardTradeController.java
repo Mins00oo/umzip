@@ -65,11 +65,11 @@ public class BoardTradeController {
                 .keyword(keyword)
                 .build();
 
-        Slice<ListDto> listDto = service.listBoardTrade(requestDto, pageable);
+        List<BoardTradeListDto> responseDto = service.listBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(listDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 중고 게시글 상세조회 ]

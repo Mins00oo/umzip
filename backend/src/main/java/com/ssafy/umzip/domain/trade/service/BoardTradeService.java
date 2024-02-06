@@ -12,7 +12,7 @@ public interface BoardTradeService {
 
     void PostBoardTrade(PostRequestDto requestDto, List<MultipartFile> files, Long memberId, int memberSigungu);
 
-    Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable);
+    List<BoardTradeListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable);
 
     DetailDto detailBoardTrade(DetailRequestDto requestDto);
 

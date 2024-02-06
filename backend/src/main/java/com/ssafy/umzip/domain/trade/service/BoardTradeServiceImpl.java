@@ -10,6 +10,7 @@ import com.ssafy.umzip.domain.trade.entity.BoardTrade;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeActive;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeImage;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeActiveRepository;
+import com.ssafy.umzip.domain.trade.repository.BoardTradeCustomRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeImageRepository;
 import com.ssafy.umzip.domain.trade.repository.BoardTradeRepository;
 import com.ssafy.umzip.global.common.Role;
@@ -37,6 +38,8 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     private final MemberRepository memberRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final ReviewReceiverRepository reviewReceiverRepository;
+
+    private final BoardTradeCustomRepository customRepository;
 
     private final S3Service s3Service;
 
@@ -69,7 +72,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
     @Transactional(readOnly = true)
     @Override
-    public Slice<ListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable) {
+    public List<BoardTradeListDto> listBoardTrade(ListRequestDto requestDto, Pageable pageable) {
 
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
@@ -80,16 +83,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int sigungu = requestDto.getSigungu();
         String keyword = requestDto.getKeyword();
 
-        Slice<BoardTrade> boardTradeList = boardTradeRepository.findBoardTradeList(keyword, sigungu, IS_ON_SALE,
-                        PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+        List<BoardTradeListDto> responseDto = customRepository.findBoardMatchingImageList(keyword, sigungu, IS_ON_SALE,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        Slice<ListDto> listDto = ListDto.toDto(boardTradeList);
-        for (ListDto dto : listDto) {
-            List<BoardTradeImage> thumbnailList = boardTradeImageRepository.findAllByBoardTradeId(dto.getBoardId());
-            dto.setThumbnailPath(thumbnailList.get(0).getPath());
-        }
-
-        return listDto;
+        return responseDto;
     }
 
     @Transactional
