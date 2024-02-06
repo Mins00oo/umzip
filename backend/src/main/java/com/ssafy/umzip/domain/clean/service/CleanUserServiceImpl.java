@@ -17,6 +17,7 @@ import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
+import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
 import com.ssafy.umzip.global.common.Role;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -49,7 +50,7 @@ public class CleanUserServiceImpl implements CleanUserService{
     private final CompanyRepository companyRepository;
     private final CleanMappingRepository cleanMappingRepository;
     private final CleanCustomRepository cleanCustomRepository;
-    private final CustomReviewReceiverRepository reviewReceiverRepository;
+    private final ReviewReceiverRepository reviewReceiverRepository;
 
     @Override
     public void createClean(List<CleanReservationCompanyDto> companys,
