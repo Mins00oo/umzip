@@ -16,7 +16,8 @@ import java.util.Map;
 @Slf4j
 public class AuthHandshakeInterceptor implements HandshakeInterceptor {
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+                                   Map<String, Object> attributes) throws Exception {
         String query = request.getURI().getQuery();
         Map<String, String> queryPairs = parseQuery(query);
         String accessToken = queryPairs.get("accessToken");

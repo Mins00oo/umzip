@@ -69,7 +69,8 @@ public enum StatusCode {
 
 
     // CHAT : 900
-    CANNOT_FIND_CHATROOM_WITH_PK(false, 900, "해당 ID로 채팅방을 찾을 수 없습니다");
+    CANNOT_FIND_CHATROOM_WITH_PK(false, 900, "해당 ID로 채팅방을 찾을 수 없습니다"),
+    NOT_VALID_CHATROOM_WITH_USER(false, 901, "해당 채팅방에 존재하는 참여자를 찾을 수 없습니다.");
 
 
     private final boolean isSuccess;
