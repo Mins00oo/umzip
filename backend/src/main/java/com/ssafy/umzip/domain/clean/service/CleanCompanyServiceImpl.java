@@ -53,15 +53,7 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
             return false;
         }
         //알람
-        AlarmDto alarm = AlarmDto.builder()
-                .alarmType(AlarmType.CLEAN)
-                .read(false)
-                .codeSmallId(codeSmall.getId())
-                .member(cleanMapping.getMember())
-                .company(cleanMapping.getCompany())
-                .build();
-        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
-        alarmRepository.save(companyAlarm);
+        saveAlarm(codeSmall, cleanMapping);
         return true;
     }
     /*
@@ -76,18 +68,13 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
         }
         CodeSmall codeSmall = codeSmallRepository.findById(202L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
         //견적 제안 알람
-        AlarmDto alarm = AlarmDto.builder()
-                .alarmType(AlarmType.CLEAN)
-                .read(false)
-                .codeSmallId(codeSmall.getId())
-                .member(cleanMapping.getMember())
-                .company(cleanMapping.getCompany())
-                .build();
-        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
-        alarmRepository.save(companyAlarm);
+        saveAlarm(codeSmall, cleanMapping);
 
         return cleanCustomRepository.updateCodeAndReissuingAndDetail(dto, codeSmall);
     }
+
+
+
     /*
         업체 : 예약 리스트 API
      */
@@ -127,5 +114,16 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
                 .build();
         cleanDetail.setCleanImages(images);
         return cleanDetail;
+    }
+    private void saveAlarm(CodeSmall codeSmall, CleanMapping cleanMapping) {
+        AlarmDto alarm = AlarmDto.builder()
+                .alarmType(AlarmType.CLEAN)
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .member(cleanMapping.getMember())
+                .company(cleanMapping.getCompany())
+                .build();
+        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
+        alarmRepository.save(companyAlarm);
     }
 }

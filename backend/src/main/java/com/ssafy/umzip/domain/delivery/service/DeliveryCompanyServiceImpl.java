@@ -1,5 +1,9 @@
 package com.ssafy.umzip.domain.delivery.service;
 
+import com.ssafy.umzip.domain.alarm.dto.AlarmDto;
+import com.ssafy.umzip.domain.alarm.dto.AlarmType;
+import com.ssafy.umzip.domain.alarm.entity.Alarm;
+import com.ssafy.umzip.domain.alarm.repository.AlarmRepository;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.delivery.dto.CompanyReservationDto;
@@ -23,6 +27,7 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     private final DeliveryMappingRepository deliveryMappingRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryCustomRepository deliveryCustomRepository;
+    private final AlarmRepository alarmRepository;
     /*
         거절 ( 104 )
      */
@@ -34,9 +39,14 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
         }
 
         CodeSmall codeSmall = codeSmallRepository.findById(104L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
-        // member, company 둘 다 알람 보내야함.
+        // member에게 알람
         deliveryMapping.setCodeSmall(codeSmall);
+        //알람
+        saveAlarm(codeSmall, deliveryMapping);
     }
+
+
+
     /*
         견적 제안 ( 102 )
      */
@@ -47,12 +57,25 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
         if(!Objects.equals(deliveryMapping.getCompany().getId(), companyId)){
             throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
         }
+        //알람
+        saveAlarm(codeSmall, deliveryMapping);
         return deliveryCustomRepository.updateDeliveryMappingDetailAndReissuingAndCodeSmall(dto,codeSmall);
     }
 
     @Override
     public List<CompanyReservationDto> companyReservationDelivery(Long companyId) {
         return deliveryCustomRepository.findCompanyReservationInfo(companyId);
+    }
+    private void saveAlarm(CodeSmall codeSmall, DeliveryMapping deliveryMapping) {
+        AlarmDto alarm = AlarmDto.builder()
+                .alarmType(AlarmType.DELIVER)
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .member(deliveryMapping.getMember())
+                .company(deliveryMapping.getCompany())
+                .build();
+        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
+        alarmRepository.save(companyAlarm);
     }
 }
 
