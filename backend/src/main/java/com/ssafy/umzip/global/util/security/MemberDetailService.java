@@ -19,7 +19,7 @@ public class MemberDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository
                 .findByEmail(username)
-                .orElseThrow(() -> new BadCredentialsException("회원정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BadCredentialsException("이메일 불일치"));
 
         return new MemberDetailsImpl(member);
     }
