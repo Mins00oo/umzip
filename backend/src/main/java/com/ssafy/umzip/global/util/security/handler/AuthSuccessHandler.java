@@ -44,18 +44,28 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
                         () -> new BaseException(StatusCode.NOT_VALID_EMAIL));
         List<Company> companyList = companyRepository.findAllByMemberId(member.getId());
         MemberTokenDto tokenDto;
+        Company company;
 
         if (companyList.isEmpty()) {
             tokenDto = jwtTokenProvider.generateMemberToken(member);
+            tokenDto.setName(member.getName());
+            tokenDto.setProfileImage(member.getImageUrl());
         } else {
             if (companyList.size() == 2) {
-                // 무조건 용달
-                tokenDto = jwtTokenProvider.generateCompanyToken(companyList.stream()
-                        .filter(company -> company.getRole() == Role.DELIVER)
+                company = companyList.stream()
+                        .filter(list -> list.getRole() == Role.DELIVER)
                         .findAny()
-                        .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH)));
-            } else
-                tokenDto = jwtTokenProvider.generateCompanyToken(companyList.get(0));
+                        .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
+                // 무조건 용달
+                tokenDto = jwtTokenProvider.generateCompanyToken(company);
+                tokenDto.setName(company.getName());
+                tokenDto.setProfileImage(company.getImageUrl());
+            } else {
+                company = companyList.get(0);
+                tokenDto = jwtTokenProvider.generateCompanyToken(company);
+                tokenDto.setName(company.getName());
+                tokenDto.setProfileImage(company.getImageUrl());
+            }
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -66,7 +76,6 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
         BaseResponse<MemberTokenDto> tokenResponse = new BaseResponse<>(tokenDto);
 
-        log.info(authentication);
         mapper.writeValue(response.getWriter(), tokenResponse);
     }
 }

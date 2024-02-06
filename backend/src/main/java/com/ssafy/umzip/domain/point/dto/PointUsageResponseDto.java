@@ -10,5 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class PointUsageResponseDto {
+    private int totalPage;
+
     List<PointUsageDto> pointUsageDtoList;
 }

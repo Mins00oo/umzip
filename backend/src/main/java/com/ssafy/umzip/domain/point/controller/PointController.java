@@ -26,7 +26,7 @@ public class PointController {
     public ResponseEntity<Object> retrieveMyPointUsage(HttpServletRequest request,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Long memberId = jwtTokenProvider.getId(request);
         PointUsageResponseDto response = pointService.retrieveMyPointUsage(memberId, pageable);
 
