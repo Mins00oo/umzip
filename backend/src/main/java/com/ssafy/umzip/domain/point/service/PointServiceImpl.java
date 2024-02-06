@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.point.dto.PointUsageResponseDto;
 import com.ssafy.umzip.domain.point.entity.Point;
 import com.ssafy.umzip.domain.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +22,13 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public void userPoint() {
+    public void usePoint() {
 
     }
 
     @Override
     public PointUsageResponseDto retrieveMyPointUsage(Long memberId, Pageable pageable) {
-        List<Point> pointList = pointRepository.findAllByMemberId(memberId, pageable);
+        Page<Point> pointList = pointRepository.findAllByMemberId(memberId, pageable);
 
         List<PointUsageDto> usageDtoList = pointList.stream()
                 .map(PointUsageDto::fromEntity)
@@ -35,6 +36,7 @@ public class PointServiceImpl implements PointService {
 
         return PointUsageResponseDto.builder()
                 .pointUsageDtoList(usageDtoList)
+                .totalPage(pointList.getTotalPages())
                 .build();
     }
 }

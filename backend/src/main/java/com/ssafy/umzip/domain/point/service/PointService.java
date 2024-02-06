@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 public interface PointService {
     void savePoint();
 
-    void userPoint();
+    void usePoint();
 
     PointUsageResponseDto retrieveMyPointUsage(Long memberId, Pageable pageable);
 }

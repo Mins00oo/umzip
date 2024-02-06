@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -46,16 +47,24 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         MemberTokenDto tokenDto;
 
         if (companyList.isEmpty()) {
-            tokenDto = jwtTokenProvider.generateMemberToken(member);
+            tokenDto = createTokenDto(member, null, new ArrayList<>(), 1);
         } else {
+            List<Role> roleList = new ArrayList<>();
+            Company company = (companyList.size() == 2)
+                    ? companyList.stream()
+                    .filter(list -> list.getRole() == Role.DELIVER)
+                    .findAny()
+                    .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH))
+                    : companyList.get(0);
+
             if (companyList.size() == 2) {
-                // 무조건 용달
-                tokenDto = jwtTokenProvider.generateCompanyToken(companyList.stream()
-                        .filter(company -> company.getRole() == Role.DELIVER)
-                        .findAny()
-                        .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH)));
-            } else
-                tokenDto = jwtTokenProvider.generateCompanyToken(companyList.get(0));
+                roleList.add(Role.DELIVER);
+                roleList.add(Role.CLEAN);
+            } else {
+                roleList.add(company.getRole());
+            }
+
+            tokenDto = createTokenDto(member, company, roleList, -1);
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -66,7 +75,20 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
         BaseResponse<MemberTokenDto> tokenResponse = new BaseResponse<>(tokenDto);
 
-        log.info(authentication);
         mapper.writeValue(response.getWriter(), tokenResponse);
+    }
+
+    // 공통 코드를 메소드로 분리
+    private MemberTokenDto createTokenDto(Member member, Company company, List<Role> roleList, int who) {
+        MemberTokenDto tokenDto = (company == null)
+                ? jwtTokenProvider.generateMemberToken(member)
+                : jwtTokenProvider.generateCompanyToken(company);
+
+        tokenDto.setName((company == null) ? member.getName() : company.getName());
+        tokenDto.setProfileImage((company == null) ? member.getImageUrl() : company.getImageUrl());
+        tokenDto.setWho(who);
+        tokenDto.setRoleList(roleList);
+
+        return tokenDto;
     }
 }

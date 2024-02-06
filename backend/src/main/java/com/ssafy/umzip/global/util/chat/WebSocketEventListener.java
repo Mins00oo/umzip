@@ -3,6 +3,8 @@ package com.ssafy.umzip.global.util.chat;
 import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
+import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +56,9 @@ public class WebSocketEventListener {
                 lastMessageId = messageList.get(messageList.size() - 1).getId();
             }
 
-            chatParticipantRepository.findByChatRoomAndMember(chatRoomId, memberId).updateLastReadMessage(lastMessageId);
+            chatParticipantRepository.findByChatRoomAndMember(chatRoomId, memberId)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_CHATROOM_WITH_USER))
+                    .updateLastReadMessage(lastMessageId);
         }
 
         messagingTemplate.convertAndSend("/topic/user/" + accessToken, memberId);

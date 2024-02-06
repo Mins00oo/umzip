@@ -138,7 +138,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional
     @Override
     public void leaveChatRoom(Long chatRoomId, Long requestId) {
-        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, requestId);
+        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, requestId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_CHATROOM_WITH_USER));
         chatParticipant.leaveChatRoom();
     }
 }
