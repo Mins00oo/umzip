@@ -81,7 +81,7 @@ public class BoardTradeCustomRepositoryImpl implements BoardTradeCustomRepositor
                 .on(boardTrade.id.eq(boardTradeImage.boardTrade.id))
                 .where(boardTrade.id
                         .notIn( queryFactory
-                                .select(boardTrade.id)
+                                .select(boardTradeActive.boardTrade.id)
                                 .from(boardTradeActive))
                         .and(boardTrade.member.id.eq(memberId))
                 )
