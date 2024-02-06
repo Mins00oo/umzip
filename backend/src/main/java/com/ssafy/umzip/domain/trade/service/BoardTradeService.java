@@ -17,4 +17,6 @@ public interface BoardTradeService {
     List<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto, Pageable pageable);
 
     List<ProfileListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable);
+
+    void CompleteSale(CompleteSaleRequestDto requestDto);
 }

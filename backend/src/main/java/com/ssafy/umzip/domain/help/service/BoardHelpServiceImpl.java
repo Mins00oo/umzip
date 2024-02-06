@@ -174,6 +174,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         boardHelpRepository.save(boardHelp);
     }
 
+    @Transactional
     @Override
     public Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable) {
 
@@ -192,6 +193,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         return responseDto;
     }
 
+    @Transactional
     @Override
     public Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable) {
 

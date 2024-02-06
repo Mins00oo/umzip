@@ -19,6 +19,7 @@ import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -137,6 +138,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         return responseDto;
     }
 
+    @Transactional
     @Override
     public List<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto,
                                                           Pageable pageable) {
@@ -155,6 +157,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         return responseDto;
     }
 
+    @Transactional
     @Override
     public List<ProfileListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
         if (profileBuyListRequestDto.isSameMember()) {
@@ -168,5 +171,21 @@ public class BoardTradeServiceImpl implements BoardTradeService {
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
         return responseDto;
+    }
+
+    @Transactional
+    @Override
+    public void CompleteSale(CompleteSaleRequestDto requestDto) {
+
+        Long boardId = requestDto.getBoardId();
+        Long curMemberId = requestDto.getMemberId();
+
+        BoardTrade boardTradeEntity = boardTradeRepository.findByIdAndMemberId(boardId, curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.CAN_USE_ONLY_WRITER));
+
+        CodeSmall codeSmallEntity = codeSmallRepository.findById(IS_COMPLETE_SALE)
+                        .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+
+        boardTradeEntity.setCodeSmall(codeSmallEntity);
     }
 }
