@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -64,7 +63,7 @@ public class SecurityConfig {
 
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(memberDetailService);
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
         filter.setFilterProcessesUrl("/api/login");
         filter.setAuthenticationManager(authenticationManager);
         filter.setAuthenticationSuccessHandler(successHandler);

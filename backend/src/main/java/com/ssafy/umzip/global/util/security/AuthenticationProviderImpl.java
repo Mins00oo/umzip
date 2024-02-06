@@ -1,7 +1,5 @@
 package com.ssafy.umzip.global.util.security;
 
-import com.ssafy.umzip.domain.member.entity.Member;
-import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationProviderImpl implements AuthenticationProvider {
-    private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberDetailService memberDetailService;
 
@@ -30,14 +27,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         MemberDetailsImpl memberDetails;
 
-        Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new BadCredentialsException("이메일 틀림"));
-
         memberDetails = (MemberDetailsImpl) memberDetailService.loadUserByUsername(username);
 
-
-        if (!bCryptPasswordEncoder.matches(password, member.getPwd())) {
-            throw new BadCredentialsException("비번 틀림");
+        if (!bCryptPasswordEncoder.matches(password, memberDetails.getPassword())) {
+            throw new BadCredentialsException("비밀번호 불일치");
         }
 
         return new UsernamePasswordAuthenticationToken(memberDetails.getUsername(), "", memberDetails.getAuthorities());

@@ -21,14 +21,14 @@ public class Point extends BaseTimeEntity {
 
     @Column(name = "point_message")
     @Enumerated(EnumType.STRING)
-    private String message;
+    private PointChangeType message;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public Point(int change, String message, Member member) {
+    public Point(int change, PointChangeType message, Member member) {
         this.change = change;
         this.message = message;
         this.member = member;

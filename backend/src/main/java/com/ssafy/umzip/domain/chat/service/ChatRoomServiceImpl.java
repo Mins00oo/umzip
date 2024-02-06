@@ -39,6 +39,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Member receiver = findMember(receiverId);
 
         ChatRoom chatRoom = buildChatRoom(role, tradeId);
+
+        log.info(String.valueOf(chatRoom));
         chatRoomRepository.save(chatRoom);
 
         saveChatParticipant(chatRoom, sender, senderRole);

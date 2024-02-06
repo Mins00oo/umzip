@@ -10,8 +10,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
@@ -21,19 +19,22 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final MemberDetailService memberDetailService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final Authentication authentication;
-        final MemberLoginRequestDto userLoginDto;
         try {
-            userLoginDto = new ObjectMapper().readValue(request.getInputStream(), MemberLoginRequestDto.class);
-            MemberDetailsImpl memberDetails = (MemberDetailsImpl) memberDetailService.loadUserByUsername(userLoginDto.getEmail());
-            authentication = new UsernamePasswordAuthenticationToken(memberDetails, "",  memberDetails.getAuthorities());
+            MemberLoginRequestDto userLoginDto = new ObjectMapper().readValue(request.getInputStream(), MemberLoginRequestDto.class);
+
+            // 이메일과 비밀번호를 사용하여 UsernamePasswordAuthenticationToken 생성
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userLoginDto.getEmail(),
+                    userLoginDto.getPwd()
+            );
+
+            // AuthenticationManager를 사용하여 인증 시도
+            return this.getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
-            throw new BadCredentialsException("bad");
+            throw new BadCredentialsException("Authentication service exception", e);
         }
-        return authentication;
     }
 }

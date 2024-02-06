@@ -23,12 +23,17 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        log.info(String.valueOf(exception));
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(200);
 
-        BaseResponse<String> baseResponse = new BaseResponse<>(StatusCode.LOGIN_FAILED);
+        BaseResponse<String> baseResponse;
+
+        if (exception.getMessage().equals("이메일 불일치")) {
+            baseResponse = new BaseResponse<>(StatusCode.NOT_VALID_EMAIL);
+        } else {
+            baseResponse = new BaseResponse<>(StatusCode.NOT_VALID_PASSWORD);
+        }
 
         mapper.writeValue(response.getWriter(), baseResponse);
     }

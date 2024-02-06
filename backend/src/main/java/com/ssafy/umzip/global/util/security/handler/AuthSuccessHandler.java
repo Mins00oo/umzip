@@ -11,7 +11,6 @@ import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import com.ssafy.umzip.global.util.jwt.MemberTokenDto;
-import com.ssafy.umzip.global.util.security.MemberDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +39,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Object principal = authentication.getPrincipal();
-        MemberDetailsImpl memberDetails = (MemberDetailsImpl) principal;
-        Member member = memberRepository.findByEmail(memberDetails.getUsername())
+        Member member = memberRepository.findByEmail(String.valueOf(authentication.getPrincipal()))
                 .orElseThrow(
                         () -> new BaseException(StatusCode.NOT_VALID_EMAIL));
         List<Company> companyList = companyRepository.findAllByMemberId(member.getId());
