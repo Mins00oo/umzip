@@ -22,14 +22,16 @@ public class Alarm extends BaseTimeEntity {
 
     @Column(name = "alarm_read")
     private Boolean isRead;
-
+    @Column(name="alarm_img_path")
+    private String imgPath;
     @ManyToOne(cascade= CascadeType.REMOVE)
     @JoinColumn(name="member_id")
     private Member member;
     @Builder
-    public Alarm(String content, Boolean isRead, Member member) {
+    public Alarm(String content, Boolean isRead, Member member,String imgPath) {
         this.content = content;
         this.isRead = isRead;
         this.member = member;
+        this.imgPath = imgPath;
     }
 }

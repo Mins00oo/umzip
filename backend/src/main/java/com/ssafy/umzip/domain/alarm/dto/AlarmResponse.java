@@ -17,11 +17,13 @@ public class AlarmResponse {
     private String content;
     private boolean isRead;
     private LocalDateTime createDt;
+    private String imgPath;
 
-    public AlarmResponse(long alarmId, String content, boolean isRead, LocalDateTime createDt) {
+    public AlarmResponse(long alarmId, String content, boolean isRead, LocalDateTime createDt,String imgPath) {
         this.alarmId = alarmId;
         this.content = content;
         this.isRead = isRead;
         this.createDt = createDt;
+        this.imgPath = imgPath;
     }
 }

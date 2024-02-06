@@ -1,5 +1,9 @@
 package com.ssafy.umzip.domain.clean.service;
 
+import com.ssafy.umzip.domain.alarm.dto.AlarmDto;
+import com.ssafy.umzip.domain.alarm.dto.AlarmType;
+import com.ssafy.umzip.domain.alarm.entity.Alarm;
+import com.ssafy.umzip.domain.alarm.repository.AlarmRepository;
 import com.ssafy.umzip.domain.clean.dto.company.CleanCompanyReservationResponseDto;
 import com.ssafy.umzip.domain.clean.dto.company.CleanQuotationRequestDto;
 import com.ssafy.umzip.domain.clean.dto.user.CleanDetailResponseDto;
@@ -29,12 +33,14 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
     private final CleanRepository cleanRepository;
     private final CleanCustomRepository cleanCustomRepository;
     private final CodeSmallRepository codeSmallRepository;
+    private final AlarmRepository alarmRepository;
     /*
-        업체 : 사용자 거절 API
+        업체 : 사용자 거절 API ( 204 )
      */
     @Override
     public Boolean rejectionClean(Long mappingId,Long companyId) {
         CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
+
         if(cleanMapping.getCompany().getId()!=(companyId)){
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN);
         }
@@ -46,11 +52,20 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
         }catch (OptimisticLockException e){
             return false;
         }
-
+        //알람
+        AlarmDto alarm = AlarmDto.builder()
+                .alarmType(AlarmType.CLEAN)
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .member(cleanMapping.getMember())
+                .company(cleanMapping.getCompany())
+                .build();
+        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
+        alarmRepository.save(companyAlarm);
         return true;
     }
     /*
-        업체 : 사용자 견적 제안 API
+        업체 : 사용자 견적 제안 API ( 202 )
      */
 
     @Override
@@ -60,6 +75,17 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN);
         }
         CodeSmall codeSmall = codeSmallRepository.findById(202L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+        //견적 제안 알람
+        AlarmDto alarm = AlarmDto.builder()
+                .alarmType(AlarmType.CLEAN)
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .member(cleanMapping.getMember())
+                .company(cleanMapping.getCompany())
+                .build();
+        Alarm companyAlarm = alarm.toMemberDeliveryAndCleanAlarmEntity();
+        alarmRepository.save(companyAlarm);
+
         return cleanCustomRepository.updateCodeAndReissuingAndDetail(dto, codeSmall);
     }
     /*

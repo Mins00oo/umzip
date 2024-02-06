@@ -18,19 +18,19 @@ public class AlarmDto {
     private Member member;
     private List<Company> companyList = new ArrayList<>();
     private Company company;
-    private String memberContent;
-    private String companyContent;
+    private String imgPath;
     private Boolean read;
     private AlarmType alarmType;
     private Long codeSmallId;
 
     @Builder
-    public AlarmDto(Member member, Company company, Boolean read, AlarmType alarmType, Long codeSmallId) {
+    public AlarmDto(Member member, Company company, Boolean read, AlarmType alarmType, Long codeSmallId,String imgPath) {
         this.member = member;
         this.company = company;
         this.read = read;
         this.alarmType = alarmType;
         this.codeSmallId = codeSmallId;
+        this.imgPath = imgPath;
     }
 
     public Alarm toMemberDeliveryAndCleanAlarmEntity() {
@@ -38,10 +38,12 @@ public class AlarmDto {
         Long status = this.codeSmallId % 100;
         checkAlarmType(sb);
         generateMemberContentByStatus(status, sb);
+        imgPath = company.getImageUrl();
         return Alarm.builder()
                 .member(this.member)
                 .isRead(false)
                 .content(sb.toString())
+                .imgPath(this.imgPath)
                 .build();
     }
 
@@ -50,10 +52,12 @@ public class AlarmDto {
         Long status = this.codeSmallId % 100;
         checkAlarmType(sb);
         generateCompanyContentByStatus(status, sb);
+        imgPath = member.getImageUrl();
         return Alarm.builder()
                 .member(company.getMember())
                 .isRead(false)
                 .content(sb.toString())
+                .imgPath(this.imgPath)
                 .build();
     }
 
@@ -74,10 +78,10 @@ public class AlarmDto {
     private void generateMemberContentByStatus(Long status, StringBuilder sb) {
         switch (status.intValue()) {
             case 2 -> { // 검토중
-                sb.append("업체 " + company.getName() + " 이 견적제안을 보냈어요!");
+                sb.append("업체 " + company.getName() + " 가(이) 견적제안을 보냈어요!");
             }
             case 4 -> { // 거절
-                sb.append("업체 " + company.getName() + " 이 회원님의 예약건을 거절했어요.");
+                sb.append("업체 " + company.getName() + " 가(이) 회원님의 예약건을 거절했어요.");
             }
         }
     }

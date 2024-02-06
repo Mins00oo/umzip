@@ -35,7 +35,6 @@ public class CleanCompanyController {
         if (BAD_REQUEST != null) {
             return BAD_REQUEST;
         }
-
         Long companyId = jwtTokenProvider.getId(request);
 
         Boolean result = cleanCompanyService.rejectionClean(rejectionRequestDto.getMappingId(),companyId);
