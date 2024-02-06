@@ -8,9 +8,7 @@ import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -65,7 +63,7 @@ public class BoardTradeController {
                 .keyword(keyword)
                 .build();
 
-        List<BoardTradeListDto> responseDto = service.listBoardTrade(requestDto, pageable);
+        List<ListDto> responseDto = service.listBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -111,11 +109,11 @@ public class BoardTradeController {
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileSellListDto> listDto = service.profileSellListBoardTrade(profileSellListRequestDto, pageable);
+        List<ProfileListDto> responseDto = service.profileSellListBoardTrade(profileSellListRequestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(listDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 구매 물품 ]
@@ -136,12 +134,11 @@ public class BoardTradeController {
                 .isSameMember(isSameMember)
                 .build();
 
-        // service
-        Page<ProfileBuyListDto> listDto = service.profileBuyListBoardTrade(profilebuyListRequestDto, pageable);
+        List<ProfileListDto> responseDto = service.profileBuyListBoardTrade(profilebuyListRequestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(listDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 판매 완료 ]
