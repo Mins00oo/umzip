@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,10 @@ public class Alarm extends BaseTimeEntity {
     @ManyToOne(cascade= CascadeType.REMOVE)
     @JoinColumn(name="member_id")
     private Member member;
+    @Builder
+    public Alarm(String content, Boolean isRead, Member member) {
+        this.content = content;
+        this.isRead = isRead;
+        this.member = member;
+    }
 }

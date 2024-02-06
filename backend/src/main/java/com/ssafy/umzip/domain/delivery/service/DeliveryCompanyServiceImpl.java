@@ -23,16 +23,23 @@ public class DeliveryCompanyServiceImpl implements DeliveryCompanyService{
     private final DeliveryMappingRepository deliveryMappingRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final DeliveryCustomRepository deliveryCustomRepository;
+    /*
+        거절 ( 104 )
+     */
     @Override
     public void rejectionDelivery(Long mappingId,Long companyId) {
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
         if(!Objects.equals(deliveryMapping.getCompany().getId(), companyId)){
             throw new BaseException(StatusCode.NOT_EXIST_COMPANY);
         }
+
         CodeSmall codeSmall = codeSmallRepository.findById(104L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
+        // member, company 둘 다 알람 보내야함.
         deliveryMapping.setCodeSmall(codeSmall);
     }
-
+    /*
+        견적 제안 ( 102 )
+     */
     @Override
     public Boolean quotationDelivery(DeliveryQuotationRequestDto dto,Long companyId) {
         CodeSmall codeSmall = codeSmallRepository.findById(102L).orElseThrow(() -> new BaseException(StatusCode.CODE_DOES_NOT_EXIST));
