@@ -175,7 +175,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     }
 
     @Override
-    public Page<ProfileHelpMeDto> listProfileBoardHelpMe(ProfileHelpMeRequestDto requestDto, Pageable pageable) {
+    public Page<ProfileHelpDto> listProfileBoardHelpMe(ProfileHelpRequestDto requestDto, Pageable pageable) {
 
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
@@ -187,13 +187,13 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         Long viewMemberId = requestDto.getViewMemberId();
         Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdMe(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        Page<ProfileHelpMeDto> responseDto = ProfileHelpMeDto.toDto(entityPage);
+        Page<ProfileHelpDto> responseDto = ProfileHelpDto.toDto(entityPage);
 
         return responseDto;
     }
 
     @Override
-    public Page<ProfileHelpYouDto> listProfileBoardHelpYou(ProfileHelpYouRequestDto requestDto, Pageable pageable) {
+    public Page<ProfileHelpDto> listProfileBoardHelpYou(ProfileHelpRequestDto requestDto, Pageable pageable) {
 
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
@@ -206,7 +206,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdYou(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        Page<ProfileHelpYouDto> responseDto = ProfileHelpYouDto.toDto(entityPage);
+        Page<ProfileHelpDto> responseDto = ProfileHelpDto.toDto(entityPage);
         
         return responseDto;
     }

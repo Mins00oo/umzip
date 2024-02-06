@@ -1,10 +1,7 @@
 package com.ssafy.umzip.domain.help.controller;
 
-import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.help.dto.*;
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
-import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -165,12 +162,12 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpMeRequestDto requestDto = ProfileHelpMeRequestDto.builder()
+        ProfileHelpRequestDto requestDto = ProfileHelpRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpMeDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
+        Page<ProfileHelpDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -191,12 +188,12 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpYouRequestDto requestDto = ProfileHelpYouRequestDto.builder()
+        ProfileHelpRequestDto requestDto = ProfileHelpRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpYouDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
+        Page<ProfileHelpDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

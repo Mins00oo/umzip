@@ -2,7 +2,6 @@ package com.ssafy.umzip.domain.help.service;
 
 
 import com.ssafy.umzip.domain.help.dto.*;
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +24,7 @@ public interface BoardHelpService {
 
     void adoptedBoardHelp(BoardHelpAdopt requestDto);
 
-    Page<ProfileHelpMeDto> listProfileBoardHelpMe(ProfileHelpMeRequestDto requestDto, Pageable pageable);
+    Page<ProfileHelpDto> listProfileBoardHelpMe(ProfileHelpRequestDto requestDto, Pageable pageable);
 
-    Page<ProfileHelpYouDto> listProfileBoardHelpYou(ProfileHelpYouRequestDto requestDto, Pageable pageable);
+    Page<ProfileHelpDto> listProfileBoardHelpYou(ProfileHelpRequestDto requestDto, Pageable pageable);
 }
