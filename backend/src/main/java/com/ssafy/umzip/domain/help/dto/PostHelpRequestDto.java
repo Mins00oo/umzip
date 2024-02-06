@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BoardHelpPostRequestDto {
+public class PostHelpRequestDto {
 
     private Long codeSmallId;  // 도움주세요(401), 도움줄게요(403)
     private String title;
@@ -17,7 +17,7 @@ public class BoardHelpPostRequestDto {
     private int point;
 
     @Builder
-    public BoardHelpPostRequestDto(Long codeSmallId, String title, String content, int point) {
+    public PostHelpRequestDto(Long codeSmallId, String title, String content, int point) {
         // 사용자가 입력한 데이터
         this.codeSmallId = codeSmallId;
         this.title = title;
@@ -26,7 +26,7 @@ public class BoardHelpPostRequestDto {
     }
 
     public BoardHelp toEntity(
-            BoardHelpPostRequestDto requestDto,
+            PostHelpRequestDto requestDto,
             Member member,
             int sigungu,
             CodeSmall codeSmall) {

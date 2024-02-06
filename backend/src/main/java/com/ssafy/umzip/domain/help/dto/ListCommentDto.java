@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class CommentListDto {
+public class ListCommentDto {
 
     private Long writerId;
     private String writerName;
@@ -17,18 +17,18 @@ public class CommentListDto {
     private LocalDateTime createDt;
 
     @Builder
-    CommentListDto(BoardHelpComment boardHelpComment) {
+    ListCommentDto(BoardHelpComment boardHelpComment) {
         this.writerId = boardHelpComment.getMember().getId();
         this.writerName = boardHelpComment.getMember().getName();
         this.comment = boardHelpComment.getContent();
         this.createDt = boardHelpComment.getCreateDt();
     }
 
-    public static List<CommentListDto> toDto(List<BoardHelpComment> entityList) {
+    public static List<ListCommentDto> toDto(List<BoardHelpComment> entityList) {
 
-        List<CommentListDto> list = new ArrayList<>();
+        List<ListCommentDto> list = new ArrayList<>();
         for(BoardHelpComment comment : entityList) {
-            list.add(CommentListDto.builder()
+            list.add(ListCommentDto.builder()
                     .boardHelpComment(comment)
                     .build());
         }

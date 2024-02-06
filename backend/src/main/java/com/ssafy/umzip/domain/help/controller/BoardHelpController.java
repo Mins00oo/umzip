@@ -36,7 +36,7 @@ public class BoardHelpController {
     * */
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
-            @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
+            @RequestPart(value="boardHelp") PostHelpRequestDto requestDto,
             @RequestPart(value="imageFileList", required = false) List<MultipartFile> imageFileList,
             HttpServletRequest request) {
 
@@ -77,14 +77,14 @@ public class BoardHelpController {
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
 
-        BoardHelpListRequestDto requestDto = BoardHelpListRequestDto.builder()
+        ListHelpRequestDto requestDto = ListHelpRequestDto.builder()
                 .sigungu(sigungu)
                 .keyword(keyword)
                 .codeSmallId(codeSmallId)
                 .memberId(memberId)
                 .build();
 
-        Page<BoardHelpListDto> responseDto = service.listBoardHelp(requestDto, pageable);
+        Page<ListHelpDto> responseDto = service.listBoardHelp(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -101,7 +101,7 @@ public class BoardHelpController {
         System.out.println("comment: " + dto.getComment());
         Long memberId = jwtTokenProvider.getId(request);
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, dto.getComment());
+        PostCommentRequestWrapDto requestDto = new PostCommentRequestWrapDto(boardId, memberId, dto.getComment());
 
         service.postComment(requestDto);
 
@@ -119,7 +119,7 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
 
-        BoardHelpDetailDto responseDto = service.detailBoardHelp(BoardHelpDetailRequestDto.builder()
+        DetailHelpDto responseDto = service.detailBoardHelp(DetailHelpRequestDto.builder()
                         .boardId(boardId)
                         .memberId(memberId)
                         .build());
@@ -138,7 +138,7 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
 
-        service.adoptedBoardHelp(BoardHelpAdopt.builder()
+        service.adoptedBoardHelp(AdoptCommentRequestDto.builder()
                                 .memberId(memberId)
                                 .commentId(commentId)
                                 .build());
@@ -162,12 +162,12 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpRequestDto requestDto = ProfileHelpRequestDto.builder()
+        ProfileRequestDto requestDto = ProfileRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
+        Page<ProfileDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -188,12 +188,12 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpRequestDto requestDto = ProfileHelpRequestDto.builder()
+        ProfileRequestDto requestDto = ProfileRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
+        Page<ProfileDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

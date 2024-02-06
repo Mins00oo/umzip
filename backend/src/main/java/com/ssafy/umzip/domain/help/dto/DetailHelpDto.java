@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class BoardHelpDetailDto {
+public class DetailHelpDto {
 
     private Long writerId;
     private String writerName;
@@ -25,15 +25,15 @@ public class BoardHelpDetailDto {
     private int boardCommentCnt;
     private int readCnt;
 
-    private List<CommentListDto> commentList = new ArrayList<>();
+    private List<ListCommentDto> commentList = new ArrayList<>();
 
     private boolean isSameMember;
     private boolean isAdopted;
     private List<String> imagePathList = new ArrayList<>();
 
     @Builder
-    BoardHelpDetailDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment,
-                       boolean isSameMember, List<String> imagePathList) {
+    DetailHelpDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment,
+                  boolean isSameMember, List<String> imagePathList) {
         this.writerId = boardHelp.getMember().getId();
         this.writerName = boardHelp.getMember().getName();
         this.boardId = boardHelp.getId();
@@ -47,7 +47,7 @@ public class BoardHelpDetailDto {
         this.readCnt = boardHelp.getReadCnt();
 
         if ( !boardHelpComment.isEmpty() ) {
-            this.commentList = CommentListDto.toDto(boardHelpComment);
+            this.commentList = ListCommentDto.toDto(boardHelpComment);
         }
 
         this.isSameMember = isSameMember;

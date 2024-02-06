@@ -42,7 +42,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional
     @Override
-    public void postBoardHelp(Long memberId, int sigungu, BoardHelpPostRequestDto requestDto, List<MultipartFile> files) {
+    public void postBoardHelp(Long memberId, int sigungu, PostHelpRequestDto requestDto, List<MultipartFile> files) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
@@ -63,8 +63,8 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<BoardHelpListDto> listBoardHelp(
-            BoardHelpListRequestDto requestDto,
+    public Page<ListHelpDto> listBoardHelp(
+            ListHelpRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         memberRepository.findById(requestDto.getMemberId())
@@ -80,7 +80,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
                 .findPageByTitleContainingAndSigunguAndCodeSmall(keyword, sigungu, codeSmallId,
                         PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        Page<BoardHelpListDto> responseDto = BoardHelpListDto.toDto(boards);
+        Page<ListHelpDto> responseDto = ListHelpDto.toDto(boards);
 
         responseDto.getContent().forEach(dto -> {
             Long id = dto.getId();
@@ -96,7 +96,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional
     @Override
-    public void postComment(CommentRequestDto requestDto) {
+    public void postComment(PostCommentRequestWrapDto requestDto) {
 
         Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
@@ -114,7 +114,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional
     @Override
-    public BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto) {
+    public DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto) {
 
         Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
@@ -140,7 +140,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(requestDto.getBoardId());
 
-        return BoardHelpDetailDto.builder()
+        return DetailHelpDto.builder()
                 .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
                 .imagePathList(imageList)
@@ -150,7 +150,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional
     @Override
-    public void adoptedBoardHelp(BoardHelpAdopt requestDto) {
+    public void adoptedBoardHelp(AdoptCommentRequestDto requestDto) {
         memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
@@ -175,7 +175,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     }
 
     @Override
-    public Page<ProfileHelpDto> listProfileBoardHelpMe(ProfileHelpRequestDto requestDto, Pageable pageable) {
+    public Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable) {
 
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
@@ -187,13 +187,13 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         Long viewMemberId = requestDto.getViewMemberId();
         Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdMe(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        Page<ProfileHelpDto> responseDto = ProfileHelpDto.toDto(entityPage);
+        Page<ProfileDto> responseDto = ProfileDto.toDto(entityPage);
 
         return responseDto;
     }
 
     @Override
-    public Page<ProfileHelpDto> listProfileBoardHelpYou(ProfileHelpRequestDto requestDto, Pageable pageable) {
+    public Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable) {
 
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
@@ -206,7 +206,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         Page<BoardHelp> entityPage = boardHelpRepository.findAllByMemberIdYou(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
-        Page<ProfileHelpDto> responseDto = ProfileHelpDto.toDto(entityPage);
+        Page<ProfileDto> responseDto = ProfileDto.toDto(entityPage);
         
         return responseDto;
     }

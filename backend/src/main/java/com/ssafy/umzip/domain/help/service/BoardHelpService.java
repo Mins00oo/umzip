@@ -12,19 +12,19 @@ import java.util.List;
 
 public interface BoardHelpService {
 
-    void postBoardHelp(Long memberId, int sigungu, BoardHelpPostRequestDto requestDto, List<MultipartFile> files);
+    void postBoardHelp(Long memberId, int sigungu, PostHelpRequestDto requestDto, List<MultipartFile> files);
 
-    Page<BoardHelpListDto> listBoardHelp(
-            BoardHelpListRequestDto requestDto,
+    Page<ListHelpDto> listBoardHelp(
+            ListHelpRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable);
 
-    void postComment(CommentRequestDto requestDto);
+    void postComment(PostCommentRequestWrapDto requestDto);
 
-    BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto);
+    DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto);
 
-    void adoptedBoardHelp(BoardHelpAdopt requestDto);
+    void adoptedBoardHelp(AdoptCommentRequestDto requestDto);
 
-    Page<ProfileHelpDto> listProfileBoardHelpMe(ProfileHelpRequestDto requestDto, Pageable pageable);
+    Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable);
 
-    Page<ProfileHelpDto> listProfileBoardHelpYou(ProfileHelpRequestDto requestDto, Pageable pageable);
+    Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable);
 }

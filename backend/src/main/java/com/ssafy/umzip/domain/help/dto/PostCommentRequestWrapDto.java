@@ -6,23 +6,21 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.xml.stream.events.Comment;
-
 @Getter
-public class CommentRequestDto {
+public class PostCommentRequestWrapDto {
 
     private Long boardId;
     private Long memberId;
     private String comment;
 
     @Builder
-    public CommentRequestDto(Long boardId, Long memberId, String comment) {
+    public PostCommentRequestWrapDto(Long boardId, Long memberId, String comment) {
         this.boardId = boardId;
         this.memberId = memberId;
         this.comment = comment;
     }
 
-    public BoardHelpComment toEntity(CommentRequestDto requestDto,
+    public BoardHelpComment toEntity(PostCommentRequestWrapDto requestDto,
                                      BoardHelp boardHelp,
                                      Member member) {
         return BoardHelpComment.builder()
