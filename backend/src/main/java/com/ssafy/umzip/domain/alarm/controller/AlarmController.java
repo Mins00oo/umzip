@@ -21,7 +21,6 @@ public class AlarmController {
     @GetMapping()
     public ResponseEntity<List<AlarmResponse>> createReview(@RequestParam int limit, @RequestParam int offset, HttpServletRequest request) {
         Long memberId = jwtTokenProvider.getId(request);
-
         return alarmService.alarmList(limit, offset, memberId);
     }
 }
