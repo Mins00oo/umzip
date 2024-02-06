@@ -59,7 +59,6 @@ public class DeliveryUserController {
                                                  @RequestPart(value="imageFileList",required = false) List<MultipartFile> imageFileList,
                                                  @RequestPart(value="price") Long price,
                                                  HttpServletRequest request
-
     ){
         Long memberId = jwtTokenProvider.getId(request);
         if(imageFileList==null){ // check null
@@ -87,8 +86,11 @@ public class DeliveryUserController {
         고객 : 취소 API
      */
     @PutMapping("/cancel")
-    public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancelRequestDto cancleRequestDto){
-        deliveryUserService.cancelDelivery(cancleRequestDto.getMappingId());
+    public ResponseEntity<Object> cancelDelivery(@RequestBody DeliveryCancelRequestDto cancelRequestDto,
+                                                 HttpServletRequest request){
+        Long memberId = jwtTokenProvider.getId(request);
+        deliveryUserService.cancelDelivery(cancelRequestDto.getMappingId(),memberId);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
@@ -110,8 +112,6 @@ public class DeliveryUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryList));
     }
 
-
-
     /*
         KAKAO Mobility 길찾기 API
      */
@@ -124,7 +124,7 @@ public class DeliveryUserController {
             routes - duration
          */
         // car Service가 없어도 될정도 이므로 바로 Repository 소환
-        Car car = carRepository.findById(Long.valueOf(dto.getCarId())).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CAR));
+        Car car = carRepository.findById(dto.getCarId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CAR));
         // API 엔드포인트 주소 세팅
         StringBuilder apiUrl = new StringBuilder("https://apis-navi.kakaomobility.com/v1/directions?");
         apiUrl.append("origin=").append(dto.getDepartureX()).append(",").append(dto.getDepartureY()).append("&")
