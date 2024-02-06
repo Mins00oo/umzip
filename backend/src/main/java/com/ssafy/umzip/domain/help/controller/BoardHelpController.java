@@ -1,10 +1,7 @@
 package com.ssafy.umzip.domain.help.controller;
 
-import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.help.dto.*;
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.service.BoardHelpService;
-import com.ssafy.umzip.domain.help.service.BoardHelpServiceImpl;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -39,7 +36,7 @@ public class BoardHelpController {
     * */
     @PostMapping
     public ResponseEntity<Object> postBoardHelp(
-            @RequestPart(value="boardHelp") BoardHelpPostRequestDto requestDto,
+            @RequestPart(value="boardHelp") PostHelpRequestDto requestDto,
             @RequestPart(value="imageFileList", required = false) List<MultipartFile> imageFileList,
             HttpServletRequest request) {
 
@@ -80,18 +77,18 @@ public class BoardHelpController {
         Long memberId = jwtTokenProvider.getId(request);
         int sigungu = jwtTokenProvider.getSigungu(request);
 
-        BoardHelpListRequestDto requestDto = BoardHelpListRequestDto.builder()
+        ListHelpRequestDto requestDto = ListHelpRequestDto.builder()
                 .sigungu(sigungu)
                 .keyword(keyword)
                 .codeSmallId(codeSmallId)
                 .memberId(memberId)
                 .build();
 
-        Page<BoardHelpListDto> boards = service.listBoardHelp(requestDto, pageable);
+        Page<ListHelpDto> responseDto = service.listBoardHelp(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(boards));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /* [ 댓글 작성 ]
@@ -104,7 +101,7 @@ public class BoardHelpController {
         System.out.println("comment: " + dto.getComment());
         Long memberId = jwtTokenProvider.getId(request);
 
-        CommentRequestDto requestDto = new CommentRequestDto(boardId, memberId, dto.getComment());
+        PostCommentRequestWrapDto requestDto = new PostCommentRequestWrapDto(boardId, memberId, dto.getComment());
 
         service.postComment(requestDto);
 
@@ -122,7 +119,7 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
 
-        BoardHelpDetailDto responseDto = service.detailBoardHelp(BoardHelpDetailRequestDto.builder()
+        DetailHelpDto responseDto = service.detailBoardHelp(DetailHelpRequestDto.builder()
                         .boardId(boardId)
                         .memberId(memberId)
                         .build());
@@ -141,7 +138,7 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
 
-        service.adoptedBoardHelp(BoardHelpAdopt.builder()
+        service.adoptedBoardHelp(AdoptCommentRequestDto.builder()
                                 .memberId(memberId)
                                 .commentId(commentId)
                                 .build());
@@ -165,16 +162,16 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpMeRequestDto requestDto = ProfileHelpMeRequestDto.builder()
+        ProfileRequestDto requestDto = ProfileRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpMeDto> pageDto = service.listProfileBoardHelpMe(requestDto, pageable);
+        Page<ProfileDto> responseDto = service.listProfileBoardHelpMe(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(pageDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 도움 공고 ]
@@ -191,15 +188,15 @@ public class BoardHelpController {
             isSameMember = true;
         }
 
-        ProfileHelpYouRequestDto requestDto = ProfileHelpYouRequestDto.builder()
+        ProfileRequestDto requestDto = ProfileRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        Page<ProfileHelpYouDto> pageDto = service.listProfileBoardHelpYou(requestDto, pageable);
+        Page<ProfileDto> responseDto = service.listProfileBoardHelpYou(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(pageDto));
+                .body(new BaseResponse<>(responseDto));
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import java.time.LocalDateTime;
 
 @Getter
-public class ProfileHelpYouDto {
+public class ProfileDto {
 
     private String title;
     private Long codeSmallId;
@@ -18,8 +18,8 @@ public class ProfileHelpYouDto {
     private LocalDateTime createDt;
 
     @Builder
-    public ProfileHelpYouDto(String title, Long codeSmallId, String codeSmallName,
-                             int point, String writerName, LocalDateTime createDt) {
+    public ProfileDto(String title, Long codeSmallId, String codeSmallName,
+                      int point, String writerName, LocalDateTime createDt) {
         this.title = title;
         this.codeSmallId = codeSmallId;
         this.codeSmallName = codeSmallName;
@@ -28,8 +28,8 @@ public class ProfileHelpYouDto {
         this.createDt = createDt;
     }
 
-    public static Page<ProfileHelpYouDto> toDto(Page<BoardHelp> entityPage) {
-        return entityPage.map(boardHelp -> ProfileHelpYouDto.builder()
+    public static Page<ProfileDto> toDto(Page<BoardHelp> entityPage) {
+        return entityPage.map(boardHelp -> ProfileDto.builder()
                 .title(boardHelp.getTitle())
                 .codeSmallId(boardHelp.getCodeSmall().getId())
                 .codeSmallName(boardHelp.getCodeSmall().getName())

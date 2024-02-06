@@ -1,8 +1,6 @@
 package com.ssafy.umzip.domain.help.dto;
 
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
-import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
-import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,13 +8,10 @@ import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @ToString
 @Getter
-public class BoardHelpListDto {
+public class ListHelpDto {
 
     private Long id;
     private String writerName;
@@ -34,10 +29,10 @@ public class BoardHelpListDto {
 
 
     @Builder
-    public BoardHelpListDto(Long id, String writerName, String title,
-                            Long codeSmallId, LocalDateTime createDt,
-                            int readCnt, int rewardPoint, int sigungu,
-                            boolean isAdopted) {
+    public ListHelpDto(Long id, String writerName, String title,
+                       Long codeSmallId, LocalDateTime createDt,
+                       int readCnt, int rewardPoint, int sigungu,
+                       boolean isAdopted) {
         this.id = id;
         this.writerName = writerName;
         this.title = title;
@@ -50,8 +45,8 @@ public class BoardHelpListDto {
         this.isAdopted = isAdopted;
     }
 
-    public static Page<BoardHelpListDto> toDto(Page<BoardHelp> boardHelpPage) {
-        return  boardHelpPage.map(boardHelp -> BoardHelpListDto.builder()
+    public static Page<ListHelpDto> toDto(Page<BoardHelp> boardHelpPage) {
+        return  boardHelpPage.map(boardHelp -> ListHelpDto.builder()
                 .id(boardHelp.getId())
                 .writerName(boardHelp.getMember().getName())
                 .title(boardHelp.getTitle())

@@ -1,16 +1,10 @@
 package com.ssafy.umzip.domain.help.dto;
 
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-public class BoardHelpListRequestDto {
+public class ListHelpRequestDto {
 
     private String codeSmallName;
     private Long codeSmallId;
@@ -19,7 +13,7 @@ public class BoardHelpListRequestDto {
     private Long memberId;
 
     @Builder
-    public BoardHelpListRequestDto(int sigungu, String keyword, Long codeSmallId, Long memberId) {
+    public ListHelpRequestDto(int sigungu, String keyword, Long codeSmallId, Long memberId) {
         this.sigungu = sigungu;
         this.keyword = keyword;
         setCodeSmallName(codeSmallId);

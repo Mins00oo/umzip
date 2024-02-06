@@ -83,11 +83,11 @@ public class BoardTradeController {
                 .boardId(boardId)
                 .build();
 
-        DetailDto detailDto = service.detailBoardTrade(requestDto);
+        DetailDto responseDto = service.detailBoardTrade(requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new BaseResponse<>(detailDto));
+                .body(new BaseResponse<>(responseDto));
     }
 
     /*[ 판매 물품 ]
@@ -104,12 +104,12 @@ public class BoardTradeController {
             isSameMember = true;
         }
 
-        ProfileSellListRequestDto profileSellListRequestDto = ProfileSellListRequestDto.builder()
+        ProfileSellListRequestDto requestDto = ProfileSellListRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        List<ProfileListDto> responseDto = service.profileSellListBoardTrade(profileSellListRequestDto, pageable);
+        List<ProfileListDto> responseDto = service.profileSellListBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -129,12 +129,12 @@ public class BoardTradeController {
             isSameMember = true;
         }
 
-        ProfileBuyListRequestDto profilebuyListRequestDto = ProfileBuyListRequestDto.builder()
+        ProfileBuyListRequestDto requestDto = ProfileBuyListRequestDto.builder()
                 .viewMemberId(memberId)
                 .isSameMember(isSameMember)
                 .build();
 
-        List<ProfileListDto> responseDto = service.profileBuyListBoardTrade(profilebuyListRequestDto, pageable);
+        List<ProfileListDto> responseDto = service.profileBuyListBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

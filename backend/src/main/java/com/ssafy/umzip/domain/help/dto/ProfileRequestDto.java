@@ -4,13 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProfileHelpMeRequestDto {
+public class ProfileRequestDto {
 
     private Long viewMemberId;
     private boolean isSameMember;
 
     @Builder
-    public ProfileHelpMeRequestDto(Long viewMemberId, boolean isSameMember) {
+    public ProfileRequestDto(Long viewMemberId, boolean isSameMember) {
         this.viewMemberId = viewMemberId;
         this.isSameMember = isSameMember;
     }

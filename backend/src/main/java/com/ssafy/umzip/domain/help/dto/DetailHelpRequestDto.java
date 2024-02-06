@@ -4,14 +4,15 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class BoardHelpAdopt {
+public class DetailHelpRequestDto {
 
+    private Long boardId;
     private Long memberId;
-    private Long commentId;
 
     @Builder
-    BoardHelpAdopt(Long memberId, Long commentId) {
+    public DetailHelpRequestDto(Long boardId, Long memberId) {
+        this.boardId = boardId;
         this.memberId = memberId;
-        this.commentId = commentId;
     }
+
 }

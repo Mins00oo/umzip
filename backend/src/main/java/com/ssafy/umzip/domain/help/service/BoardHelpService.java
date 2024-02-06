@@ -2,7 +2,6 @@ package com.ssafy.umzip.domain.help.service;
 
 
 import com.ssafy.umzip.domain.help.dto.*;
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,19 +12,19 @@ import java.util.List;
 
 public interface BoardHelpService {
 
-    void postBoardHelp(Long memberId, int sigungu, BoardHelpPostRequestDto requestDto, List<MultipartFile> files);
+    void postBoardHelp(Long memberId, int sigungu, PostHelpRequestDto requestDto, List<MultipartFile> files);
 
-    Page<BoardHelpListDto> listBoardHelp(
-            BoardHelpListRequestDto requestDto,
+    Page<ListHelpDto> listBoardHelp(
+            ListHelpRequestDto requestDto,
             @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable);
 
-    void postComment(CommentRequestDto requestDto);
+    void postComment(PostCommentRequestWrapDto requestDto);
 
-    BoardHelpDetailDto detailBoardHelp(BoardHelpDetailRequestDto requestDto);
+    DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto);
 
-    void adoptedBoardHelp(BoardHelpAdopt requestDto);
+    void adoptedBoardHelp(AdoptCommentRequestDto requestDto);
 
-    Page<ProfileHelpMeDto> listProfileBoardHelpMe(ProfileHelpMeRequestDto requestDto, Pageable pageable);
+    Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable);
 
-    Page<ProfileHelpYouDto> listProfileBoardHelpYou(ProfileHelpYouRequestDto requestDto, Pageable pageable);
+    Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable);
 }
