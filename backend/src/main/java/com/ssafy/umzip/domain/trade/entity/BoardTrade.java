@@ -23,6 +23,7 @@ public class BoardTrade extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="code_small_id")
+    @Setter
     private CodeSmall codeSmall;
 
     @ManyToOne(fetch = FetchType.LAZY)

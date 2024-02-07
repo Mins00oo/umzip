@@ -9,6 +9,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.trade.dto.ListDto;
 import com.ssafy.umzip.domain.trade.dto.ProfileListDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -60,7 +62,24 @@ public class BoardTradeCustomRepositoryImpl implements BoardTradeCustomRepositor
     }
 
     @Override
-    public List<ProfileListDto> findProfileSellMatchingImageList(Long memberId, Pageable pageable) {
+    public Page<ProfileListDto> findProfileSellMatchingImageList(Long memberId, Pageable pageable) {
+
+        Long size = queryFactory.select(boardTrade.count())
+                .from(boardTrade)
+                .where(boardTrade.id.in(queryFactory.select(boardTrade.id)
+                        .from(boardTradeActive)
+                        .where(boardTradeActive.member.id.eq(memberId))))
+                .fetchOne();
+
+        Long totalSize = queryFactory.select(boardTrade.count().subtract(size))
+                .from(boardTrade)
+                .where(boardTrade.member.id.eq(memberId))
+                        .fetchOne();
+        System.out.println("count: " + totalSize);
+
+        if (totalSize < 0) {
+            totalSize = 0L;
+        }
 
         List<ProfileListDto> resultList = queryFactory.select(
                 Projections.constructor(
@@ -91,13 +110,15 @@ public class BoardTradeCustomRepositoryImpl implements BoardTradeCustomRepositor
                 .orderBy(boardTrade.id.desc())
                 .fetch();
 
-        return resultList;
+        return new PageImpl<>(resultList, pageable, totalSize);
     }
 
     @Override
-    public List<ProfileListDto> findProfileBuyMatchingImageList(Long memberId, Pageable pageable) {
+    public Page<ProfileListDto> findProfileBuyMatchingImageList(Long memberId, Pageable pageable) {
 
-
+        Long totalSize = queryFactory.select(boardTradeActive.count())
+                .from(boardTradeActive)
+                .where(boardTradeActive.member.id.eq(memberId)).fetchOne();
 
         List<ProfileListDto> resultList = queryFactory.select(
                         Projections.constructor(
@@ -123,6 +144,6 @@ public class BoardTradeCustomRepositoryImpl implements BoardTradeCustomRepositor
                 .orderBy(boardTrade.id.desc())
                 .fetch();
 
-        return resultList;
+        return new PageImpl<>(resultList, pageable, totalSize);
     }
 }

@@ -8,6 +8,7 @@ import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -109,7 +110,7 @@ public class BoardTradeController {
                 .isSameMember(isSameMember)
                 .build();
 
-        List<ProfileListDto> responseDto = service.profileSellListBoardTrade(requestDto, pageable);
+        Page<ProfileListDto> responseDto = service.profileSellListBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -134,7 +135,7 @@ public class BoardTradeController {
                 .isSameMember(isSameMember)
                 .build();
 
-        List<ProfileListDto> responseDto = service.profileBuyListBoardTrade(requestDto, pageable);
+        Page<ProfileListDto> responseDto = service.profileBuyListBoardTrade(requestDto, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -144,8 +145,34 @@ public class BoardTradeController {
     /*[ 판매 완료 ]
      * - 판매 완료 버튼을 누르면 해당 중고 게시글의 상태 코드를 302(판매완료)로 변경한다
      * */
+    @PostMapping("/completed-sales")
+    public ResponseEntity<Object> completeSale(@RequestBody CompleteRequestDto requestDto,
+                                               HttpServletRequest request) {
 
-    /*[ 구매 완료 여부 ]
+        Long memberId = jwtTokenProvider.getId(request);
+        requestDto.setMemberId(memberId);
+
+        service.CompleteSale(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
+    /*[ 구매 완료 ]
     * 구매 여부: 후기작성을 끝내면 구매완료 테이블에 추가한다.
     * */
+    @PostMapping("/completed-buys")
+    public ResponseEntity<Object> completeBuy(@RequestBody CompleteRequestDto requestDto,
+                                               HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
+        requestDto.setMemberId(memberId);
+
+        service.CompleteBuy(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
 }

@@ -137,8 +137,9 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         return responseDto;
     }
 
+    @Transactional
     @Override
-    public List<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto,
+    public Page<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto,
                                                           Pageable pageable) {
         
         // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
@@ -149,14 +150,15 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileSellListRequestDto.getViewMemberId();
-        List<ProfileListDto> responseDto = customRepository.findProfileSellMatchingImageList(viewMemberId,
+        Page<ProfileListDto> responseDto = customRepository.findProfileSellMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
         return responseDto;
     }
 
+    @Transactional
     @Override
-    public List<ProfileListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
+    public Page<ProfileListDto> profileBuyListBoardTrade(ProfileBuyListRequestDto profileBuyListRequestDto, Pageable pageable) {
         if (profileBuyListRequestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필 - [중고] 구매 목록");
         }
@@ -164,9 +166,54 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         int curPage = pageable.getPageNumber() - 1;
         int size = pageable.getPageSize();
         Long viewMemberId = profileBuyListRequestDto.getViewMemberId();
-        List<ProfileListDto> responseDto = customRepository.findProfileBuyMatchingImageList(viewMemberId,
+        Page<ProfileListDto> responseDto = customRepository.findProfileBuyMatchingImageList(viewMemberId,
                 PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
         return responseDto;
+    }
+
+    @Transactional
+    @Override
+    public void CompleteSale(CompleteRequestDto requestDto) {
+        
+        Long boardId = requestDto.getBoardId();
+        Long curMemberId = requestDto.getMemberId();
+
+        // 작성자만 판매 완료 기능을 사용할 수 있다.
+        BoardTrade boardTradeEntity = boardTradeRepository.findByIdAndMemberId(boardId, curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.CAN_USE_ONLY_WRITER));
+        
+        CodeSmall codeSmallEntity = codeSmallRepository.findById(IS_COMPLETE_SALE)
+                        .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+
+        boardTradeEntity.setCodeSmall(codeSmallEntity);
+    }
+
+    @Transactional
+    @Override
+    public void CompleteBuy(CompleteRequestDto requestDto) {
+
+        Long boardId = requestDto.getBoardId();
+        Long curMemberId = requestDto.getMemberId();
+
+        Member member = memberRepository.findById(curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
+        // 작성자가 아니면 구매 완료 기능을 사용할 수 있다.
+        BoardTrade boardTradeEntity = boardTradeRepository.findByIdAndMemberIdNot(boardId, curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.AUTHOR_CANNOT_USE_FEATURE));
+
+        // 해당 게시글을 이미 구매완료 했으면 저장하지 않는다.
+        List<CompleteBuyLogicDto> listDto = boardTradeActiveRepository.findAll(boardId, curMemberId);
+        if (!listDto.isEmpty()) {
+            throw new BaseException(StatusCode.ALREADY_PURCHASED_BOARD);
+        }
+
+        BoardTradeActive boardTradeActiveEntity = BoardTradeActive.builder()
+                        .boardTrade(boardTradeEntity)
+                        .member(member)
+                        .isActive(true).build();
+
+        boardTradeActiveRepository.save(boardTradeActiveEntity);
     }
 }
