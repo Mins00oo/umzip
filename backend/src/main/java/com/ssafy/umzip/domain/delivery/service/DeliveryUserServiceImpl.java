@@ -234,6 +234,9 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         }
         return alarmList;
     }
+    /**
+     * 예약 완료
+     */
 
     @Override
     public Boolean completeReservation(Long mappingId, Long memberId) {
@@ -259,9 +262,6 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         return true;
     }
 
-    /**
-     * 예약 완료
-     */
 
     /*
         delivery Image 세팅
