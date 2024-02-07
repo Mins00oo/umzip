@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ProfileDto {
 
+    private Long boardId;
     private String title;
     private Long codeSmallId;
     private String codeSmallName;
@@ -18,8 +19,9 @@ public class ProfileDto {
     private LocalDateTime createDt;
 
     @Builder
-    public ProfileDto(String title, Long codeSmallId, String codeSmallName,
+    public ProfileDto(Long boardId, String title, Long codeSmallId, String codeSmallName,
                       int point, String writerName, LocalDateTime createDt) {
+        this.boardId = boardId;
         this.title = title;
         this.codeSmallId = codeSmallId;
         this.codeSmallName = codeSmallName;
@@ -30,6 +32,7 @@ public class ProfileDto {
 
     public static Page<ProfileDto> toDto(Page<BoardHelp> entityPage) {
         return entityPage.map(boardHelp -> ProfileDto.builder()
+                .boardId(boardHelp.getId())
                 .title(boardHelp.getTitle())
                 .codeSmallId(boardHelp.getCodeSmall().getId())
                 .codeSmallName(boardHelp.getCodeSmall().getName())
