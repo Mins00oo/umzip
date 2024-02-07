@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.clean.dto.user.*;
 import com.ssafy.umzip.domain.clean.service.CleanUserService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
+import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +108,22 @@ public class CleanUserController {
         List<CleanMatchingCompanyDto> cleans = cleanUserService.companyListClean(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(cleans));
     }
-    
+    /**
+     * 유저 : 예약 완료 API
+     */
+    @PostMapping("/reservation-complete")
+    public ResponseEntity<Object> completeReservation(@RequestBody CleanCompleteReservationDto dto,
+                                                      HttpServletRequest request
+    ){
+        Long memberId = jwtTokenProvider.getId(request);
+        Boolean result = cleanUserService.completeReservation(dto.getMappingId(), memberId);
+
+        if(!result){
+            throw new BaseException(StatusCode.FAIL_TO_RESERVATION);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+
     /**
         계산기 필요 메서드들
      */
