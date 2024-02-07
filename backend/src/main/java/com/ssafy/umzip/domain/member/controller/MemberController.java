@@ -34,6 +34,9 @@ public class MemberController {
     @GetMapping("/{memberId}")
     public ResponseEntity<Object> retrieveUser(@PathVariable Long memberId, HttpServletRequest request) {
         Long requestId = jwtTokenProvider.getId(request);
+        if (memberId == -1) {
+            memberId = requestId;
+        }
         MemberResponseDto responseDto = memberService.retrieveMember(memberId, requestId);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(responseDto));
     }
