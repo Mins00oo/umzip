@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.alarm.dto;
 
+import com.ssafy.umzip.domain.alarm.entity.Alarm;
 import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,13 +30,51 @@ public class BoardAlarmDto {
     }
 
     /*
-        중고 : 구매완료 ( 303 ) 만 알람. 구매자가 판매자에게 알람.
+        중고 : 구매완료 ( 303 ) 만 알람. 구매자가 판매자에게 알람. ( 후기 )
      */
-    
+    public Alarm toSellerAlarmEntity() {
+        StringBuilder sb = new StringBuilder();
+        checkAlarmType(sb);
+        //후기 작성시 알람
+        generateSellerContent(sb);
+        imgPath = fromMember.getImageUrl();
+        return Alarm.builder()
+                .member(this.toMember)
+                .isRead(false)
+                .content(sb.toString())
+                .imgPath(this.imgPath)
+                .build();
+    }
+
     /*
-        도움 :   채택 : 채택 당한사람 ( adoptedBoardHelp)
+        도움 :   채택 : 채택 당한사람 ( adoptedBoardHelp )
                 댓글 : 글 작성자 ( postComment )
      */
+    public Alarm toBoardHelpUserAlarmEntity(String boardTitle) {
+        StringBuilder sb = new StringBuilder();
+        checkAlarmType(sb);
+        String subTitle = boardTitle.substring(0, 8)+"···";
+        generateBoardHelpContent(sb, subTitle);
+        imgPath = fromMember.getImageUrl();
+        return Alarm.builder()
+                .member(this.toMember)
+                .isRead(false)
+                .content(sb.toString())
+                .imgPath(this.imgPath)
+                .build();
+    }
+
+    private void generateBoardHelpContent(StringBuilder sb, String subTitle) {
+        switch (this.boardAlarmType){
+            case ADOPTED->{//채택 당한사람
+                sb.append("도움 ["+ subTitle +"]"+"게시글에서 채택되셨어요!");
+            }
+            case COMMENT->{//댓글 달리면
+                sb.append("도움 ["+ subTitle +"]"+"게시글에 "+ fromMember.getName()+"님께서 댓글을 달았어요!");
+            }
+        }
+    }
+
     private void checkAlarmType(StringBuilder sb) {
         switch (this.alarmType) {
             case HELP -> {
@@ -46,4 +85,9 @@ public class BoardAlarmDto {
             }
         }
     }
+
+    private void generateSellerContent(StringBuilder sb) {
+        sb.append(fromMember.getName() + " 님께서 중고 거래 후기를 남겨주셨어요! ");
+    }
+
 }
