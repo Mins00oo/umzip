@@ -81,6 +81,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.toList());
         reviewTagRepository.saveAll(reviewTags);
 
+        // 4) 포인트 추가
+        // createReviewRequest.getPoint();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
