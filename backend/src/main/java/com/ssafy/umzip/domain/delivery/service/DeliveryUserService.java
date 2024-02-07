@@ -18,5 +18,6 @@ public interface DeliveryUserService {
      void cancelDelivery(Long mappingId,Long memberId);
      List<DeliveryMatchingCompanyDto> companyMatchingListDelivery(DeliveryCompanyListRequestDto dto);
      List<UserDeliveryReservationDto> userReservationDelivery(Long memberId);
+     Boolean completeReservation(Long mappingId, Long memberId);
 
 }

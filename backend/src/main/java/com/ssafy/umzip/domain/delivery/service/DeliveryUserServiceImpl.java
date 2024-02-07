@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.alarm.dto.AlarmDto;
 import com.ssafy.umzip.domain.alarm.dto.AlarmType;
 import com.ssafy.umzip.domain.alarm.entity.Alarm;
 import com.ssafy.umzip.domain.alarm.repository.AlarmRepository;
+import com.ssafy.umzip.domain.clean.entity.CleanMapping;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.company.entity.Company;
@@ -233,6 +234,34 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         }
         return alarmList;
     }
+
+    @Override
+    public Boolean completeReservation(Long mappingId, Long memberId) {
+        DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY));
+        CodeSmall codeSmall = codeSmallRepository.findById(103L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
+
+        Member member = deliveryMapping.getMember();
+        if(member.getId().equals(memberId)){
+            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        }
+
+        deliveryMapping.setCodeSmall(codeSmall);
+        //알람
+        AlarmDto alarm = AlarmDto.builder()
+                .read(false)
+                .codeSmallId(codeSmall.getId())
+                .alarmType(AlarmType.DELIVER)
+                .member(member)
+                .build();
+
+        Alarm companyAlarm = alarm.toCompanyDeliveryAndCleanAlarmEntity(deliveryMapping.getCompany());
+        alarmRepository.save(companyAlarm);
+        return true;
+    }
+
+    /**
+     * 예약 완료
+     */
 
     /*
         delivery Image 세팅

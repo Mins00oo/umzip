@@ -117,9 +117,10 @@ public class CleanUserController {
     ){
         Long memberId = jwtTokenProvider.getId(request);
         Boolean result = cleanUserService.completeReservation(dto.getMappingId(), memberId);
-//        if(!result){
-//            throw new BaseException(StatusCode.)
-//        }
+
+        if(!result){
+            throw new BaseException(StatusCode.FAIL_TO_RESERVATION);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 

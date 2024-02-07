@@ -116,10 +116,16 @@ public class DeliveryUserController {
         고객 : 용달 예약 확정 API
      */
     @PostMapping("/reservation-complete")
-    public ResponseEntity<Object> completeReservation(@RequestBody DeliveryCompleteReservationDto dto){
-
+    public ResponseEntity<Object> completeReservation(@RequestBody DeliveryCompleteReservationDto dto,
+                                                      HttpServletRequest request){
+        Long memberId = jwtTokenProvider.getId(request);
+        Boolean result = deliveryUserService.completeReservation(dto.getMappingId(), memberId);
+        if(!result){
+            throw new BaseException(StatusCode.FAIL_TO_RESERVATION);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
+
     /*
         KAKAO Mobility 길찾기 API
      */

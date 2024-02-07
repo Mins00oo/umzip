@@ -174,7 +174,9 @@ public class CleanUserServiceImpl implements CleanUserService{
         return cleanDetail;
     }
 
-
+    /**
+     * 예약 완료 API
+     */
     @Override
     public Boolean completeReservation(Long mappingId, Long memberId) {
         CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
@@ -199,9 +201,7 @@ public class CleanUserServiceImpl implements CleanUserService{
         return true;
     }
 
-    /**
-     * 예약 완료 API
-     */
+
 
     private void setImages(List<MultipartFile> imageFileList, Clean clean) {
         for(MultipartFile file: imageFileList){

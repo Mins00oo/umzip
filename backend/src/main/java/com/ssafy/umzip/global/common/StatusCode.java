@@ -11,7 +11,7 @@ public enum StatusCode {
     S3_UPLOAD_FAIL(false, 200, "사진 업로드에 실패하였습니다."),
     TRANSLATE_FILE_FAILED(false, 201, "파일 변환에 실패하였습니다"),
     FORBIDDEN_REQUEST(false, 202, "접근 권한이 없습니다."),
-
+    FAIL_TO_RESERVATION(false, 203, "예약에 실패했습니다."),
     // MEMBER : 300
     ALREADY_EXIST_MEMBER(false, 300, "이미 존재하는 계정입니다."),
     NOT_VALID_PASSWORD(false, 301, "비밀번호 입력값이 잘못되었습니다."),
