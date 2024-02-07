@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.chat.repository;
 
 import com.mongodb.BasicDBObject;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,6 +10,7 @@ import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.entity.ChatRoomStatus;
 import com.ssafy.umzip.domain.chat.entity.QChatParticipant;
 import com.ssafy.umzip.domain.chat.entity.QChatRoom;
+import com.ssafy.umzip.domain.company.entity.QCompany;
 import com.ssafy.umzip.domain.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +38,29 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
         QChatParticipant cp2 = QChatParticipant.chatParticipant;
         QMember m = QMember.member;
         QChatRoom cr = QChatRoom.chatRoom;
+        QCompany c = QCompany.company;
         return queryFactory
                 .select(Projections.constructor(
                         ChatRoomListResponseDto.class,
                         cp.chatRoom.id,
-                        m.id,
-                        m.imageUrl,
-                        m.name,
+                        ExpressionUtils.as(
+                                JPAExpressions.select(c.id)
+                                        .from(c)
+                                        .where(c.member.id.eq(m.id)
+                                                .and(cp.role.in("CLEAN", "DELIVER"))),
+                                "companyId"),
+                        ExpressionUtils.as(
+                                JPAExpressions.select(c.imageUrl)
+                                        .from(c)
+                                        .where(c.member.id.eq(m.id)
+                                                .and(cp.role.in("CLEAN", "DELIVER"))),
+                                "companyImageUrl"),
+                        ExpressionUtils.as(
+                                JPAExpressions.select(c.name)
+                                        .from(c)
+                                        .where(c.member.id.eq(m.id)
+                                                .and(cp.role.in("CLEAN", "DELIVER"))),
+                                "companyName"),
                         cp.chatRoom.updateDt))
                 .from(cp)
                 .join(cp.member, m)
