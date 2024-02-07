@@ -195,6 +195,38 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         return deliveryCustomRepository.findUserReservationInfo(memberId);
     }
 
+    /**
+     * 용달 개별 조회
+     */
+
+    @Override
+    public DeliveryDetailResponseDto getDeliveryDetail(Long deliveryId, Long memberId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY));
+        if(!deliveryMappingRepository.existsByDeliveryIdAndMemberId(deliveryId,memberId)){
+            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        }
+        List<String> images = delivery.getImages().stream()
+                .map(DeliveryImage::getPath)
+                .toList();
+        String carName = delivery.getCar().getName();
+        DeliveryDetailResponseDto deliveryDetail = DeliveryDetailResponseDto.builder()
+                .id(delivery.getId())
+                .carName(carName)
+                .startTime(delivery.getStartTime())
+                .endTime(delivery.getEndTime())
+                .departure(delivery.getDeparture())
+                .departureDetail(delivery.getDepartureDetail())
+                .destination(delivery.getDestination())
+                .destinationDetail(delivery.getDestinationDetail())
+                .packaging(delivery.isPackaging())
+                .move(delivery.isMove())
+                .elevator(delivery.isElevator())
+                .parking(delivery.isParking())
+                .movelist(delivery.getMovelist())
+                .build();
+        deliveryDetail.setDeliveryImages(images);
+        return deliveryDetail;
+    }
 
     /*
         Mapping 연결 저장 : List<Alarm>리턴
