@@ -141,8 +141,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
     @Override
     public Page<ProfileListDto> profileSellListBoardTrade(ProfileSellListRequestDto profileSellListRequestDto,
                                                           Pageable pageable) {
-        
-        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
+
         if (profileSellListRequestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필 - [중고] 판매 목록");
         }
@@ -179,7 +178,6 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         Long boardId = requestDto.getBoardId();
         Long curMemberId = requestDto.getMemberId();
 
-        // 작성자만 판매 완료 기능을 사용할 수 있다.
         BoardTrade boardTradeEntity = boardTradeRepository.findByIdAndMemberId(boardId, curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.CAN_USE_ONLY_WRITER));
         
@@ -199,11 +197,9 @@ public class BoardTradeServiceImpl implements BoardTradeService {
         Member member = memberRepository.findById(curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
-        // 작성자가 아니면 구매 완료 기능을 사용할 수 있다.
         BoardTrade boardTradeEntity = boardTradeRepository.findByIdAndMemberIdNot(boardId, curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.AUTHOR_CANNOT_USE_FEATURE));
 
-        // 해당 게시글을 이미 구매완료 했으면 저장하지 않는다.
         List<CompleteBuyLogicDto> listDto = boardTradeActiveRepository.findAll(boardId, curMemberId);
         if (!listDto.isEmpty()) {
             throw new BaseException(StatusCode.ALREADY_PURCHASED_BOARD);
