@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.delivery.dto.*;
+import com.ssafy.umzip.global.common.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -90,11 +91,11 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 ));
 
 
-        result.forEach(delivery ->{
+        result.forEach(delivery -> {
             List<UserDeliveryMappingDto> list = mappingMap.get(delivery.getId());
             Long recentCode = 0L;
             for (UserDeliveryMappingDto userDeliveryMappingDto : list) {
-                recentCode = Math.max(recentCode,userDeliveryMappingDto.getCodeSmallId());
+                recentCode = Math.max(recentCode, userDeliveryMappingDto.getCodeSmallId());
             }
             delivery.setList(list);
             delivery.setStatus(recentCode);
@@ -103,7 +104,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
     }
 
     @Override
-    public Boolean updateDeliveryMappingDetailAndReissuingAndCodeSmall(DeliveryQuotationRequestDto dto,CodeSmall codeSmall) {
+    public Boolean updateDeliveryMappingDetailAndReissuingAndCodeSmall(DeliveryQuotationRequestDto dto, CodeSmall codeSmall) {
         long result = queryFactory
                 .update(deliveryMapping)
                 .set(deliveryMapping.detail, dto.getDetail())
@@ -135,17 +136,20 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                         )
                 )
                 .from(deliveryMapping)
-                .join(deliveryMapping.delivery,delivery)
-                .join(deliveryMapping.codeSmall,codeSmall)
-                .join(deliveryMapping.member,member)
+                .join(deliveryMapping.delivery, delivery)
+                .join(deliveryMapping.codeSmall, codeSmall)
+                .join(deliveryMapping.member, member)
                 .where(company.id.eq(companyId))
                 .fetch();
     }
+
     /*
         매칭
      */
     @Override
-    public List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime, int sigungu,int limit) {
+    public List<DeliveryMatchingCompanyDto> findCompanyMatchingList(LocalDateTime startTime, LocalDateTime endTime, int sigungu, int limit) {
+
+
         List<DeliveryMatchingCompanyDto> list = queryFactory
                 .selectDistinct(
                         Projections.constructor(
@@ -159,22 +163,29 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                         )
                 )
                 .from(company)
-                .leftJoin(deliveryMapping).on(company.id.eq(deliveryMapping.company.id))
-                .where(deliveryMapping.codeSmall.id.ne(103L),
-                        company.sigungu.eq(sigungu),
+                .leftJoin(deliveryMapping)
+                .on(deliveryMapping.company.id.eq(company.id))
+                .where(
                         deliveryMapping.delivery.id.notIn(
-                                queryFactory
-                                        .select(delivery.id)
-                                        .from(delivery)
-                                        .where(delivery.startTime.between(startTime, endTime)
-                                                .or(delivery.endTime.between(startTime, endTime))
-                                                .or(delivery.startTime.before(startTime).and(delivery.endTime.after(endTime))))
-                        )
+                                        queryFactory
+                                                .select(delivery.id)
+                                                .from(delivery)
+                                                .where(
+                                                        delivery.startTime.between(startTime, endTime)
+                                                                .or(delivery.endTime.between(startTime, endTime))
+                                                                .or(delivery.startTime.before(startTime)
+                                                                        .and(delivery.endTime.after(endTime))
+                                                                )
+                                                )
+                                ).or(deliveryMapping.delivery.id.isNull())
+                                .and(company.sigungu.eq(sigungu))
+                                .and(deliveryMapping.codeSmall.id.ne(103L).or(deliveryMapping.codeSmall.isNull()))
+                                .and(company.role.eq(Role.DELIVER))
                 )
-                .orderBy(company.experience.asc())
-                .distinct()
                 .limit(limit)
+                .orderBy(company.experience.asc())
                 .fetch();
+
 
         return list;
     }

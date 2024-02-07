@@ -138,7 +138,8 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 .leftJoin(cleanMapping).on(cleanMapping.company.id.eq(company.id))
                 .where(company.sigungu.eq(dto.getSigungu())
                         .and(company.role.eq(Role.CLEAN))
-                        .and(company.id.notIn(queryFactory.select( // 포함되면 안됨.
+                        .and(company.id.notIn(
+                                queryFactory.select( // 포함되면 안됨.
                                         company.id
                                 ).from(cleanMapping)
                                 .join(cleanMapping.company, company)
