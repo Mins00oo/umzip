@@ -20,15 +20,18 @@ public class CompanyResponseDto {
 
     private List<CompanyReviewListResponse> reviewList;
 
+    private String imageUrl;
+
     @Builder
     public CompanyResponseDto(String name, String averageScore, String introduction,
                               List<String> mostTag,
-                              List<CompanyReviewListResponse> reviewList) {
+                              List<CompanyReviewListResponse> reviewList, String imageUrl) {
         this.name = name;
         this.averageScore = averageScore;
         this.introduction = introduction;
         this.mostTag = mostTag;
         this.reviewList = reviewList;
+        this.imageUrl = imageUrl;
     }
 
     public static CompanyResponseDto fromEntity(Company company, String formattedAverageScore,
@@ -39,6 +42,7 @@ public class CompanyResponseDto {
                 .introduction(company.getIntroduction())
                 .mostTag(tagList)
                 .reviewList(companyReviewList)
+                .imageUrl(company.getImageUrl())
                 .build();
     }
 }
