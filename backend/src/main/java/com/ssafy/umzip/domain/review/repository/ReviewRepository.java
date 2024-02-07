@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewRepository  extends JpaRepository<Review, Long>, CustomReviewRepository {
+public interface ReviewRepository  extends JpaRepository<Review, Long> {
     @Query("SELECT NEW com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse(r.id, m.name, m.imageUrl, rr.receiverRole, r.content, r.score, r.createDt) " +
             "FROM ReviewReceiver rr " +
             "JOIN rr.review r " +
