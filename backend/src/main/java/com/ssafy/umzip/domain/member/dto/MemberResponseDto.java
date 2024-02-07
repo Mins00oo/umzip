@@ -24,8 +24,11 @@ public class MemberResponseDto {
 
     private List<String> tagList;
 
+    private String imageUrl;
+
     @Builder
-    public MemberResponseDto(boolean me, String name, String phone, int point, String email, String avgScore, List<String> tagList) {
+    public MemberResponseDto(boolean me, String name, String phone, int point, String email, String avgScore,
+                             List<String> tagList, String imageUrl) {
         this.me = me;
         this.name = name;
         this.phone = phone;
@@ -33,10 +36,12 @@ public class MemberResponseDto {
         this.email = email;
         this.avgScore = avgScore;
         this.tagList = tagList;
+        this.imageUrl = imageUrl;
     }
 
 
-    public static MemberResponseDto fromEntity(Member member, boolean isMe, String formattedAvgScore, List<String> tagList) {
+    public static MemberResponseDto fromEntity(Member member, boolean isMe, String formattedAvgScore,
+                                               List<String> tagList) {
         return MemberResponseDto.builder()
                 .me(isMe)
                 .email(member.getEmail())
@@ -45,6 +50,7 @@ public class MemberResponseDto {
                 .point(member.getPoint())
                 .avgScore(formattedAvgScore)
                 .tagList(tagList)
+                .imageUrl(member.getImageUrl())
                 .build();
     }
 }
