@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class CompleteSaleRequestDto {
+public class CompleteRequestDto {
 
     private Long boardId;
     @Setter
     private Long memberId;
 
     @Builder
-    public CompleteSaleRequestDto(Long boardId, Long memberId) {
+    public CompleteRequestDto(Long boardId, Long memberId) {
         this.boardId = boardId;
         this.memberId = memberId;
     }

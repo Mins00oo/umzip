@@ -44,6 +44,8 @@ public enum StatusCode {
     ALREADY_ADOPT_BOARD(false, 506, "이미 채택된 글입니다."),
     NOT_PURCHASED_FROM_POST(false, 507, "현재 회원은 해당 게시글에서 중고 물품을 구매하지 않았습니다."),
     CAN_USE_ONLY_WRITER(false, 508, "작성자만 판매 완료 기능을 사용할 수 있습니다."),
+    AUTHOR_CANNOT_USE_FEATURE(false, 509, "작성자는 구매 완료 기능을 사용할 수 없습니다."),
+    ALREADY_PURCHASED_BOARD(false, 510, "이미 구매 완료한 중고글 입니다."),
 
 
     // DELIVERY : 600
