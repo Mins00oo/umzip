@@ -1,11 +1,9 @@
 package com.ssafy.umzip.domain.help.dto;
 
-import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
@@ -26,37 +24,22 @@ public class ListHelpDto {
     private int sigungu;
     private boolean isAdopted;
 
-
-
     @Builder
     public ListHelpDto(Long id, String writerName, String title,
                        Long codeSmallId, LocalDateTime createDt,
-                       int readCnt, int rewardPoint, int sigungu,
-                       boolean isAdopted) {
+                       Long commentCnt, int readCnt, int rewardPoint,
+                       int sigungu, boolean isAdopted) {
         this.id = id;
         this.writerName = writerName;
         this.title = title;
         setCodeSmallName(codeSmallId);
         this.codeSmallId = codeSmallId;
         this.createDt = createDt;
+        this.commentCnt = commentCnt;
         this.readCnt = readCnt;
         this.rewardPoint = rewardPoint;
         this.sigungu = sigungu;
         this.isAdopted = isAdopted;
-    }
-
-    public static Page<ListHelpDto> toDto(Page<BoardHelp> boardHelpPage) {
-        return  boardHelpPage.map(boardHelp -> ListHelpDto.builder()
-                .id(boardHelp.getId())
-                .writerName(boardHelp.getMember().getName())
-                .title(boardHelp.getTitle())
-                .codeSmallId(boardHelp.getCodeSmall().getId())
-                .createDt(boardHelp.getCreateDt())
-                .readCnt(boardHelp.getReadCnt())
-                .rewardPoint(boardHelp.getPoint())
-                .sigungu(boardHelp.getSigungu())
-                .isAdopted(boardHelp.getIsAdopted())
-                .build());
     }
 
     private void setCodeSmallName(Long codeSmallId) {

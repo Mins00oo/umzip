@@ -6,6 +6,7 @@ import com.ssafy.umzip.domain.help.dto.*;
 import com.ssafy.umzip.domain.help.entity.BoardHelp;
 import com.ssafy.umzip.domain.help.entity.BoardHelpComment;
 import com.ssafy.umzip.domain.help.entity.BoardHelpImage;
+import com.ssafy.umzip.domain.help.repository.BoardHelpCustomRepository;
 import com.ssafy.umzip.domain.help.repository.BoardHelpImageRepository;
 import com.ssafy.umzip.domain.help.repository.BoardHelpRepository;
 import com.ssafy.umzip.domain.help.repository.CommentRepository;
@@ -38,6 +39,8 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final CodeSmallRepository codeSmallRepository;
     private final CommentRepository commentRepository;
 
+    private final BoardHelpCustomRepository boardHelpCustomRepository;
+
     private final S3Service s3Service;
 
     @Transactional
@@ -63,10 +66,9 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ListHelpDto> listBoardHelp(
-            ListHelpRequestDto requestDto,
-            @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-
+    public Page<ListHelpDto> listBoardHelp(ListHelpRequestDto requestDto,
+                                           @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+        
         memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
@@ -76,22 +78,10 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         String keyword = requestDto.getKeyword();
         Long codeSmallId = requestDto.getCodeSmallId(); // 0, 401, 402
 
-        Page<BoardHelp> boards = boardHelpRepository
-                .findPageByTitleContainingAndSigunguAndCodeSmall(keyword, sigungu, codeSmallId,
-                        PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
+        Page<ListHelpDto> pages = boardHelpCustomRepository.listBoardHelpAndCommentCount(keyword, sigungu, codeSmallId,
+                PageRequest.of(curPage, size, Sort.Direction.DESC, "id"));
 
-        Page<ListHelpDto> responseDto = ListHelpDto.toDto(boards);
-
-        responseDto.getContent().forEach(dto -> {
-            Long id = dto.getId();
-            Long commentCnt = commentRepository.countAllByBoardIdGroupBy(id);
-            if (commentCnt == null) {
-                commentCnt = 0L;
-            }
-            dto.setCommentCnt(commentCnt);
-        });
-
-        return responseDto;
+        return pages;
     }
 
     @Transactional
@@ -116,15 +106,18 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Override
     public DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto) {
 
-        Member member = memberRepository.findById(requestDto.getMemberId())
+        Long curMemberId = requestDto.getMemberId();
+        Long viewBoardId = requestDto.getBoardId();
+
+        Member member = memberRepository.findById(curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
-        BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
+        BoardHelp boardHelp = boardHelpRepository.findById(viewBoardId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
         boardHelp.setReadCnt(boardHelp.getReadCnt() + 1);
 
-        List<BoardHelpImage> boardHelpImages = boardHelpImageRepository.findAllById(requestDto.getBoardId());
+        List<BoardHelpImage> boardHelpImages = boardHelpImageRepository.findAllById(viewBoardId);
         List<String> imageList = new ArrayList<>();
         for (BoardHelpImage image : boardHelpImages) {
             if (image.getImageOriginName().isEmpty()) {
@@ -138,7 +131,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             isSameMember = true;
         }
 
-        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(requestDto.getBoardId());
+        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
 
         return DetailHelpDto.builder()
                 .isSameMember(isSameMember)
@@ -178,7 +171,6 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Override
     public Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable) {
 
-        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필 - [도움] 구인 목록");
         }
@@ -197,7 +189,6 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Override
     public Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable) {
 
-        // 현재 사용자의 프로필인가? 다른 사람의 프로필인가?
         if (requestDto.isSameMember()) {
             System.out.println("현재 사용자의 프로필 - [도움] 내역 목록");
         }
