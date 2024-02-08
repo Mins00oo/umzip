@@ -73,6 +73,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .join(deliveryMapping.delivery, delivery)
                 .join(deliveryMapping.company, company)
                 .where(deliveryMapping.member.id.eq(memberId))
+                .orderBy(delivery.createDt.desc())
                 .fetch();
         Map<Long, List<UserDeliveryMappingDto>> mappingMap = mappingRepoDtoList.stream()
                 .collect(Collectors.groupingBy(
@@ -140,6 +141,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .join(deliveryMapping.codeSmall, codeSmall)
                 .join(deliveryMapping.member, member)
                 .where(company.id.eq(companyId))
+                .orderBy(delivery.createDt.desc())
                 .fetch();
     }
 

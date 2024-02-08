@@ -21,12 +21,13 @@ import static com.ssafy.umzip.domain.clean.entity.QClean.clean;
 import static com.ssafy.umzip.domain.clean.entity.QCleanMapping.cleanMapping;
 import static com.ssafy.umzip.domain.code.entity.QCodeSmall.codeSmall;
 import static com.ssafy.umzip.domain.company.entity.QCompany.company;
+import static com.ssafy.umzip.domain.delivery.entity.QDelivery.delivery;
 import static com.ssafy.umzip.domain.member.entity.QMember.member;
 import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
 
 @RequiredArgsConstructor
 @Repository
-public class CleanCustomRepositoryImpl implements CleanCustomRepository{
+public class CleanCustomRepositoryImpl implements CleanCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -55,6 +56,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 ).from(cleanMapping)
                 .join(cleanMapping.clean, clean)
                 .where(cleanMapping.member.id.eq(memberId))
+                .orderBy(delivery.createDt.desc())
                 .distinct()
                 .fetch();
         //mapping들 가져옴.
@@ -92,12 +94,12 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                                         .reissuing(dto.getReissuing())
                                         .build(), Collectors.toList())
                 ));
-        for(UserCleanReservationResponseDto reservation:cleans){
+        for (UserCleanReservationResponseDto reservation : cleans) {
             List<UserCleanMappingDto> mappingDtos = cleanCompanyMap.get(reservation.getCleanId());
             reservation.setList(mappingDtos);
             Long recentStatus = 0L;
-            for(UserCleanMappingDto dto:mappingDtos){
-                recentStatus = Math.max(recentStatus,dto.getCodeSmallId());
+            for (UserCleanMappingDto dto : mappingDtos) {
+                recentStatus = Math.max(recentStatus, dto.getCodeSmallId());
             }
             reservation.setStatus(recentStatus);
         }
@@ -115,10 +117,10 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
         LocalDateTime startTimeMinus4 = startTime.minusHours(4);
         // 2. 시간이 겹치는 Mapping
         List<Long> invalidMapping = queryFactory.select(
-                            cleanMapping.id
+                        cleanMapping.id
                 ).from(cleanMapping)
                 .join(cleanMapping.clean, clean)
-                .where(clean.reservationTime.between(startTime,endTime)
+                .where(clean.reservationTime.between(startTime, endTime)
                         .or(clean.reservationTime.loe(startTime)
                                 .and(clean.reservationTime.gt(startTimeMinus4))
                         )
@@ -139,15 +141,15 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 .where(company.sigungu.eq(dto.getSigungu())
                         .and(company.role.eq(Role.CLEAN))
                         .and(company.id.notIn(
-                                queryFactory.select( // 포함되면 안됨.
-                                        company.id
-                                ).from(cleanMapping)
-                                .join(cleanMapping.company, company)
-                                .where(cleanMapping.id.in(invalidMapping), //시간이 겹치고
-                                        cleanMapping.codeSmall.id.eq(203L)  // 예약 완료인 상태인 companyId는
-                                )
-                                .distinct()
-                                .fetch()
+                                        queryFactory.select( // 포함되면 안됨.
+                                                        company.id
+                                                ).from(cleanMapping)
+                                                .join(cleanMapping.company, company)
+                                                .where(cleanMapping.id.in(invalidMapping), //시간이 겹치고
+                                                        cleanMapping.codeSmall.id.eq(203L)  // 예약 완료인 상태인 companyId는
+                                                )
+                                                .distinct()
+                                                .fetch()
                                 )
                         )
                 )
@@ -180,7 +182,8 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 .join(cleanMapping.member, member)
                 .where(
                         cleanMapping.company.id.eq(companyId)
-                ).distinct()
+                ).orderBy(delivery.createDt.desc())
+                .distinct()
                 .fetch();
     }
 }
