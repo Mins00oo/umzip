@@ -17,6 +17,7 @@ public class DetailDto {
     private List<String> filePathList;
     private Long writerId;
     private String writerName;
+    private String writerImageUrl;
     private Double writerRating;
     private String writerAddress;
     private String title;
@@ -32,7 +33,7 @@ public class DetailDto {
 
     @Builder
     public DetailDto(Long boardId, List<String> filePathList,
-                     Long writerId, String writerName, Double writerRating, String writerAddress,
+                     Long writerId, String writerName, String writerImageUrl, Double writerRating, String writerAddress,
                      String title, Long price, LocalDateTime createDt, boolean isDirect,
                      String content, int readCnt, Long codeSmallId, String codeSmallName,
                      boolean isWriter, boolean isActive) {
@@ -40,6 +41,7 @@ public class DetailDto {
         this.filePathList = filePathList;
         this.writerId = writerId;
         this.writerName = writerName;
+        this.writerImageUrl = writerImageUrl;
         this.writerRating = writerRating;
         this.writerAddress = writerAddress;
         this.title = title;
@@ -68,6 +70,7 @@ public class DetailDto {
                 .filePathList(filePathList)
                 .writerId(boardTrade.getMember().getId())
                 .writerName(boardTrade.getMember().getName())
+                .writerImageUrl(boardTrade.getMember().getImageUrl())
                 .writerRating(rating)
                 .writerAddress(boardTrade.getMember().getAddress())
                 .title(boardTrade.getTitle())

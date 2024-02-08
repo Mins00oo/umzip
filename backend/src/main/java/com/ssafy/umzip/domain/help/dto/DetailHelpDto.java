@@ -14,6 +14,7 @@ public class DetailHelpDto {
 
     private Long writerId;
     private String writerName;
+    private String writerImageUrl;
 
     private Long boardId;
     private String boardTitle;
@@ -36,6 +37,8 @@ public class DetailHelpDto {
                   boolean isSameMember, List<String> imagePathList) {
         this.writerId = boardHelp.getMember().getId();
         this.writerName = boardHelp.getMember().getName();
+        this.writerImageUrl = boardHelp.getMember().getImageUrl();
+
         this.boardId = boardHelp.getId();
         this.boardTitle = boardHelp.getTitle();
         this.boardContent = boardHelp.getContent();
