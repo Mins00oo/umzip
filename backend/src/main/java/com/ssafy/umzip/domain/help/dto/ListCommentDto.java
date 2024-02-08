@@ -13,6 +13,7 @@ public class ListCommentDto {
 
     private Long writerId;
     private String writerName;
+    private String writerImageUrl;
     private String comment;
     private LocalDateTime createDt;
 
@@ -20,6 +21,7 @@ public class ListCommentDto {
     ListCommentDto(BoardHelpComment boardHelpComment) {
         this.writerId = boardHelpComment.getMember().getId();
         this.writerName = boardHelpComment.getMember().getName();
+        this.writerImageUrl = boardHelpComment.getMember().getImageUrl();
         this.comment = boardHelpComment.getContent();
         this.createDt = boardHelpComment.getCreateDt();
     }
