@@ -45,7 +45,7 @@ public class Member extends BaseTimeEntity {
     private String pwd;
 
     @Builder
-    public Member(String email, String phone, String name, int point,String imageUrl, String address, String addressDetail, int sigungu, String pwd) {
+    public Member(String email, String phone, String name, int point, String imageUrl, String address, String addressDetail, int sigungu, String pwd) {
         this.email = email;
         this.phone = phone;
         this.name = name;
@@ -55,6 +55,14 @@ public class Member extends BaseTimeEntity {
         this.addressDetail = addressDetail;
         this.sigungu = sigungu;
         this.pwd = pwd;
+    }
+
+    public void savePoint(int point) {
+        this.point += point;
+    }
+
+    public void usePoint(int point) {
+        this.point -= point;
     }
 
 }
