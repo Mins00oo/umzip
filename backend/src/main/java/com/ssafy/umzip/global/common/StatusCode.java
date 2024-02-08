@@ -57,6 +57,7 @@ public enum StatusCode {
     FAIL_TO_QUOTATION(false,605,"견적 제안 요청이 실패했습니다."),
     INVALID_ACCESS_DELIVERY(false,606,"요청한 업체와 수정 적용 대상이 다른 업체입니다"),
     FAIL_TO_REJECTION(false,607,"업체의 견적 거절 요청이 실패했습니다."),
+    INVALID_GET_DELIVER(false,608,"올바르지 않은 용달 상세 정보 요청입니다."),
     
 
 

@@ -12,4 +12,5 @@ import java.util.Optional;
 
 public interface DeliveryMappingRepository extends JpaRepository<DeliveryMapping, Long> {
     Boolean existsByDeliveryIdAndMemberId(Long memberId,Long deliveryId);
+    Boolean existsByDeliveryIdAndCompanyId(Long deliveryId,Long companyId);
 }

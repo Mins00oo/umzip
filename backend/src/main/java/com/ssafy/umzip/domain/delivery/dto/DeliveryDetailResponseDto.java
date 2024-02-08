@@ -28,7 +28,6 @@ public class DeliveryDetailResponseDto {
     private String movelist;
     private List<String> deliveryImages = new ArrayList<>();
     @Builder
-
     public DeliveryDetailResponseDto(Long id, String carName, LocalDateTime startTime, LocalDateTime endTime, String departure, String departureDetail, String destination, String destinationDetail, Boolean packaging, Boolean move, Boolean elevator, Boolean parking, String movelist) {
         this.id = id;
         this.carName = carName;
