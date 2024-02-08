@@ -183,8 +183,8 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         boardHelpRepository.save(boardHelp);
 
         BoardAlarmDto boardAlarmDto = BoardAlarmDto.builder()
-                .fromMember(member)
-                .toMember(boardHelp.getMember())
+                .fromMember(boardHelp.getMember())
+                .toMember(member)
                 .read(false)
                 .alarmType(AlarmType.HELP)
                 .boardAlarmType(BoardAlarmType.ADOPTED)
