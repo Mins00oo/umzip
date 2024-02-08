@@ -54,6 +54,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .join(deliveryMapping.delivery, delivery)
                 .where(deliveryMapping.member.id.eq(memberId))
                 .distinct()
+                .orderBy(delivery.createDt.desc())
                 .fetch();
 
         List<UserDeliveryMappingRepoDto> mappingRepoDtoList = queryFactory
@@ -73,7 +74,6 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .join(deliveryMapping.delivery, delivery)
                 .join(deliveryMapping.company, company)
                 .where(deliveryMapping.member.id.eq(memberId))
-                .orderBy(delivery.createDt.desc())
                 .fetch();
         Map<Long, List<UserDeliveryMappingDto>> mappingMap = mappingRepoDtoList.stream()
                 .collect(Collectors.groupingBy(
