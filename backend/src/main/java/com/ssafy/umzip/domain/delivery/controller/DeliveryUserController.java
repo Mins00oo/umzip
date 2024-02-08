@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.delivery.controller;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ssafy.umzip.domain.clean.dto.user.CleanCompleteReservationDto;
+import com.ssafy.umzip.domain.clean.dto.user.CleanDetailResponseDto;
 import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.repository.CarRepository;
@@ -124,6 +125,15 @@ public class DeliveryUserController {
             throw new BaseException(StatusCode.FAIL_TO_RESERVATION);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
+    }
+    /*
+        유저 : 예약 상세조회 API
+     */
+    @GetMapping("/reservation/{deliveryId}")
+    public ResponseEntity<Object> userDetailReservationDelivery(@PathVariable Long deliveryId, HttpServletRequest request){
+        Long memberId = jwtTokenProvider.getId(request);
+        DeliveryDetailResponseDto deliveryDetail = deliveryUserService.getDeliveryDetail(deliveryId, memberId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryDetail));
     }
 
     /*

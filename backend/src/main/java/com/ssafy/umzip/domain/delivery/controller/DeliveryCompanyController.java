@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.delivery.controller;
 
 import com.ssafy.umzip.domain.delivery.dto.CompanyReservationDto;
+import com.ssafy.umzip.domain.delivery.dto.DeliveryDetailResponseDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryQuotationRequestDto;
 import com.ssafy.umzip.domain.delivery.dto.DeliveryRejectionRequestDto;
 import com.ssafy.umzip.domain.delivery.service.DeliveryCompanyService;
@@ -52,5 +53,13 @@ public class DeliveryCompanyController {
         List<CompanyReservationDto> companyReservationDtos = deliveryCompanyService.companyReservationDelivery(companyId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(companyReservationDtos));
     }
-
+    /*
+        업체 : 예약 상세
+     */
+    @GetMapping("/reservation/{deliveryId}")
+    public ResponseEntity<Object> companyDetailReservationDelivery(@PathVariable Long deliveryId, HttpServletRequest request){
+        Long companyId = jwtTokenProvider.getId(request);
+        DeliveryDetailResponseDto deliveryDetail = deliveryCompanyService.getDeliveryDetail(deliveryId, companyId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryDetail));
+    }
 }

@@ -10,8 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CleanCompleteReservationDto {
     private Long mappingId;
+    private Long point; //minus point
     @Builder
-    public CleanCompleteReservationDto(Long mappingId) {
+    public CleanCompleteReservationDto(Long mappingId, Long point) {
         this.mappingId = mappingId;
+        this.point = point;
     }
 }

@@ -32,7 +32,9 @@ public class AlarmDto {
         this.codeSmallId = codeSmallId;
         this.imgPath = imgPath;
     }
-
+    /*
+        용달&청소 : 유저에게 알람이 감.
+     */
     public Alarm toMemberDeliveryAndCleanAlarmEntity() {
         StringBuilder sb = new StringBuilder();
         Long status = this.codeSmallId % 100;
@@ -46,7 +48,9 @@ public class AlarmDto {
                 .imgPath(this.imgPath)
                 .build();
     }
-
+    /*
+        용달&청소 : 업체에게 알람이 감.
+     */
     public Alarm toCompanyDeliveryAndCleanAlarmEntity(Company company) {
         StringBuilder sb = new StringBuilder();
         Long status = this.codeSmallId % 100;
@@ -93,12 +97,6 @@ public class AlarmDto {
             }
             case CLEAN -> {
                 sb.append("[ 청소 ] ");
-            }
-            case HELP -> {
-                sb.append("[ 중고 ] ");
-            }
-            case TRADE -> {
-                sb.append("[ 도움 ] ");
             }
         }
     }

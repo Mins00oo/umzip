@@ -178,8 +178,8 @@ public class CleanUserServiceImpl implements CleanUserService{
      * 예약 완료 API
      */
     @Override
-    public Boolean completeReservation(Long mappingId, Long memberId) {
-        CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
+    public Boolean completeReservation(CleanCompleteReservationDto dto, Long memberId) {
+        CleanMapping cleanMapping = cleanMappingRepository.findById(dto.getMappingId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
         CodeSmall codeSmall = codeSmallRepository.findById(203L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
 
         Member member = cleanMapping.getMember();

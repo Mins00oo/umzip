@@ -153,6 +153,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository{
                 )
                 .orderBy(company.experience.asc())
                 .distinct()
+                .limit(dto.getLimit())
                 .fetch();
 
 
