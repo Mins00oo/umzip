@@ -2,16 +2,12 @@ package com.ssafy.umzip.domain.review.service;
 
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
-import com.ssafy.umzip.domain.review.dto.AllReviewRequest;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
 import com.ssafy.umzip.domain.review.entity.Review;
-import com.ssafy.umzip.domain.review.repository.CustomReviewRepositoryImpl;
 import com.ssafy.umzip.domain.review.repository.ReviewRepository;
-import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
-import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepositoryImpl;
 import com.ssafy.umzip.domain.reviewreceiver.repository.ReviewReceiverRepository;
 import com.ssafy.umzip.domain.reviewtag.entity.ReviewTag;
 import com.ssafy.umzip.domain.reviewtag.repository.ReviewTagRepository;
@@ -25,12 +21,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +38,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTagRepository reviewTagRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
-    private final CustomReviewRepositoryImpl customReviewRepository;
 
     /*
     * 리뷰작성
@@ -88,6 +81,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.toList());
         reviewTagRepository.saveAll(reviewTags);
 
+        // 4) 포인트 추가
+        // createReviewRequest.getPoint();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
@@ -115,7 +111,6 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             return ResponseEntity.notFound().build();
         }
-//        return ResponseEntity.status(HttpStatus.CREATED).body(customReviewRepository.findReviewsForUser(myReceiveReviewRequest));
     }
 
     @Override

@@ -15,4 +15,5 @@ public class CreateReviewRequest {
     private float score;
     private List<Long> tag;
     private String comment;
+    private int point;
 }
