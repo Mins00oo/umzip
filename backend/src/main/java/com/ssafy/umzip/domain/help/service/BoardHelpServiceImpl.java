@@ -1,5 +1,10 @@
 package com.ssafy.umzip.domain.help.service;
 
+import com.ssafy.umzip.domain.alarm.dto.AlarmType;
+import com.ssafy.umzip.domain.alarm.dto.BoardAlarmDto;
+import com.ssafy.umzip.domain.alarm.dto.BoardAlarmType;
+import com.ssafy.umzip.domain.alarm.entity.Alarm;
+import com.ssafy.umzip.domain.alarm.repository.AlarmRepository;
 import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.help.dto.*;
@@ -38,6 +43,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final BoardHelpImageRepository boardHelpImageRepository;
     private final CodeSmallRepository codeSmallRepository;
     private final CommentRepository commentRepository;
+    private final AlarmRepository alarmRepository;
 
     private final BoardHelpCustomRepository boardHelpCustomRepository;
 
@@ -100,6 +106,16 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         BoardHelpComment comment = requestDto.toEntity(requestDto, boardHelp, member);
         commentRepository.save(comment);
+
+        BoardAlarmDto boardAlarmDto = BoardAlarmDto.builder()
+                .fromMember(member)
+                .toMember(boardHelp.getMember())
+                .read(false)
+                .alarmType(AlarmType.HELP)
+                .boardAlarmType(BoardAlarmType.COMMENT)
+                .build();
+        Alarm alarm = boardAlarmDto.toBoardHelpUserAlarmEntity(boardHelp.getTitle());
+        alarmRepository.save(alarm);
     }
 
     @Transactional
@@ -144,7 +160,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     @Transactional
     @Override
     public void adoptedBoardHelp(AdoptCommentRequestDto requestDto) {
-        memberRepository.findById(requestDto.getMemberId())
+        Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
 
         BoardHelpComment boardHelpComment = commentRepository.findById(requestDto.getCommentId())
@@ -165,6 +181,16 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         boardHelp.setCodeSmall(codeSmall);
 
         boardHelpRepository.save(boardHelp);
+
+        BoardAlarmDto boardAlarmDto = BoardAlarmDto.builder()
+                .fromMember(member)
+                .toMember(boardHelp.getMember())
+                .read(false)
+                .alarmType(AlarmType.HELP)
+                .boardAlarmType(BoardAlarmType.ADOPTED)
+                .build();
+        Alarm alarm = boardAlarmDto.toBoardHelpUserAlarmEntity(boardHelp.getTitle());
+        alarmRepository.save(alarm);
     }
 
     @Transactional
