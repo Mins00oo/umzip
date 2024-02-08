@@ -56,7 +56,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository {
                 ).from(cleanMapping)
                 .join(cleanMapping.clean, clean)
                 .where(cleanMapping.member.id.eq(memberId))
-                .orderBy(delivery.createDt.desc())
+                .orderBy(clean.createDt.desc())
                 .distinct()
                 .fetch();
         //mapping들 가져옴.
@@ -182,7 +182,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository {
                 .join(cleanMapping.member, member)
                 .where(
                         cleanMapping.company.id.eq(companyId)
-                ).orderBy(delivery.createDt.desc())
+                ).orderBy(clean.createDt.desc())
                 .distinct()
                 .fetch();
     }
