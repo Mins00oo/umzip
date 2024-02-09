@@ -91,7 +91,8 @@ public class ChatRoomController {
     @GetMapping("/rooms/{chatRoomId}")
     public ResponseEntity<Object> retrieveChatRoomMessage(@PathVariable Long chatRoomId, HttpServletRequest request) {
         Long requestId = jwtTokenProvider.getId(request);
-        ChatDetailResponseDto response = chatService.retrieveChatRoomMessages(chatRoomId, requestId);
+        String role = jwtTokenProvider.getRole(request);
+        ChatDetailResponseDto response = chatService.retrieveChatRoomMessages(chatRoomId, requestId, role);
 
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(response));
     }

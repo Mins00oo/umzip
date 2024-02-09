@@ -185,6 +185,11 @@ public class JwtTokenProvider {
         return extractClaims(accessToken).get("id", Long.class);
     }
 
+    public String getRoleByToken(String BearerToken) {
+        String accessToken = BearerToken.split(" ")[1].trim();
+        return extractClaims(accessToken).get("role", String.class);
+    }
+
     public Long getIdByAccessToken(String accessToken) {
         return extractClaims(accessToken).get("id", Long.class);
     }

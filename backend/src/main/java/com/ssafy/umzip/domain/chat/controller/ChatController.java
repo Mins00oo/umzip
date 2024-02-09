@@ -30,11 +30,12 @@ public class ChatController {
     public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
                      @Header("Authorization") String authToken) {
         Long requestId = jwtTokenProvider.getIdByToken(authToken);
+        String role = jwtTokenProvider.getRoleByToken(authToken);
         if (message.getType().equals("LEAVE")) {
             chatRoomService.leaveChatRoom(chatRoomId, requestId);
             message.setContent("상대방이 나갔습니다.");
         }
-        ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId);
+        ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId, role);
 
         template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }

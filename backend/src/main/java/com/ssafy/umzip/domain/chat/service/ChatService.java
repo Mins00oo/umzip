@@ -7,7 +7,7 @@ import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
 import java.util.List;
 
 public interface ChatService {
-    ChatMessageResponseDto saveMessage(ChatMessageRequestDto message, Long chatRoomId, Long requestId);
+    ChatMessageResponseDto saveMessage(ChatMessageRequestDto message, Long chatRoomId, Long requestId, String role);
 
-    ChatDetailResponseDto retrieveChatRoomMessages(Long chatRoomId, Long requestId);
+    ChatDetailResponseDto retrieveChatRoomMessages(Long chatRoomId, Long requestId, String role);
 }
