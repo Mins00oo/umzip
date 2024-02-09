@@ -66,6 +66,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository {
                                 clean.id.as("cleanId"),
                                 cleanMapping.id.as("mappingId"),
                                 company.id.as("companyId"),
+                                company.member.id.as("companyMemberId"),
                                 company.name.as("companyName"),
                                 company.imageUrl.as("imageUrl"),
                                 cleanMapping.detail.as("detail"),
@@ -86,6 +87,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository {
                                 UserCleanMappingDto.builder()
                                         .mappingId(dto.getMappingId())
                                         .companyId(dto.getCompanyId())
+                                        .companyMemberId(dto.getCompanyMemberId())
                                         .companyName(dto.getCompanyName())
                                         .imageUrl(dto.getImageUrl())
                                         .detail(dto.getDetail())
