@@ -64,7 +64,8 @@ public class CustomChatParticipantRepositoryImpl implements CustomChatParticipan
                         cp.chatRoom.updateDt))
                 .from(cp)
                 .join(cp.member, m)
-                .leftJoin(c).on(cp.member.id.eq(c.member.id))
+                .leftJoin(c).on(cp.member.id.eq(c.member.id)
+                        .and(cp.role.eq(c.role.stringValue())))
                 .join(cp.chatRoom, cr)
                 .where(cp.chatRoom.id.in(
                         JPAExpressions
