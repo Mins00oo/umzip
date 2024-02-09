@@ -3,6 +3,7 @@ package com.ssafy.umzip.global.util.chat;
 import com.ssafy.umzip.domain.chat.entity.ChatMessage;
 import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
+import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
@@ -30,6 +31,7 @@ public class WebSocketEventListener {
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatParticipantRepository chatParticipantRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final CompanyRepository companyRepository;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -46,6 +48,12 @@ public class WebSocketEventListener {
 
         String accessToken = sessionAttributes.get("accessToken").toString();
         Long memberId = jwtTokenProvider.getIdByAccessToken(accessToken);
+        String role = jwtTokenProvider.getRoleByAccessToken(accessToken);
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            memberId = companyRepository.findById(memberId)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
         Long chatRoomId;
 
         if (destination.startsWith("/topic/chatroom/")) {
