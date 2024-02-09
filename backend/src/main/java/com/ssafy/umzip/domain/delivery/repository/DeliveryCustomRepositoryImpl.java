@@ -65,7 +65,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                         deliveryMapping.detail.as("detail"),
                         deliveryMapping.codeSmall.id.as("codeSmallId"),
                         company.id.as("companyId"),
-                        company.member.id.as("companyMemberId"),
+                        company.member.id.as("memberId"),
                         company.name.as("companyName"),
                         company.imageUrl.as("imageUrl"),
                         deliveryMapping.price.as("price"),
@@ -83,7 +83,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                                 UserDeliveryMappingDto.builder()
                                         .mappingId(dto.getMappingId())
                                         .companyId(dto.getCompanyId())
-                                        .companyMemberId(dto.getCompanyMemberId())
+                                        .memberId(dto.getMemberId())
                                         .companyName(dto.getCompanyName())
                                         .imageUrl(dto.getImageUrl())
                                         .detail(dto.getDetail())

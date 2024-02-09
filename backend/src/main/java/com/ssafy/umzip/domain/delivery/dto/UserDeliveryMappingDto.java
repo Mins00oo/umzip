@@ -8,7 +8,7 @@ import lombok.*;
 public class UserDeliveryMappingDto {
     private Long mappingId;
     private Long companyId;
-    private Long companyMemberId;
+    private Long memberId;
     private String companyName;
     private String imageUrl;
     private String detail;
@@ -18,10 +18,10 @@ public class UserDeliveryMappingDto {
 
     @Builder
 
-    public UserDeliveryMappingDto(Long mappingId, Long companyId,Long companyMemberId, String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
+    public UserDeliveryMappingDto(Long mappingId, Long companyId,Long memberId, String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
         this.mappingId = mappingId;
         this.companyId = companyId;
-        this.companyMemberId = companyMemberId;
+        this.memberId = memberId;
         this.companyName = companyName;
         this.imageUrl = imageUrl;
         this.detail = detail;

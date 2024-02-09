@@ -10,7 +10,7 @@ public class UserCleanMappingRepoDto {
     private Long cleanId;
     private Long mappingId;
     private Long companyId;
-    private Long companyMemberId;
+    private Long memberId;
     private String companyName;
     private String imageUrl;
     private String detail;
@@ -18,11 +18,11 @@ public class UserCleanMappingRepoDto {
     private Long price;
     private Long reissuing;
     @Builder
-    public UserCleanMappingRepoDto(Long cleanId, Long mappingId, Long companyId, Long companyMemberId,String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
+    public UserCleanMappingRepoDto(Long cleanId, Long mappingId, Long companyId, Long memberId,String companyName, String imageUrl, String detail, Long codeSmallId, Long price, Long reissuing) {
         this.cleanId = cleanId;
         this.mappingId = mappingId;
         this.companyId = companyId;
-        this.companyMemberId = companyMemberId;
+        this.memberId = memberId;
         this.companyName = companyName;
         this.imageUrl = imageUrl;
         this.detail = detail;
