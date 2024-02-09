@@ -8,6 +8,7 @@ import com.ssafy.umzip.domain.chat.entity.ChatRoomType;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.umzip.domain.chat.repository.CustomChatParticipantRepository;
+import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.global.common.StatusCode;
@@ -31,6 +32,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final CustomChatParticipantRepository customChatParticipantRepository;
+    private final CompanyRepository companyRepository;
 
     @Transactional
     @Override
@@ -89,14 +91,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional(readOnly = true)
     @Override
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
+        Long id = memberId;
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            id = companyRepository.findById(id)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
 
-        List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(memberId, role);
+        List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(id, role);
 
         List<Long> chatRoomIds = chatRooms.stream()
                 .map(ChatRoomListResponseDto::getChatRoomId)
                 .collect(Collectors.toList());
 
-        Map<Long, String> lastReadMessageIdByRoomId = getLastReadMessageIds(memberId, chatRoomIds);
+        Map<Long, String> lastReadMessageIdByRoomId = getLastReadMessageIds(id, chatRoomIds);
 
         List<ChatMessage> recentMessages = customChatParticipantRepository.findRecentMessagesByChatRoomIds(chatRoomIds);
 
