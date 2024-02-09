@@ -14,6 +14,7 @@ public class CompanyReservationDto {
     private Long deliveryId;
     private LocalDateTime createDt;
     private LocalDateTime startTime;
+    private Long memberId;
     private String memberName;
     private Long codeSmallId;
     private Long price;

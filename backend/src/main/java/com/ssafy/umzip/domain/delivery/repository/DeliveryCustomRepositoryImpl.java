@@ -131,6 +131,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                                 delivery.id.as("deliveryId"),
                                 delivery.createDt.as("createDt"),
                                 delivery.startTime.as("startTime"),
+                                member.id.as("memberId"),
                                 member.name.as("memberName"),
                                 codeSmall.id.as("codeSmallId"),
                                 deliveryMapping.price.as("price"),

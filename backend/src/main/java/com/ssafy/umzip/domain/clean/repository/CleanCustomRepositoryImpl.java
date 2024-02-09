@@ -176,6 +176,7 @@ public class CleanCustomRepositoryImpl implements CleanCustomRepository {
                                 cleanMapping.price.as("price"),
                                 cleanMapping.reissuing.as("reissuing"),
                                 cleanMapping.codeSmall.id.as("codeSmallId"),
+                                member.id.as("memberId"),
                                 member.name.as("memberName"),
                                 member.imageUrl.as("memberImg")
                         )

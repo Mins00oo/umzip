@@ -19,10 +19,10 @@ public class CleanCompanyReservationResponseDto {
     private Long price;
     private Long reissuing;
     private Long codeSmallId;
+    private Long memberId;
     private String memberName;
     private String memberImg;
     @Builder
-
     public CleanCompanyReservationResponseDto(Long mappingId, Long cleanId, LocalDateTime createDt, LocalDateTime reservationTime, Long price, Long reissuing, Long codeSmallId, String memberName, String memberImg) {
         this.mappingId = mappingId;
         this.cleanId = cleanId;
