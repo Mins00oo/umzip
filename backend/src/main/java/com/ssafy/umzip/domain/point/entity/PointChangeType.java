@@ -9,7 +9,14 @@ public enum PointChangeType {
     SAVE_BY_DELIVERY("용달 이용 적립"),
     SAVE_BY_CLEAN("청소 이용 적립"),
     SAVE_BY_TRADE_REVIEW("중고글 후기 작성 적립"),
-    SAVE_BY_HELP("따뜻한 도움 제공");
+    SAVE_BY_DELIVER_REVIEW("중고글 후기 작성 적립"),
+    SAVE_BY_CLEAN_REVIEW("중고글 후기 작성 적립"),
+    SAVE_BY_HELP("따뜻한 도움 제공"),
+
+
+    USE_BY_DELIVER("용달 이용 결제 포인트 사용"),
+    USE_BY_CLEAN("청소 이용 결제 포인트 사용"),
+    USE_BY_HELP_ME("도와주세요 글 작성");
 
     private final String message;
 }

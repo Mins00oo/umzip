@@ -21,6 +21,8 @@ public class MemberTokenDto {
     private String profileImage;
     @Setter
     private List<Role> roleList;
+    @Setter
+    private Long id;
 
     @Builder
     public MemberTokenDto(String accessToken, String refreshToken) {
