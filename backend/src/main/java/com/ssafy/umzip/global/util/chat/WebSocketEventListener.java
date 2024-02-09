@@ -49,8 +49,10 @@ public class WebSocketEventListener {
         String accessToken = sessionAttributes.get("accessToken").toString();
         Long memberId = jwtTokenProvider.getIdByAccessToken(accessToken);
         String role = jwtTokenProvider.getRoleByAccessToken(accessToken);
+        Long id = memberId;
+
         if (role.equals("DELIVER") || role.equals("CLEAN")) {
-            memberId = companyRepository.findById(memberId)
+            id = companyRepository.findById(memberId)
                     .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
                     .getMember().getId();
         }
@@ -64,12 +66,12 @@ public class WebSocketEventListener {
                 lastMessageId = messageList.get(messageList.size() - 1).getId();
             }
 
-            chatParticipantRepository.findByChatRoomAndMember(chatRoomId, memberId)
+            chatParticipantRepository.findByChatRoomAndMember(chatRoomId, id)
                     .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_CHATROOM_WITH_USER))
                     .updateLastReadMessage(lastMessageId);
         }
 
-        messagingTemplate.convertAndSend("/topic/user/" + accessToken, memberId);
+        messagingTemplate.convertAndSend("/topic/user/" + accessToken, id);
 
     }
 

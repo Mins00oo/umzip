@@ -8,6 +8,7 @@ import com.ssafy.umzip.domain.chat.entity.*;
 import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatRoomRepository;
+import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.trade.entity.BoardTradeImage;
@@ -33,13 +34,22 @@ public class ChatServiceImpl implements ChatService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final BoardTradeImageRepository boardTradeImageRepository;
+    private final CompanyRepository companyRepository;
 
 
     @Transactional
     @Override
-    public ChatMessageResponseDto saveMessage(ChatMessageRequestDto message, Long chatRoomId, Long requestId) {
-        Member member = memberRepository.findById(requestId)
+    public ChatMessageResponseDto saveMessage(ChatMessageRequestDto message, Long chatRoomId, Long requestId, String role) {
+        Long id = requestId;
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            id = companyRepository.findById(id)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
+
+        Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
+
         ChatMessage chatMessage = ChatMessageRequestDto.toEntity(message, member, chatRoomId);
 
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
@@ -47,7 +57,7 @@ public class ChatServiceImpl implements ChatService {
         List<ChatParticipant> chatParticipantList = chatParticipantRepository.findByChatRoomId(chatRoomId);
 
         for (ChatParticipant cp : chatParticipantList) {
-            if (cp.getMember().getId().equals(requestId)) {
+            if (cp.getMember().getId().equals(id)) {
                 cp.updateLastReadMessage(savedMessage.getId());
             }
             if (!cp.getStatus().equals(ChatRoomStatus.TALK)) {
@@ -60,11 +70,19 @@ public class ChatServiceImpl implements ChatService {
 
     @Transactional
     @Override
-    public ChatDetailResponseDto retrieveChatRoomMessages(Long chatRoomId, Long requestId) {
-        Member requester = memberRepository.findById(requestId)
+    public ChatDetailResponseDto retrieveChatRoomMessages(Long chatRoomId, Long requestId, String role) {
+        Long id = requestId;
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            id = companyRepository.findById(id)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
+
+        Member requester = memberRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
 
-        Member anotherMember = chatParticipantRepository.findByChatRoomAndMemberId(chatRoomId, requestId);
+        Member anotherMember = chatParticipantRepository.findByChatRoomAndMemberId(chatRoomId, id);
+
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
 
         List<ChatMessageResponseDto> responseDto = chatMessages.stream()
