@@ -36,7 +36,6 @@ public class ChatController {
         }
         ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId);
 
-        log.info(chatRoomId + " " + response.getContent());
         template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }
 

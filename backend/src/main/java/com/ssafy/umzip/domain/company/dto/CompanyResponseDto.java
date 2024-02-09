@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -22,20 +23,24 @@ public class CompanyResponseDto {
 
     private String imageUrl;
 
+    private String experience;
+
     @Builder
     public CompanyResponseDto(String name, String averageScore, String introduction,
                               List<String> mostTag,
-                              List<CompanyReviewListResponse> reviewList, String imageUrl) {
+                              List<CompanyReviewListResponse> reviewList, String imageUrl, String experience) {
         this.name = name;
         this.averageScore = averageScore;
         this.introduction = introduction;
         this.mostTag = mostTag;
         this.reviewList = reviewList;
         this.imageUrl = imageUrl;
+        this.experience = experience;
     }
 
     public static CompanyResponseDto fromEntity(Company company, String formattedAverageScore,
                                                 List<String> tagList, List<CompanyReviewListResponse> companyReviewList) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return CompanyResponseDto.builder()
                 .name(company.getName())
                 .averageScore(formattedAverageScore)
@@ -43,6 +48,7 @@ public class CompanyResponseDto {
                 .mostTag(tagList)
                 .reviewList(companyReviewList)
                 .imageUrl(company.getImageUrl())
+                .experience(company.getExperience().format(formatter))
                 .build();
     }
 }

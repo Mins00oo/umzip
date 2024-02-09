@@ -9,8 +9,20 @@ public interface PointService {
 
     void savePointByUsingDeliver(Member member, int point);
 
+    void savePointByTradeReview(Member member, int point);
 
-    void usePoint();
+    void savePointByDeliverReview(Member member, int point);
+
+    void savePointByCleanReview(Member member, int point);
+
+    void savePointByHelpPeople(Member member, int point);
+
+
+    void usePointByDeliver(Member member, int point);
+
+    void usePointByClean(Member member, int point);
+
+    void usePointByHelpMe(Member member, int point);
 
     PointUsageResponseDto retrieveMyPointUsage(Long memberId, Pageable pageable);
 }

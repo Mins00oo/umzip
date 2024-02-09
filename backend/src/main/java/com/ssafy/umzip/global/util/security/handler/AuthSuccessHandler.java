@@ -47,7 +47,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         MemberTokenDto tokenDto;
 
         if (companyList.isEmpty()) {
-            tokenDto = createTokenDto(member, null, new ArrayList<>(), 1);
+            tokenDto = createTokenDto(member, null, new ArrayList<>(), 1, member.getId());
         } else {
             List<Role> roleList = new ArrayList<>();
             Company company = (companyList.size() == 2)
@@ -64,7 +64,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
                 roleList.add(company.getRole());
             }
 
-            tokenDto = createTokenDto(member, company, roleList, -1);
+            tokenDto = createTokenDto(member, company, roleList, -1, company.getId());
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -79,7 +79,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     // 공통 코드를 메소드로 분리
-    private MemberTokenDto createTokenDto(Member member, Company company, List<Role> roleList, int who) {
+    private MemberTokenDto createTokenDto(Member member, Company company, List<Role> roleList, int who, Long id) {
         MemberTokenDto tokenDto = (company == null)
                 ? jwtTokenProvider.generateMemberToken(member)
                 : jwtTokenProvider.generateCompanyToken(company);
@@ -88,6 +88,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         tokenDto.setProfileImage((company == null) ? member.getImageUrl() : company.getImageUrl());
         tokenDto.setWho(who);
         tokenDto.setRoleList(roleList);
+        tokenDto.setId(id);
 
         return tokenDto;
     }
