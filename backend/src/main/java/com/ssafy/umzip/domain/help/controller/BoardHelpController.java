@@ -129,6 +129,25 @@ public class BoardHelpController {
                 .body(new BaseResponse<>(responseDto));
     }
     
+    /* 도움글 상세조회 - 댓글 리스트 조회
+    * 
+    * */
+    @GetMapping("/detail/comments/{boardId}")
+    public ResponseEntity<Object> commentListBoardHelp(@PathVariable("boardId") Long boardId,
+                                                       HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
+
+        List<ListCommentDto> responseDto = service.commentListBoardHelp(DetailHelpRequestDto.builder()
+                .boardId(boardId)
+                .memberId(memberId)
+                .build());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(responseDto));
+    }
+    
     /*[ 도움 게시글 상세조회 - 채택 기능 ]
     * 
     * */
@@ -198,5 +217,26 @@ public class BoardHelpController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new BaseResponse<>(responseDto));
+    }
+
+    /*[ 도와줄게요 - 포인트 제공 API ]
+    * 도와줄게요 게시글의 작성자에게 도움을 받은 경우, 도움을 받은 사람이 포인트를 제공하는 기능
+    * 
+    * */
+    @PostMapping("/detail/point/{boardId}")
+    public ResponseEntity<Object> givePointBoardHelp(@PathVariable("boardId") Long boardId,
+                                                   HttpServletRequest request) {
+
+        Long curMemberId = jwtTokenProvider.getId(request);
+        GivePointRequestDto requestDto = GivePointRequestDto.builder()
+                .giverMemberId(curMemberId)
+                .boardId(boardId)
+                .build();
+
+        service.givePointBoardHelp(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(StatusCode.SUCCESS));
     }
 }

@@ -21,10 +21,13 @@ public interface BoardHelpService {
     void postComment(PostCommentRequestWrapDto requestDto);
 
     DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto);
+    List<ListCommentDto> commentListBoardHelp(DetailHelpRequestDto requestDto);
 
     void adoptedBoardHelp(AdoptCommentRequestDto requestDto);
 
     Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable);
 
     Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable);
+
+    void givePointBoardHelp(GivePointRequestDto requestDto);
 }

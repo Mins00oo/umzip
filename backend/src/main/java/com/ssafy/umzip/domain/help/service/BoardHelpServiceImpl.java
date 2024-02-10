@@ -17,6 +17,7 @@ import com.ssafy.umzip.domain.help.repository.BoardHelpRepository;
 import com.ssafy.umzip.domain.help.repository.CommentRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.point.service.PointService;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import com.ssafy.umzip.global.util.s3.S3Service;
@@ -48,6 +49,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
     private final BoardHelpCustomRepository boardHelpCustomRepository;
 
     private final S3Service s3Service;
+    private final PointService pointService;
 
     @Transactional
     @Override
@@ -55,6 +57,13 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
+        if (requestDto.getCodeSmallId() != 402L) {
+            if (member.getPoint() < requestDto.getPoint()) {
+                throw new BaseException(StatusCode.INSUFFICIENT_POINTS);
+            }
+            pointService.usePointByHelpMe(member, requestDto.getPoint());
+        }
 
         CodeSmall codeSmall = codeSmallRepository.findById(requestDto.getCodeSmallId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
@@ -100,7 +109,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
-        if (boardHelp.getIsAdopted()) {
+        if (boardHelp.getIsAdopted() || Objects.equals(member.getId(), boardHelp.getMember().getId())) {
             throw new BaseException(StatusCode.NOT_POST_COMMENT);
         }
 
@@ -147,14 +156,35 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             isSameMember = true;
         }
 
-        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
+        Long commentCnt = commentRepository.countAllByBoardHelpId(viewBoardId);
 
         return DetailHelpDto.builder()
                 .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
                 .imagePathList(imageList)
-                .boardHelpComment(commentList)
+                .commentCnt(commentCnt)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ListCommentDto> commentListBoardHelp(DetailHelpRequestDto requestDto) {
+
+        Long curMemberId = requestDto.getMemberId();
+        Long viewBoardId = requestDto.getBoardId();
+
+        memberRepository.findById(curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+        boardHelpRepository.findById(viewBoardId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
+        List<ListCommentDto> responseDto = new ArrayList<>();
+        if (!commentList.isEmpty()) {
+            responseDto = ListCommentDto.toDto(commentList);
+        }
+
+        return responseDto;
     }
 
     @Transactional
@@ -184,13 +214,15 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
         BoardAlarmDto boardAlarmDto = BoardAlarmDto.builder()
                 .fromMember(boardHelp.getMember())
-                .toMember(member)
+                .toMember(boardHelpComment.getMember())
                 .read(false)
                 .alarmType(AlarmType.HELP)
                 .boardAlarmType(BoardAlarmType.ADOPTED)
                 .build();
         Alarm alarm = boardAlarmDto.toBoardHelpUserAlarmEntity(boardHelp.getTitle());
         alarmRepository.save(alarm);
+
+        pointService.savePointByHelpPeople(boardHelpComment.getMember(), boardHelp.getPoint());
     }
 
     @Transactional
@@ -229,4 +261,26 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         
         return responseDto;
     }
+
+    @Transactional
+    @Override
+    public void givePointBoardHelp(GivePointRequestDto requestDto) {
+
+        Long giverMemberId = requestDto.getGiverMemberId();
+        Long boardId = requestDto.getBoardId();
+
+        Member giverMember = memberRepository.findById(giverMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+
+        BoardHelp boardHelp = boardHelpRepository.findById(boardId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        if (giverMember.getPoint() < boardHelp.getPoint()) {
+            throw new BaseException(StatusCode.INSUFFICIENT_POINTS);
+        }
+        pointService.usePointByHelpMe(giverMember, boardHelp.getPoint());
+
+        pointService.savePointByHelpPeople(boardHelp.getMember(), boardHelp.getPoint());
+    }
+
 }

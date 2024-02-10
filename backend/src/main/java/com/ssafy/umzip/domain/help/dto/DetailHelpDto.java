@@ -23,18 +23,15 @@ public class DetailHelpDto {
     private Long codeSmallId;
     private String codeSmallName;
     private LocalDateTime boardCreateDt;
-    private int boardCommentCnt;
+    private Long boardCommentCnt;
     private int readCnt;
-
-    private List<ListCommentDto> commentList = new ArrayList<>();
 
     private boolean isSameMember;
     private boolean isAdopted;
     private List<String> imagePathList = new ArrayList<>();
 
     @Builder
-    DetailHelpDto(BoardHelp boardHelp, List<BoardHelpComment> boardHelpComment,
-                  boolean isSameMember, List<String> imagePathList) {
+    DetailHelpDto(BoardHelp boardHelp, boolean isSameMember, List<String> imagePathList, Long commentCnt) {
         this.writerId = boardHelp.getMember().getId();
         this.writerName = boardHelp.getMember().getName();
         this.writerImageUrl = boardHelp.getMember().getImageUrl();
@@ -46,12 +43,8 @@ public class DetailHelpDto {
         this.codeSmallId = boardHelp.getCodeSmall().getId();
         this.codeSmallName = boardHelp.getCodeSmall().getName();
         this.boardCreateDt = boardHelp.getCreateDt();
-        this.boardCommentCnt = boardHelpComment.size();
+        this.boardCommentCnt = commentCnt;
         this.readCnt = boardHelp.getReadCnt();
-
-        if ( !boardHelpComment.isEmpty() ) {
-            this.commentList = ListCommentDto.toDto(boardHelpComment);
-        }
 
         this.isSameMember = isSameMember;
         this.isAdopted = boardHelp.getIsAdopted();
