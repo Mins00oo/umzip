@@ -46,6 +46,7 @@ public enum StatusCode {
     CAN_USE_ONLY_WRITER(false, 508, "작성자만 판매 완료 기능을 사용할 수 있습니다."),
     AUTHOR_CANNOT_USE_FEATURE(false, 509, "작성자는 구매 완료 기능을 사용할 수 없습니다."),
     ALREADY_PURCHASED_BOARD(false, 510, "이미 구매 완료한 중고글 입니다."),
+    INSUFFICIENT_POINTS(false, 511, "포인트가 부족합니다."),
 
 
     // DELIVERY : 600

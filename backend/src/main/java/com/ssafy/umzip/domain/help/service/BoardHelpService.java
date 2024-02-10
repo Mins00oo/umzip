@@ -27,4 +27,6 @@ public interface BoardHelpService {
     Page<ProfileDto> listProfileBoardHelpMe(ProfileRequestDto requestDto, Pageable pageable);
 
     Page<ProfileDto> listProfileBoardHelpYou(ProfileRequestDto requestDto, Pageable pageable);
+
+    void givePointBoardHelp(GivePointRequestDto requestDto);
 }
