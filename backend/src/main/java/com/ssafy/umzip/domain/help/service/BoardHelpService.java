@@ -21,7 +21,7 @@ public interface BoardHelpService {
     void postComment(PostCommentRequestWrapDto requestDto);
 
     DetailHelpDto detailBoardHelp(DetailHelpRequestDto requestDto);
-    List<ListCommentDto> commentListBoardHelp(DetailHelpRequestDto requestDto);
+    ListCommentWithStatusDto commentListBoardHelp(DetailHelpRequestDto requestDto);
 
     void adoptedBoardHelp(AdoptCommentRequestDto requestDto);
 
