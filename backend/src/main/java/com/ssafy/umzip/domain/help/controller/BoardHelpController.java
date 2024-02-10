@@ -129,6 +129,25 @@ public class BoardHelpController {
                 .body(new BaseResponse<>(responseDto));
     }
     
+    /* 도움글 상세조회 - 댓글 리스트 조회
+    * 
+    * */
+    @GetMapping("/detail/comments/{boardId}")
+    public ResponseEntity<Object> commentListBoardHelp(@PathVariable("boardId") Long boardId,
+                                                       HttpServletRequest request) {
+
+        Long memberId = jwtTokenProvider.getId(request);
+
+        List<ListCommentDto> responseDto = service.commentListBoardHelp(DetailHelpRequestDto.builder()
+                .boardId(boardId)
+                .memberId(memberId)
+                .build());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new BaseResponse<>(responseDto));
+    }
+    
     /*[ 도움 게시글 상세조회 - 채택 기능 ]
     * 
     * */

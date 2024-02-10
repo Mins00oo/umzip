@@ -109,7 +109,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         BoardHelp boardHelp = boardHelpRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
-        if (boardHelp.getIsAdopted()) {
+        if (boardHelp.getIsAdopted() || Objects.equals(member.getId(), boardHelp.getMember().getId())) {
             throw new BaseException(StatusCode.NOT_POST_COMMENT);
         }
 
@@ -156,14 +156,35 @@ public class BoardHelpServiceImpl implements BoardHelpService {
             isSameMember = true;
         }
 
-        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
+        Long commentCnt = commentRepository.countAllByBoardHelpId(viewBoardId);
 
         return DetailHelpDto.builder()
                 .isSameMember(isSameMember)
                 .boardHelp(boardHelp)
                 .imagePathList(imageList)
-                .boardHelpComment(commentList)
+                .commentCnt(commentCnt)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ListCommentDto> commentListBoardHelp(DetailHelpRequestDto requestDto) {
+
+        Long curMemberId = requestDto.getMemberId();
+        Long viewBoardId = requestDto.getBoardId();
+
+        memberRepository.findById(curMemberId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
+        boardHelpRepository.findById(viewBoardId)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
+
+        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
+        List<ListCommentDto> responseDto = new ArrayList<>();
+        if (!commentList.isEmpty()) {
+            responseDto = ListCommentDto.toDto(commentList);
+        }
+
+        return responseDto;
     }
 
     @Transactional
