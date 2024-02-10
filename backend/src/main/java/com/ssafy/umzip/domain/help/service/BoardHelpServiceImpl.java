@@ -168,21 +168,33 @@ public class BoardHelpServiceImpl implements BoardHelpService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ListCommentDto> commentListBoardHelp(DetailHelpRequestDto requestDto) {
+    public ListCommentWithStatusDto commentListBoardHelp(DetailHelpRequestDto requestDto) {
 
         Long curMemberId = requestDto.getMemberId();
         Long viewBoardId = requestDto.getBoardId();
 
-        memberRepository.findById(curMemberId)
+        Member member = memberRepository.findById(curMemberId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
-        boardHelpRepository.findById(viewBoardId)
+        BoardHelp boardHelp = boardHelpRepository.findById(viewBoardId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_BOARD_PK));
 
-        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
-        List<ListCommentDto> responseDto = new ArrayList<>();
-        if (!commentList.isEmpty()) {
-            responseDto = ListCommentDto.toDto(commentList);
+        boolean isSameMember = false;
+        boolean isAdopted = boardHelp.getIsAdopted();
+        if (Objects.equals(member.getId(), boardHelp.getMember().getId())) {
+            isSameMember = true;
         }
+
+        List<BoardHelpComment> commentList = commentRepository.findAllByBoardHelpId(viewBoardId);
+        List<ListCommentDto> listDto = new ArrayList<>();
+        if (!commentList.isEmpty()) {
+            listDto = ListCommentDto.toDto(commentList);
+        }
+
+        ListCommentWithStatusDto responseDto = ListCommentWithStatusDto.builder()
+                .isSameMember(isSameMember)
+                .isAdopted(isAdopted)
+                .listDto(listDto)
+                .build();
 
         return responseDto;
     }

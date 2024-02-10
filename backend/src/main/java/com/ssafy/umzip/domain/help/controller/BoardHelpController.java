@@ -138,7 +138,7 @@ public class BoardHelpController {
 
         Long memberId = jwtTokenProvider.getId(request);
 
-        List<ListCommentDto> responseDto = service.commentListBoardHelp(DetailHelpRequestDto.builder()
+        ListCommentWithStatusDto responseDto = service.commentListBoardHelp(DetailHelpRequestDto.builder()
                 .boardId(boardId)
                 .memberId(memberId)
                 .build());
