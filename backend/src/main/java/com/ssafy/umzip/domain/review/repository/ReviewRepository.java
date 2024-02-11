@@ -19,7 +19,7 @@ public interface ReviewRepository  extends JpaRepository<Review, Long> {
             "JOIN r.member m " +
             "WHERE rr.member.id = :memberId AND rr.receiverRole = :receiverRole " +
             "ORDER BY r.createDt DESC")
-    Optional<List<MyReceiveReviewResponse>> findReviewDetailsByMemberIdAndRole(
+    Page<MyReceiveReviewResponse> findReviewDetailsByMemberIdAndRole(
             @Param("memberId") Long memberId,
             @Param("receiverRole") Role receiverRole,
             Pageable pageable
