@@ -16,7 +16,8 @@ public enum PointChangeType {
 
     USE_BY_DELIVER("용달 이용 결제 포인트 사용"),
     USE_BY_CLEAN("청소 이용 결제 포인트 사용"),
-    USE_BY_HELP_ME("도와주세요 글 작성");
+    USE_BY_HELP_ME("도와주세요 글 작성"),
+    USE_BY_HELP_BY_PEOPLE("따뜻한 도움을 제공받았어요 !");
 
     private final String message;
 }

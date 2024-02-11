@@ -15,6 +15,8 @@ public class PointUsageDto {
 
     private String date;
 
+    private boolean isSave;
+
     public static PointUsageDto fromEntity(
             Point point
     ) {
@@ -23,6 +25,7 @@ public class PointUsageDto {
                 .message(point.getMessage().getMessage())
                 .change(point.getChange())
                 .date(point.getCreateDt().format(formatter))
+                .isSave(point.getChange() > 0)
                 .build();
     }
 

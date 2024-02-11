@@ -24,5 +24,7 @@ public interface PointService {
 
     void usePointByHelpMe(Member member, int point);
 
+    void usePointByHelpedByPeople(Member member, int point);
+
     PointUsageResponseDto retrieveMyPointUsage(Long memberId, Pageable pageable);
 }
