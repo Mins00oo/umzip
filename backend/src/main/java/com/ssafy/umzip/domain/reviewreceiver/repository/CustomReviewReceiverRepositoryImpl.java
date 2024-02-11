@@ -8,6 +8,7 @@ import com.ssafy.umzip.domain.company.entity.QCompany;
 import com.ssafy.umzip.domain.member.entity.QMember;
 import com.ssafy.umzip.domain.review.entity.QReview;
 import com.ssafy.umzip.domain.review.entity.Review;
+import com.ssafy.umzip.domain.reviewreceiver.dto.ScoreInfoDto;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.entity.QReviewReceiver;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.ssafy.umzip.domain.review.entity.QReview.review;
+import static com.ssafy.umzip.domain.reviewreceiver.entity.QReviewReceiver.reviewReceiver;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -137,5 +141,23 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
         });
 
         return responses;
+    }
+
+    @Override
+    public List<ScoreInfoDto> findScoreByCompanyMemberId(List<Long> companyList,Role role) {
+        List<ScoreInfoDto> result = queryFactory.select(
+                        Projections.constructor(
+                                ScoreInfoDto.class,
+                                reviewReceiver.member.id.as("memberId"),
+                                review.score.avg().as("score")
+                        )
+                ).from(reviewReceiver)
+                .join(review).on(review.id.eq(reviewReceiver.review.id))
+                .where(reviewReceiver.member.id.in(companyList),
+                        reviewReceiver.receiverRole.eq(role))
+                .groupBy(reviewReceiver.member.id)
+                .fetch();
+
+        return result;
     }
 }
