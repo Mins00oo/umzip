@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,18 +39,11 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public ChatMessageResponseDto saveMessage(ChatMessageRequestDto message, Long chatRoomId, Long requestId, String role) {
-        Long id = requestId;
-        if (role.equals("DELIVER") || role.equals("CLEAN")) {
-            id = companyRepository.findById(id)
-                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
-                    .getMember().getId();
-        }
+        Long id = resolveMemberIdByRole(requestId, role);
 
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
+        Member member = findMemberById(id);
 
         ChatMessage chatMessage = ChatMessageRequestDto.toEntity(message, member, chatRoomId);
-
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
         List<ChatParticipant> chatParticipantList = chatParticipantRepository.findByChatRoomId(chatRoomId);
@@ -68,19 +60,12 @@ public class ChatServiceImpl implements ChatService {
         return ChatMessageRequestDto.toResponseDto(message.getContent(), member, LocalDateTime.now());
     }
 
+
     @Transactional
     @Override
     public ChatDetailResponseDto retrieveChatRoomMessages(Long chatRoomId, Long requestId, String role) {
-        Long id = requestId;
-        if (role.equals("DELIVER") || role.equals("CLEAN")) {
-            id = companyRepository.findById(id)
-                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
-                    .getMember().getId();
-        }
-
-        Member requester = memberRepository.findById(id)
-                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
-
+        Long id = resolveMemberIdByRole(requestId, role);
+        Member requester = findMemberById(id);
         Member anotherMember = chatParticipantRepository.findByChatRoomAndMemberId(chatRoomId, id);
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
@@ -88,7 +73,6 @@ public class ChatServiceImpl implements ChatService {
         List<ChatMessageResponseDto> responseDto = chatMessages.stream()
                 .map(message -> {
                     Member userInfo = message.getSenderId().equals(requestId.toString()) ? requester : anotherMember;
-
                     return new ChatMessageResponseDto(
                             message.getContent(),
                             requestId,
@@ -109,7 +93,7 @@ public class ChatServiceImpl implements ChatService {
 
         if (chatRoom.getRoomType().equals(ChatRoomType.TRADE)) {
             BoardTradeImage boardTrade = boardTradeImageRepository.findAllById(chatRoom.getTradeId()).get(0);
-            chatTradeMessageRequestDto =ChatTradeMessageRequestDto.builder()
+            chatTradeMessageRequestDto = ChatTradeMessageRequestDto.builder()
                     .tradeItemTitle(boardTrade.getBoardTrade().getTitle())
                     .tradeId(boardTrade.getBoardTrade().getId())
                     .tradeItemPrice(boardTrade.getBoardTrade().getPrice())
@@ -128,5 +112,19 @@ public class ChatServiceImpl implements ChatService {
         return ChatDetailResponseDto.builder()
                 .chatMessages(responseDto)
                 .build();
+    }
+
+    private Long resolveMemberIdByRole(Long id, String role) {
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            return companyRepository.findById(id)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
+        return id;
+    }
+
+    private Member findMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MEMBER));
     }
 }
