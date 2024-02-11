@@ -23,7 +23,7 @@ public class CleanCompanyReservationResponseDto {
     private String memberName;
     private String memberImg;
     @Builder
-    public CleanCompanyReservationResponseDto(Long mappingId, Long cleanId, LocalDateTime createDt, LocalDateTime reservationTime, Long price, Long reissuing, Long codeSmallId, String memberName, String memberImg) {
+    public CleanCompanyReservationResponseDto(Long mappingId, Long cleanId, LocalDateTime createDt, LocalDateTime reservationTime, Long price, Long reissuing, Long codeSmallId, Long memberId, String memberName, String memberImg) {
         this.mappingId = mappingId;
         this.cleanId = cleanId;
         this.createDt = createDt;
@@ -31,6 +31,7 @@ public class CleanCompanyReservationResponseDto {
         this.price = price;
         this.reissuing = reissuing;
         this.codeSmallId = codeSmallId;
+        this.memberId = memberId;
         this.memberName = memberName;
         this.memberImg = memberImg;
     }
