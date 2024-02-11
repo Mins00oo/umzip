@@ -19,6 +19,7 @@ import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.point.service.PointService;
+import com.ssafy.umzip.domain.reviewreceiver.dto.ScoreInfoDto;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
@@ -133,6 +134,10 @@ public class CleanUserServiceImpl implements CleanUserService{
                 .limit(3)
                 .build();
         List<TopTagListResponse> tagList = reviewReceiverRepository.findTopTagsListByMemberIdAndRole(request);
+        List<ScoreInfoDto> scores = reviewReceiverRepository.findScoreByCompanyMemberId(memberIdList, CLEAN);
+
+        Map<Long, Double> memberIdToScoreMap = scores.stream()
+                .collect(Collectors.toMap(ScoreInfoDto::getMemberId, ScoreInfoDto::getScore));
 
         Map<Long, List<String>> tagGroupedByCompanyId = tagList.stream()
                 .collect(Collectors.groupingBy(TopTagListResponse::getCompanyId,
@@ -140,6 +145,9 @@ public class CleanUserServiceImpl implements CleanUserService{
         for(CleanMatchingCompanyDto companyDto : companys){
             List<String> tags = tagGroupedByCompanyId.get(companyDto.getCompanyId());
             companyDto.setTags(tags);
+            double score = memberIdToScoreMap.get(companyDto.getMemberId()) == null ? 0.0 : memberIdToScoreMap.get(companyDto.getMemberId());
+            score = Math.round(score*10)/10.0;
+            companyDto.setScore(score);
         }
 
         return companys;

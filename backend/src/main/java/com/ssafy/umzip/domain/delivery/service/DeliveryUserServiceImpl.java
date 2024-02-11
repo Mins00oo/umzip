@@ -19,6 +19,7 @@ import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.point.repository.PointRepository;
 import com.ssafy.umzip.domain.point.service.PointService;
+import com.ssafy.umzip.domain.reviewreceiver.dto.ScoreInfoDto;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
@@ -154,7 +155,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         alarmRepository.save(companyAlarm);
 
     }
-    /*
+    /**
         용달 기사 매칭
      */
 
@@ -177,12 +178,21 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
                 .build();
 
         List<TopTagListResponse> tagList = reviewReceiverRepository.findTopTagsListByMemberIdAndRole(request);
+
+        List<ScoreInfoDto> scores = reviewReceiverRepository.findScoreByCompanyMemberId(memberIdList,Role.DELIVER);
+
+        Map<Long, Double> memberIdToScoreMap = scores.stream()
+                .collect(Collectors.toMap(ScoreInfoDto::getMemberId, ScoreInfoDto::getScore));
+
         Map<Long, List<String>> tagGroupedByCompanyId = tagList.stream()
                 .collect(Collectors.groupingBy(TopTagListResponse::getCompanyId,
                         Collectors.mapping(TopTagListResponse::getTag, Collectors.flatMapping(List::stream, Collectors.toList()))));
 
         for (DeliveryMatchingCompanyDto companyDto : list) {
             companyDto.setTopTagList(tagGroupedByCompanyId.get(companyDto.getCompanyId()));
+            double score = memberIdToScoreMap.get(companyDto.getMemberId()) == null ? 0.0 : memberIdToScoreMap.get(companyDto.getMemberId());
+            score = Math.round(score*10)/10.0;
+            companyDto.setScore(score);
         }
 
         return list;

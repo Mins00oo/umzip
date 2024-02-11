@@ -20,6 +20,7 @@ public class CleanMatchingCompanyDto {
     private String ceo;
     private String companyName;
     private List<String > tags = new ArrayList<>();
+    private Double score;
     @Builder
     public CleanMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo,String companyName) {
         this.companyId = companyId;

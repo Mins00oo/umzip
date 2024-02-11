@@ -36,6 +36,7 @@ public class DeliveryMatchingCompanyDto {
     private String ceo;
     private String companyName;
     private List<String> topTagList;
+    private Double score;
     public DeliveryMatchingCompanyDto(Long companyId, Long memberId, LocalDateTime experience, String imageUrl, String ceo,String companyName) {
         this.companyId = companyId;
         this.memberId = memberId;
