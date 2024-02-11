@@ -18,6 +18,7 @@ import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.point.service.PointService;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
@@ -57,6 +58,7 @@ public class CleanUserServiceImpl implements CleanUserService{
     private final CleanCustomRepository cleanCustomRepository;
     private final ReviewReceiverRepository reviewReceiverRepository;
     private final AlarmRepository alarmRepository;
+    private final PointService pointService;
     /*
         청소 예약 신청 ( 101 )
      */
@@ -197,7 +199,10 @@ public class CleanUserServiceImpl implements CleanUserService{
                 .build();
         Alarm companyAlarm = alarm.toCompanyDeliveryAndCleanAlarmEntity(cleanMapping.getCompany());
         alarmRepository.save(companyAlarm);
-
+        //포인트
+        Long finalPrice = cleanMapping.getReissuing()==0?cleanMapping.getPrice():cleanMapping.getReissuing();
+        pointService.usePointByClean(member,dto.getPoint());
+        pointService.savePointByUsingClean(member, (int) Math.round(finalPrice*0.03));
         return true;
     }
 

@@ -8,6 +8,7 @@ import com.ssafy.umzip.domain.delivery.dto.*;
 import com.ssafy.umzip.domain.delivery.entity.Car;
 import com.ssafy.umzip.domain.delivery.repository.CarRepository;
 import com.ssafy.umzip.domain.delivery.service.DeliveryUserService;
+import com.ssafy.umzip.domain.point.service.PointService;
 import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
@@ -30,6 +31,7 @@ import java.util.List;
 @RequestMapping("/api/delivery/user")
 public class DeliveryUserController {
     private final DeliveryUserService deliveryUserService;
+    private final PointService pointService;
     // car Service가 없어도 될정도 이므로 바로 Repository 소환
     private final CarRepository carRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -110,6 +112,7 @@ public class DeliveryUserController {
     public ResponseEntity<Object>  userReservationDelivery(HttpServletRequest request){
         //memberID는 JWT토큰에서 가져온다.
         Long memberId = jwtTokenProvider.getId(request);
+        System.out.println("memberId = " + memberId);
         List<UserDeliveryReservationDto> deliveryList = deliveryUserService.userReservationDelivery(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(deliveryList));
     }
@@ -120,10 +123,11 @@ public class DeliveryUserController {
     public ResponseEntity<Object> completeReservation(@RequestBody DeliveryCompleteReservationDto dto,
                                                       HttpServletRequest request){
         Long memberId = jwtTokenProvider.getId(request);
-        Boolean result = deliveryUserService.completeReservation(dto.getMappingId(), memberId);
+        Boolean result = deliveryUserService.completeReservation(dto.getMappingId(),dto.getPoint(), memberId);
         if(!result){
             throw new BaseException(StatusCode.FAIL_TO_RESERVATION);
         }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
