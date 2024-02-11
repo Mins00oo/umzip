@@ -3,6 +3,7 @@ package com.ssafy.umzip.domain.review.controller;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
+import com.ssafy.umzip.domain.review.dto.MyReciveReviewResponseInfo;
 import com.ssafy.umzip.domain.review.service.ReviewService;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class ReviewController {
         return reviewService.myReceiveReviewRequest(myReceiveReviewRequest);
     }
     @PostMapping("/myWrite")
-    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest, HttpServletRequest request) {
+    public ResponseEntity<MyReciveReviewResponseInfo> myWriteReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest, HttpServletRequest request) {
         Long userId = jwtTokenProvider.getId(request);
         myReceiveReviewRequest.setMemberId(userId);
         return reviewService.myWriteReviewRequest(myReceiveReviewRequest);

@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
 import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.global.common.Role;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,7 +39,7 @@ public interface ReviewRepository  extends JpaRepository<Review, Long> {
             "LEFT JOIN Member m ON rr.member.id = m.id AND c.role IS NULL " +
             "WHERE r.member.id = :memberId " +
             "ORDER BY r.createDt DESC")
-    Optional<List<MyReceiveReviewResponse>> findWriteReviewDetailsByMemberIdAndRole(
+    Page<MyReceiveReviewResponse> findWriteReviewDetailsByMemberIdAndRole(
             @Param("memberId") Long memberId,
             Pageable pageable
     );

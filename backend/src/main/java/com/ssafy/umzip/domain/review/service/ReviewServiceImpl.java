@@ -5,6 +5,7 @@ import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
+import com.ssafy.umzip.domain.review.dto.MyReciveReviewResponseInfo;
 import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.domain.review.repository.ReviewRepository;
 import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
@@ -19,6 +20,7 @@ import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.exception.BaseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -114,13 +116,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseEntity<List<MyReceiveReviewResponse>> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
+    public ResponseEntity<MyReciveReviewResponseInfo> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
         Pageable pageable = PageRequest.of(myReceiveReviewRequest.getOffset(), myReceiveReviewRequest.getLimit());
-        Optional<List<MyReceiveReviewResponse>> reviewResponses = reviewRepository.findWriteReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), pageable);
+        Page<MyReceiveReviewResponse> reviewResponses = reviewRepository.findWriteReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), pageable);
 
-        if (reviewResponses.isPresent()) {
+        MyReciveReviewResponseInfo responseDto = new MyReciveReviewResponseInfo();
 
-            List<MyReceiveReviewResponse> reviewList = reviewResponses.get();
+        if (reviewResponses.hasContent()) {
+            List<MyReceiveReviewResponse> reviewList = reviewResponses.getContent();
 
             // 각 리뷰에 대한 태그 정보 가져오기
             reviewList.forEach(reviewResponse -> {
@@ -130,12 +133,15 @@ public class ReviewServiceImpl implements ReviewService {
                         .collect(Collectors.toList());
                 reviewResponse.setTag(tagNames);
             });
-            return ResponseEntity.status(HttpStatus.OK).body(reviewResponses.get());
+
+            responseDto.setBoard_cnt((int) reviewResponses.getTotalElements()); // 전체 콘텐츠 개수 설정
+            responseDto.setLimit(myReceiveReviewRequest.getLimit());
+            responseDto.setOffset(myReceiveReviewRequest.getOffset());
+            responseDto.setReviews(reviewList);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } else {
             return ResponseEntity.notFound().build();
         }
 
     }
-
-
 }
