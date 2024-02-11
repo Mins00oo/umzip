@@ -17,6 +17,8 @@ import com.ssafy.umzip.domain.delivery.entity.DeliveryMapping;
 import com.ssafy.umzip.domain.delivery.repository.*;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.point.repository.PointRepository;
+import com.ssafy.umzip.domain.point.service.PointService;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.repository.CustomReviewReceiverRepository;
@@ -54,6 +56,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     private final DeliveryCustomRepository deliveryCustomRepository;
     private final ReviewReceiverRepository reviewReceiverRepository;
     private final AlarmRepository alarmRepository;
+    private final PointService pointService;
 
     @Override
     public List<CarResponseDto> getCarInfo() {
@@ -130,10 +133,10 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
         취소 ( 105 )
      */
     @Override
-    public void cancelDelivery(Long mappingId,Long memberId) {
+    public void cancelDelivery(Long mappingId, Long memberId) {
         //1. delivery_mapping 가져옴.
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
-        if(!deliveryMapping.getMember().getId().equals(memberId)){
+        if (!deliveryMapping.getMember().getId().equals(memberId)) {
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
         }
         //2. 상태 105로 변경 ( 105 : 취소 )
@@ -202,7 +205,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
     @Override
     public DeliveryDetailResponseDto getDeliveryDetail(Long deliveryId, Long memberId) {
         Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY));
-        if(!deliveryMappingRepository.existsByDeliveryIdAndMemberId(deliveryId,memberId)){
+        if (!deliveryMappingRepository.existsByDeliveryIdAndMemberId(deliveryId, memberId)) {
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
         }
         List<String> images = delivery.getImages().stream()
@@ -255,29 +258,30 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
                     .reissuing(0L) // 초기값 0
                     .build();
             delivery.addMapping(deliveryMapping);
-            
+
             //알림에 company추가
             alarm.addCompany(resultCompany);
         }
         List<Alarm> alarmList = new ArrayList<>();
-        for(Company company: alarm.getCompanyList()){
+        for (Company company : alarm.getCompanyList()) {
             Alarm companyAlarmEntity = alarm.toCompanyDeliveryAndCleanAlarmEntity(company);
             alarmList.add(companyAlarmEntity);
         }
         return alarmList;
     }
+
     /**
      * 예약 완료
      */
 
     @Override
-    public Boolean completeReservation(Long mappingId, Long memberId) {
+    public Boolean completeReservation(Long mappingId, int point, Long memberId) {
         DeliveryMapping deliveryMapping = deliveryMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_DELIVERY));
         CodeSmall codeSmall = codeSmallRepository.findById(103L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
 
         Member member = deliveryMapping.getMember();
-        if(member.getId().equals(memberId)){
-            throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN_MAPPING);
+        if (!member.getId().equals(memberId)) {
+            throw new BaseException(StatusCode.INVALID_ACCESS_DELIVERY);
         }
 
         deliveryMapping.setCodeSmall(codeSmall);
@@ -291,6 +295,11 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
 
         Alarm companyAlarm = alarm.toCompanyDeliveryAndCleanAlarmEntity(deliveryMapping.getCompany());
         alarmRepository.save(companyAlarm);
+        //포인트
+        Long finalPrice = (deliveryMapping.getReissuing() == 0) ? deliveryMapping.getPrice() : deliveryMapping.getReissuing();
+
+        pointService.savePointByUsingDeliver(member, (int) Math.round(0.03*finalPrice));
+        pointService.usePointByDeliver(member, point);
         return true;
     }
 
