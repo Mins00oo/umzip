@@ -20,7 +20,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("https://i10e108.p.ssafy.io", "http://192.168.123.104:5173", "http://192.168.0.107:5173", "http://192.168.45.206:5173",
-                "http://localhost:5173"));
+                "http://localhost:5173", "http://192.168.45.240:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));

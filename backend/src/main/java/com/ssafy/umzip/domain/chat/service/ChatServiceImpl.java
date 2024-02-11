@@ -8,6 +8,7 @@ import com.ssafy.umzip.domain.chat.entity.*;
 import com.ssafy.umzip.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatParticipantRepository;
 import com.ssafy.umzip.domain.chat.repository.ChatRoomRepository;
+import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
@@ -49,6 +50,13 @@ public class ChatServiceImpl implements ChatService {
 
         List<ChatParticipant> chatParticipantList = chatParticipantRepository.findByChatRoomId(chatRoomId);
 
+        boolean isSenderCompany = companyRepository.existsByMember(member);
+        Company senderCompany;
+        if (isSenderCompany) {
+            senderCompany = companyRepository.findByMemberIdAndRole(member.getId(), Role.valueOf(role))
+                    .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
+        } else senderCompany = null;
+
         for (ChatParticipant cp : chatParticipantList) {
             if (cp.getMember().getId().equals(id)) {
                 cp.updateLastReadMessage(savedMessage.getId());
@@ -58,7 +66,12 @@ public class ChatServiceImpl implements ChatService {
             }
         }
 
-        return ChatMessageRequestDto.toResponseDto(message.getContent(), member, LocalDateTime.now());
+        if (senderCompany != null) {
+            return ChatMessageRequestDto.toResponseDto(message.getContent(), id, id, senderCompany.getName(), senderCompany.getImageUrl(),
+                    LocalDateTime.now());
+        }
+
+        return ChatMessageRequestDto.toResponseDto(message.getContent(), id, id, member.getName(), member.getImageUrl(), LocalDateTime.now());
     }
 
 
@@ -68,27 +81,60 @@ public class ChatServiceImpl implements ChatService {
         Long id = resolveMemberIdByRole(requestId, role);
         Member requester = findMemberById(id);
         ChatParticipant cp = chatParticipantRepository.findByChatRoomAndMemberId(chatRoomId, id);
-        Member anotherMember;
-
-        if (cp.getRole().equals("DELIVER") || cp.getRole().equals("CLEAN")) {
-            anotherMember = companyRepository.findByMemberIdAndRole(cp.getId(), Role.valueOf(cp.getRole()))
-                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY)).getMember();
-        } else {
-            anotherMember = cp.getMember();
-        }
+        Member anotherMember = cp.getMember();
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
 
+        boolean isRequesterCompany = companyRepository.existsByMember(requester);
+        boolean isAnotherMemberCompany = companyRepository.existsByMember(anotherMember);
+
+        Company requesterCompany;
+        Company anotherMemberCompany;
+
+        if (isRequesterCompany) {
+            requesterCompany = companyRepository.findByMemberIdAndRole(requester.getId(), Role.valueOf(role))
+                    .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
+        } else {
+            requesterCompany = null;
+        }
+
+        if (isAnotherMemberCompany) {
+            anotherMemberCompany = companyRepository.findByMemberIdAndRole(anotherMember.getId(), Role.valueOf(cp.getRole()))
+                    .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
+        } else {
+            anotherMemberCompany = null;
+        }
+
         List<ChatMessageResponseDto> responseDto = chatMessages.stream()
                 .map(message -> {
-                    Member userInfo = message.getSenderId().equals(requestId.toString()) ? requester : anotherMember;
+                    boolean isRequesterSender = message.getSenderId().equals(id.toString());
+                    String name;
+                    String imageUrl;
+
+                    if (isRequesterSender) {
+                        if (isRequesterCompany && requesterCompany != null) {
+                            name = requesterCompany.getName();
+                            imageUrl = requesterCompany.getImageUrl();
+                        } else {
+                            name = requester.getName();
+                            imageUrl = requester.getImageUrl();
+                        }
+                    } else {
+                        if (isAnotherMemberCompany && anotherMemberCompany != null) {
+                            name = anotherMemberCompany.getName();
+                            imageUrl = anotherMemberCompany.getImageUrl();
+                        } else {
+                            name = anotherMember.getName();
+                            imageUrl = anotherMember.getImageUrl();
+                        }
+                    }
 
                     return new ChatMessageResponseDto(
                             message.getContent(),
                             requestId,
-                            userInfo.getName(),
+                            name,
                             message.getSenderId(),
-                            userInfo.getImageUrl(),
+                            imageUrl,
                             message.getUpdateDt()
                     );
                 })
