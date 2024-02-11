@@ -37,7 +37,7 @@ public class ReviewController {
         return reviewService.creaetReviwe(createReviewRequest);
     }
     @PostMapping("/myReceive")
-    public ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
+    public ResponseEntity<MyReciveReviewResponseInfo> myReceiveReview(@RequestBody MyReceiveReviewRequest myReceiveReviewRequest) {
         return reviewService.myReceiveReviewRequest(myReceiveReviewRequest);
     }
     @PostMapping("/myWrite")

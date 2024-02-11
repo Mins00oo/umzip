@@ -92,14 +92,16 @@ public class ReviewServiceImpl implements ReviewService {
      * 전체 리뷰 정보 반환 with pagination
      * */
     @Override
-    public ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
+    public ResponseEntity<MyReciveReviewResponseInfo> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
 
         Pageable pageable = PageRequest.of(myReceiveReviewRequest.getOffset(), myReceiveReviewRequest.getLimit());
-        Optional<List<MyReceiveReviewResponse>> reviewResponses = reviewRepository.findReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), Role.valueOf(myReceiveReviewRequest.getRole()), pageable);
+        Page<MyReceiveReviewResponse> reviewResponses = reviewRepository.findReviewDetailsByMemberIdAndRole(myReceiveReviewRequest.getMemberId(), Role.valueOf(myReceiveReviewRequest.getRole()), pageable);
 
-        if (reviewResponses.isPresent()) {
+        MyReciveReviewResponseInfo responseDto = new MyReciveReviewResponseInfo();
 
-            List<MyReceiveReviewResponse> reviewList = reviewResponses.get();
+        if (reviewResponses.hasContent()) {
+
+            List<MyReceiveReviewResponse> reviewList = reviewResponses.getContent();
 
             // 각 리뷰에 대한 태그 정보 가져오기
             reviewList.forEach(reviewResponse -> {
@@ -109,7 +111,12 @@ public class ReviewServiceImpl implements ReviewService {
                         .collect(Collectors.toList());
                 reviewResponse.setTag(tagNames);
             });
-            return ResponseEntity.status(HttpStatus.OK).body(reviewResponses.get());
+
+            responseDto.setBoard_cnt((int) reviewResponses.getTotalElements()); // 전체 콘텐츠 개수 설정
+            responseDto.setLimit(myReceiveReviewRequest.getLimit());
+            responseDto.setOffset(myReceiveReviewRequest.getOffset());
+            responseDto.setReviews(reviewList);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReviewService {
     ResponseEntity<Object> creaetReviwe(CreateReviewRequest createReviewRequest);
 
-    ResponseEntity<List<MyReceiveReviewResponse>> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest);
+    ResponseEntity<MyReciveReviewResponseInfo> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest);
     public ResponseEntity<MyReciveReviewResponseInfo> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest);
 }
 
