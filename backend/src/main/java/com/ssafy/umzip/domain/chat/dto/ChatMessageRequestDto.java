@@ -30,16 +30,19 @@ public class ChatMessageRequestDto {
 
     public static ChatMessageResponseDto toResponseDto(
             String content,
-            Member member,
+            Long requesterId,
+            Long senderId,
+            String senderName,
+            String senderImageUrl,
             LocalDateTime sendTime
     ) {
         return ChatMessageResponseDto.builder()
                 .content(content)
-                .requesterId(member.getId())
-                .senderId(String.valueOf(member.getId()))
+                .requesterId(requesterId)
+                .senderId(String.valueOf(senderId))
                 .sendTime(sendTime)
-                .senderName(member.getName())
-                .senderProfileImage(member.getImageUrl())
+                .senderName(senderName)
+                .senderProfileImage(senderImageUrl)
                 .build();
 
     }
