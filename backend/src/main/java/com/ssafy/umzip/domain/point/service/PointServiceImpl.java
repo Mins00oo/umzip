@@ -70,6 +70,11 @@ public class PointServiceImpl implements PointService {
         usePoint(member, point, PointChangeType.USE_BY_HELP_ME);
     }
 
+    @Override
+    public void usePointByHelpedByPeople(Member member, int point) {
+        usePoint(member, point, PointChangeType.USE_BY_HELP_BY_PEOPLE);
+    }
+
     private void savePoint(Member member, int point, PointChangeType changeType) {
         Point entity = Point.builder()
                 .member(member)
@@ -85,7 +90,7 @@ public class PointServiceImpl implements PointService {
     private void usePoint(Member member, int point, PointChangeType changeType) {
         Point entity = Point.builder()
                 .member(member)
-                .change(point)
+                .change(-point)
                 .message(changeType)
                 .build();
 

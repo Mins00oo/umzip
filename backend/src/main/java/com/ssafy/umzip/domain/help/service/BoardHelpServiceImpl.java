@@ -290,7 +290,7 @@ public class BoardHelpServiceImpl implements BoardHelpService {
         if (giverMember.getPoint() < boardHelp.getPoint()) {
             throw new BaseException(StatusCode.INSUFFICIENT_POINTS);
         }
-        pointService.usePointByHelpMe(giverMember, boardHelp.getPoint());
+        pointService.usePointByHelpedByPeople(giverMember, boardHelp.getPoint());
 
         pointService.savePointByHelpPeople(boardHelp.getMember(), boardHelp.getPoint());
     }
