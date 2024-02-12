@@ -53,7 +53,12 @@ public class BoardAlarmDto {
     public Alarm toBoardHelpUserAlarmEntity(String boardTitle) {
         StringBuilder sb = new StringBuilder();
         checkAlarmType(sb);
-        String subTitle = boardTitle.substring(0, 8)+"···";
+        String subTitle;
+        if (boardTitle.length() >= 8) {
+            subTitle = boardTitle.substring(0, 8) + "···";
+        } else {
+            subTitle = boardTitle;
+        }
         generateBoardHelpContent(sb, subTitle);
         imgPath = fromMember.getImageUrl();
         return Alarm.builder()
