@@ -59,6 +59,7 @@ public class BoardHelpCommentRepositoryImpl implements BoardHelpCustomRepository
                 ))
                 .from(boardHelp)
                 .where(builder)
+                .orderBy(boardHelp.id.desc())
                 .fetch();
 
         Long totalCount = queryFactory.select(boardHelp.count())
