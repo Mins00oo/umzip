@@ -27,7 +27,7 @@ public class CleanCompanyController {
     /**
      *  업체 : 거절 API
      */
-    @PostMapping("/rejection")
+    @PutMapping("/rejection")
     public ResponseEntity<Object> rejectionClean(@RequestBody CleanRejectionRequestDto rejectionRequestDto,
                                                  HttpServletRequest request
     ){
@@ -47,7 +47,7 @@ public class CleanCompanyController {
     /**
      업체 : 견적 제안 API
      */
-    @PostMapping("/quotation")
+    @PutMapping("/quotation")
     public ResponseEntity<Object> quotationClean(@RequestBody CleanQuotationRequestDto requestDto,
                                                  HttpServletRequest request){
         ResponseEntity<Object> BAD_REQUEST = checkRole(request); // Role check
