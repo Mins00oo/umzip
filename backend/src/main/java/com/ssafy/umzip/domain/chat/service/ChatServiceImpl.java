@@ -61,7 +61,7 @@ public class ChatServiceImpl implements ChatService {
             if (cp.getMember().getId().equals(id)) {
                 cp.updateLastReadMessage(savedMessage.getId());
             }
-            if (!cp.getStatus().equals(ChatRoomStatus.TALK)) {
+            if (!cp.getStatus().equals(ChatRoomStatus.TALK) && !cp.getStatus().equals(ChatRoomStatus.LEAVE)) {
                 cp.talkWithChatRoom();
             }
         }
