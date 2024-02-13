@@ -59,6 +59,8 @@ public class BoardHelpCommentRepositoryImpl implements BoardHelpCustomRepository
                 ))
                 .from(boardHelp)
                 .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(boardHelp.id.desc())
                 .fetch();
 
