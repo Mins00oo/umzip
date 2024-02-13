@@ -6,25 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/*
-{
-    "companys" : [
-        {
-        "companyId":Long,
-        "experience" : LocalDateTime,
-        "imageUrl" : String,
-        "ceo" : string
-        "tags" : [ //3개
-                int
-        ]
-        }
-//buisiness Authentication
-    ]
-}
- */
 @Getter
 @Setter
-@ToString//지워야함
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

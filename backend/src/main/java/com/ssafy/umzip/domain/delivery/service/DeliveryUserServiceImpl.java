@@ -36,9 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ssafy.umzip.global.common.CommonMethods.getLocalDateTime;
@@ -194,7 +192,7 @@ public class DeliveryUserServiceImpl implements DeliveryUserService {
             score = Math.round(score*10)/10.0;
             companyDto.setScore(score);
         }
-
+        list.sort(Comparator.comparing(DeliveryMatchingCompanyDto::getScore).reversed());
         return list;
 
     }

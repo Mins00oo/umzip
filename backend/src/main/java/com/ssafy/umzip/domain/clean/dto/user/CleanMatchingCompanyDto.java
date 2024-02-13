@@ -1,9 +1,11 @@
 package com.ssafy.umzip.domain.clean.dto.user;
 
+import com.ssafy.umzip.domain.clean.entity.Clean;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
