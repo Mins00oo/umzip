@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.member.dto;
 
+import com.ssafy.umzip.domain.company.dto.MostTagResponseDto;
 import com.ssafy.umzip.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,13 +23,13 @@ public class MemberResponseDto {
 
     private String avgScore;
 
-    private List<String> tagList;
+    private List<MostTagResponseDto> tagList;
 
     private String imageUrl;
 
     @Builder
     public MemberResponseDto(boolean me, String name, String phone, int point, String email, String avgScore,
-                             List<String> tagList, String imageUrl) {
+                             List<MostTagResponseDto> tagList, String imageUrl) {
         this.me = me;
         this.name = name;
         this.phone = phone;
@@ -41,7 +42,7 @@ public class MemberResponseDto {
 
 
     public static MemberResponseDto fromEntity(Member member, boolean isMe, String formattedAvgScore,
-                                               List<String> tagList) {
+                                               List<MostTagResponseDto> tagList) {
         return MemberResponseDto.builder()
                 .me(isMe)
                 .email(member.getEmail())

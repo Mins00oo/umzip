@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.company.service;
 
 import com.ssafy.umzip.domain.company.dto.CompanyCreateRequestDto;
+import com.ssafy.umzip.domain.company.dto.MostTagResponseDto;
 import com.ssafy.umzip.domain.company.dto.CompanyResponseDto;
 import com.ssafy.umzip.domain.company.dto.CompanyReviewListResponse;
 import com.ssafy.umzip.domain.company.entity.Company;
@@ -23,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,7 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMPANY));
 
-        List<String> tagList = reviewReceiverRepository
+        List<MostTagResponseDto> tagList = reviewReceiverRepository
                 .findTopTagsByMemberId(company.getMember().getId(), 3, company.getRole());
 
         String formattedScore = reviewReceiverService

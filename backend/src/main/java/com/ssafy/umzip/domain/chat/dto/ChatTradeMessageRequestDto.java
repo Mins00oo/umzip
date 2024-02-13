@@ -13,15 +13,18 @@ public class ChatTradeMessageRequestDto {
 
     private Long tradeId;
 
+    private Long memberId;
+
     private Long tradeItemPrice;
 
     private String tradeItemImage;
 
 
     @Builder
-    public ChatTradeMessageRequestDto(String tradeItemTitle, Long tradeId, Long tradeItemPrice, String tradeItemImage) {
+    public ChatTradeMessageRequestDto(String tradeItemTitle, Long tradeId, Long memberId, Long tradeItemPrice, String tradeItemImage) {
         this.tradeItemTitle = tradeItemTitle;
         this.tradeId = tradeId;
+        this.memberId = memberId;
         this.tradeItemPrice = tradeItemPrice;
         this.tradeItemImage = tradeItemImage;
     }

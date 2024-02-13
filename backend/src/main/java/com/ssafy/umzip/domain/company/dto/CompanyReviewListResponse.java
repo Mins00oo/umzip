@@ -1,8 +1,8 @@
 package com.ssafy.umzip.domain.company.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,8 @@ public class CompanyReviewListResponse {
 
     private String writerProfileImage;
 
-    private List<String> tagList;
+    @Setter
+    private List<MostTagResponseDto> tagList;
 
     private String content;
 
@@ -38,7 +39,4 @@ public class CompanyReviewListResponse {
         this.score = score;
     }
 
-    public void setTagList(List<String> tagList) {
-        this.tagList = tagList;
-    }
 }

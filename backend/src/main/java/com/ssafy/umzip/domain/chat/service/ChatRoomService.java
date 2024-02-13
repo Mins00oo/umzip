@@ -10,5 +10,5 @@ public interface ChatRoomService {
 
     List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role);
 
-    void leaveChatRoom(Long chatRoomId, Long requestId);
+    void leaveChatRoom(Long chatRoomId, Long requestId, String role);
 }

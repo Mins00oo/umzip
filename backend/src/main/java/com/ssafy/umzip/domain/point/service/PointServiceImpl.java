@@ -28,7 +28,7 @@ public class PointServiceImpl implements PointService {
     @Transactional
     @Override
     public void savePointByUsingDeliver(Member member, int point) {
-        savePoint(member, point, PointChangeType.SAVE_BY_DELIVERY);
+        savePoint(member, point, PointChangeType.SAVE_BY_DELIVER);
     }
 
     @Transactional

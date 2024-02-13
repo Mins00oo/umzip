@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PointChangeType {
-    SAVE_BY_DELIVERY("용달 이용 적립"),
+    SAVE_BY_DELIVER("용달 이용 적립"),
     SAVE_BY_CLEAN("청소 이용 적립"),
     SAVE_BY_TRADE_REVIEW("중고글 후기 작성 적립"),
     SAVE_BY_DELIVER_REVIEW("용달 후기 작성 적립"),
