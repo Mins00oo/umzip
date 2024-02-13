@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
     /*
-     * 전체 리뷰 정보 반환 with pagination
+     * 내게 쓰인 리뷰
      * */
     @Override
     public ResponseEntity<MyReciveReviewResponseInfo> myReceiveReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
@@ -100,16 +101,19 @@ public class ReviewServiceImpl implements ReviewService {
         MyReciveReviewResponseInfo responseDto = new MyReciveReviewResponseInfo();
 
         if (reviewResponses.hasContent()) {
-
             List<MyReceiveReviewResponse> reviewList = reviewResponses.getContent();
-
             // 각 리뷰에 대한 태그 정보 가져오기
             reviewList.forEach(reviewResponse -> {
                 List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewResponse.getId()).orElse(Collections.emptyList());
-                List<String> tagNames = tags.stream()
-                        .map(tag -> tag.getTag().getTagName())
-                        .collect(Collectors.toList());
+                List<String> tagNames = new ArrayList<>();
+                List<Integer> tagTypes = new ArrayList<>();
+
+                tags.forEach(tag -> {
+                    tagNames.add(tag.getTag().getTagName());
+                    tagTypes.add(tag.getTag().getTagType());
+                });
                 reviewResponse.setTag(tagNames);
+                reviewResponse.setTagType(tagTypes);
             });
 
             responseDto.setBoard_cnt((int) reviewResponses.getTotalElements()); // 전체 콘텐츠 개수 설정
@@ -122,6 +126,9 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
+    /*
+     * 내가 쓴 리뷰
+     * */
     @Override
     public ResponseEntity<MyReciveReviewResponseInfo> myWriteReviewRequest(MyReceiveReviewRequest myReceiveReviewRequest) {
         Pageable pageable = PageRequest.of(myReceiveReviewRequest.getOffset(), myReceiveReviewRequest.getLimit());
@@ -135,10 +142,15 @@ public class ReviewServiceImpl implements ReviewService {
             // 각 리뷰에 대한 태그 정보 가져오기
             reviewList.forEach(reviewResponse -> {
                 List<ReviewTag> tags = reviewTagRepository.findByReview_Id(reviewResponse.getId()).orElse(Collections.emptyList());
-                List<String> tagNames = tags.stream()
-                        .map(tag -> tag.getTag().getTagName())
-                        .collect(Collectors.toList());
+                List<String> tagNames = new ArrayList<>();
+                List<Integer> tagTypes = new ArrayList<>();
+
+                tags.forEach(tag -> {
+                    tagNames.add(tag.getTag().getTagName());
+                    tagTypes.add(tag.getTag().getTagType());
+                });
                 reviewResponse.setTag(tagNames);
+                reviewResponse.setTagType(tagTypes);
             });
 
             responseDto.setBoard_cnt((int) reviewResponses.getTotalElements()); // 전체 콘텐츠 개수 설정
