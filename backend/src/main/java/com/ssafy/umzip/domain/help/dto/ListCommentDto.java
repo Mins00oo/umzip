@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class ListCommentDto {
 
+    private Long commentId;
     private Long boardId;
     private Long writerId;
     private String writerName;
@@ -20,6 +21,7 @@ public class ListCommentDto {
 
     @Builder
     ListCommentDto(BoardHelpComment boardHelpComment) {
+        this.commentId = boardHelpComment.getId();
         this.boardId = boardHelpComment.getBoardHelp().getId();
         this.writerId = boardHelpComment.getMember().getId();
         this.writerName = boardHelpComment.getMember().getName();
