@@ -4,15 +4,14 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.umzip.domain.company.dto.CompanyReviewListResponse;
+import com.ssafy.umzip.domain.company.dto.MostTagResponseDto;
 import com.ssafy.umzip.domain.company.entity.QCompany;
 import com.ssafy.umzip.domain.member.entity.QMember;
 import com.ssafy.umzip.domain.review.entity.QReview;
-import com.ssafy.umzip.domain.review.entity.Review;
 import com.ssafy.umzip.domain.reviewreceiver.dto.ScoreInfoDto;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListRequest;
 import com.ssafy.umzip.domain.reviewreceiver.dto.TopTagListResponse;
 import com.ssafy.umzip.domain.reviewreceiver.entity.QReviewReceiver;
-import com.ssafy.umzip.domain.reviewreceiver.entity.ReviewReceiver;
 import com.ssafy.umzip.domain.reviewtag.entity.QReviewTag;
 import com.ssafy.umzip.domain.tag.entity.QTag;
 import com.ssafy.umzip.global.common.Role;
@@ -33,13 +32,17 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> findTopTagsByMemberId(Long memberId, int limit, Role role) {
+    public List<MostTagResponseDto> findTopTagsByMemberId(Long memberId, int limit, Role role) {
         QReviewReceiver reviewReceiver = QReviewReceiver.reviewReceiver;
         QReviewTag reviewTag = QReviewTag.reviewTag;
         QTag tag = QTag.tag;
 
         return queryFactory
-                .select(tag.tagName)
+                .select(Projections.constructor(
+                        MostTagResponseDto.class,
+                        tag.tagName.as("tagName"),
+                        tag.tagType.as("tagType")
+                ))
                 .from(reviewReceiver)
                 .join(reviewTag).on(reviewReceiver.review.eq(reviewTag.review))
                 .where(reviewReceiver.receiverRole.eq(role))
@@ -122,21 +125,27 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
                 .fetch();
 
         List<Tuple> list = queryFactory
-                .select(reviewTag.review.id, reviewTag.tag.tagName)
+                .select(reviewTag.review.id, reviewTag.tag.tagName, reviewTag.tag.tagType)
                 .from(reviewTag)
                 .join(reviewTag.review, review)
                 .join(reviewTag.tag, tag)
                 .fetch();
 
 
-        Map<Long, List<String>> reviewIdToTagNames = list.stream()
+        Map<Long, List<MostTagResponseDto>> reviewIdToTagNames = list.stream()
                 .collect(Collectors.groupingBy(
                         tuple -> tuple.get(reviewTag.review.id),
-                        Collectors.mapping(tuple -> tuple.get(reviewTag.tag.tagName), Collectors.toList())
+                        Collectors.mapping(
+                                tuple -> new MostTagResponseDto(
+                                        tuple.get(reviewTag.tag.tagName), // tagName 추출
+                                        tuple.get(reviewTag.tag.tagType)  // tagType 추출
+                                ),
+                                Collectors.toList() // MostTagResponseDto 객체의 리스트로 수집
+                        )
                 ));
 
         responses.forEach(response -> {
-            List<String> tagNameList = reviewIdToTagNames.get(response.getReviewId());
+            List<MostTagResponseDto> tagNameList = reviewIdToTagNames.get(response.getReviewId());
             response.setTagList(tagNameList);
         });
 
@@ -144,7 +153,7 @@ public class CustomReviewReceiverRepositoryImpl implements CustomReviewReceiverR
     }
 
     @Override
-    public List<ScoreInfoDto> findScoreByCompanyMemberId(List<Long> companyList,Role role) {
+    public List<ScoreInfoDto> findScoreByCompanyMemberId(List<Long> companyList, Role role) {
         List<ScoreInfoDto> result = queryFactory.select(
                         Projections.constructor(
                                 ScoreInfoDto.class,

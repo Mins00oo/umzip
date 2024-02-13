@@ -1,5 +1,6 @@
 package com.ssafy.umzip.domain.member.service;
 
+import com.ssafy.umzip.domain.company.dto.MostTagResponseDto;
 import com.ssafy.umzip.domain.member.dto.MemberCreateRequestDto;
 import com.ssafy.umzip.domain.member.dto.MemberResponseDto;
 import com.ssafy.umzip.domain.member.entity.Member;
@@ -43,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_MEMBER_PK));
-        List<String> tagList = reviewReceiverRepository.findTopTagsByMemberId(member.getId(), 3, Role.USER);
+        List<MostTagResponseDto> tagList = reviewReceiverRepository.findTopTagsByMemberId(member.getId(), 3, Role.USER);
 
         String formattedAverageScore = reviewReceiverService.receiverReviewScore(member.getId(), Role.USER);
 

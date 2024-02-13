@@ -91,13 +91,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional(readOnly = true)
     @Override
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
-        Long id = memberId;
-        if (role.equals("DELIVER") || role.equals("CLEAN")) {
-            id = companyRepository.findById(id)
-                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
-                    .getMember().getId();
-        }
-
+        Long id = resolveMemberIdByRole(memberId, role);
         List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(id, role);
 
         List<Long> chatRoomIds = chatRooms.stream()
@@ -145,9 +139,19 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Transactional
     @Override
-    public void leaveChatRoom(Long chatRoomId, Long requestId) {
-        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, requestId)
+    public void leaveChatRoom(Long chatRoomId, Long requestId, String role) {
+        Long id = resolveMemberIdByRole(requestId, role);
+        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndMember(chatRoomId, id)
                 .orElseThrow(() -> new BaseException(StatusCode.NOT_VALID_CHATROOM_WITH_USER));
         chatParticipant.leaveChatRoom();
+    }
+
+    private Long resolveMemberIdByRole(Long id, String role) {
+        if (role.equals("DELIVER") || role.equals("CLEAN")) {
+            return companyRepository.findById(id)
+                    .orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_COMMENT_PK))
+                    .getMember().getId();
+        }
+        return id;
     }
 }

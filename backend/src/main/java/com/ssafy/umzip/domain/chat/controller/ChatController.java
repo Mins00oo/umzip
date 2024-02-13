@@ -34,7 +34,7 @@ public class ChatController {
         ChatMessageResponseDto response;
 
         if (message.getType().equals("LEAVE")) {
-            chatRoomService.leaveChatRoom(chatRoomId, requestId);
+            chatRoomService.leaveChatRoom(chatRoomId, requestId, role);
             message.setContent("상대방이 나갔습니다.");
         }
         response = chatService.saveMessage(message, chatRoomId, requestId, role);

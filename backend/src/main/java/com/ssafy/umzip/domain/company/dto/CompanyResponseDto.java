@@ -17,7 +17,7 @@ public class CompanyResponseDto {
 
     private String introduction;
 
-    private List<String> mostTag;
+    private List<MostTagResponseDto> mostTag;
 
     private List<CompanyReviewListResponse> reviewList;
 
@@ -27,7 +27,7 @@ public class CompanyResponseDto {
 
     @Builder
     public CompanyResponseDto(String name, String averageScore, String introduction,
-                              List<String> mostTag,
+                              List<MostTagResponseDto> mostTag,
                               List<CompanyReviewListResponse> reviewList, String imageUrl, LocalDateTime experience) {
         this.name = name;
         this.averageScore = averageScore;
@@ -39,7 +39,7 @@ public class CompanyResponseDto {
     }
 
     public static CompanyResponseDto fromEntity(Company company, String formattedAverageScore,
-                                                List<String> tagList, List<CompanyReviewListResponse> companyReviewList) {
+                                                List<MostTagResponseDto> tagList, List<CompanyReviewListResponse> companyReviewList) {
         return CompanyResponseDto.builder()
                 .name(company.getName())
                 .averageScore(formattedAverageScore)

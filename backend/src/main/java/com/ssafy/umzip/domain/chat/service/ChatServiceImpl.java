@@ -92,6 +92,7 @@ public class ChatServiceImpl implements ChatService {
         Company anotherMemberCompany;
 
         if (isRequesterCompany) {
+            log.info("requester is company");
             requesterCompany = companyRepository.findByMemberIdAndRole(requester.getId(), Role.valueOf(role))
                     .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
         } else {
@@ -99,6 +100,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         if (isAnotherMemberCompany) {
+            log.info("another is company");
             anotherMemberCompany = companyRepository.findByMemberIdAndRole(anotherMember.getId(), Role.valueOf(cp.getRole()))
                     .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
         } else {
@@ -152,6 +154,7 @@ public class ChatServiceImpl implements ChatService {
             chatTradeMessageRequestDto = ChatTradeMessageRequestDto.builder()
                     .tradeItemTitle(boardTrade.getBoardTrade().getTitle())
                     .tradeId(boardTrade.getBoardTrade().getId())
+                    .memberId(boardTrade.getBoardTrade().getMember().getId())
                     .tradeItemPrice(boardTrade.getBoardTrade().getPrice())
                     .tradeItemImage(boardTrade.getPath())
                     .build();
