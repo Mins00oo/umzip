@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DeliveryQuotationRequestDto {
     private Long mappingId;
-    private Long price;
+    private Long reissuing;
     private String detail;
     @Builder
-    public DeliveryQuotationRequestDto(Long mappingId, Long price, String detail) {
+    public DeliveryQuotationRequestDto(Long mappingId, Long reissuing, String detail) {
         this.mappingId = mappingId;
-        this.price = price;
+        this.reissuing = reissuing;
         this.detail = detail;
     }
 }

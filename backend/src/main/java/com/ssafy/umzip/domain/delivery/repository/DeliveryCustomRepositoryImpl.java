@@ -111,7 +111,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
         long result = queryFactory
                 .update(deliveryMapping)
                 .set(deliveryMapping.detail, dto.getDetail())
-                .set(deliveryMapping.reissuing, dto.getPrice())
+                .set(deliveryMapping.reissuing, dto.getReissuing())
                 .set(deliveryMapping.codeSmall, codeSmall)  // assuming codeSmall is a foreign key in DeliveryMapping
                 .where(deliveryMapping.id.eq(dto.getMappingId()))
                 .execute();
