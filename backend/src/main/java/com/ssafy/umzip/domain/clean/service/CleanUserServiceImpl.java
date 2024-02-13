@@ -16,6 +16,7 @@ import com.ssafy.umzip.domain.code.entity.CodeSmall;
 import com.ssafy.umzip.domain.code.repository.CodeSmallRepository;
 import com.ssafy.umzip.domain.company.entity.Company;
 import com.ssafy.umzip.domain.company.repository.CompanyRepository;
+import com.ssafy.umzip.domain.delivery.dto.DeliveryMatchingCompanyDto;
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
 import com.ssafy.umzip.domain.point.service.PointService;
@@ -38,10 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.http.HttpClient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ssafy.umzip.global.common.Role.CLEAN;
@@ -142,6 +140,8 @@ public class CleanUserServiceImpl implements CleanUserService{
         Map<Long, List<String>> tagGroupedByCompanyId = tagList.stream()
                 .collect(Collectors.groupingBy(TopTagListResponse::getCompanyId,
                         Collectors.mapping(TopTagListResponse::getTag, Collectors.flatMapping(List::stream, Collectors.toList()))));
+
+
         for(CleanMatchingCompanyDto companyDto : companys){
             List<String> tags = tagGroupedByCompanyId.get(companyDto.getCompanyId());
             companyDto.setTags(tags);
@@ -149,6 +149,7 @@ public class CleanUserServiceImpl implements CleanUserService{
             score = Math.round(score*10)/10.0;
             companyDto.setScore(score);
         }
+       companys.sort(Comparator.comparing(CleanMatchingCompanyDto::getScore).reversed());
 
         return companys;
     }

@@ -77,6 +77,9 @@ public class BoardAlarmDto {
             case COMMENT->{//댓글 달리면
                 sb.append("도움 ["+ subTitle +"]"+"게시글에 "+ fromMember.getName()+"님께서 댓글을 달았어요!");
             }
+            case REVIEW -> { //리뷰
+                sb.append(fromMember.getName()+" 님께서 후기를 남겨주셨어요!");
+            }
         }
     }
 
@@ -92,7 +95,7 @@ public class BoardAlarmDto {
     }
 
     private void generateSellerContent(StringBuilder sb) {
-        sb.append(fromMember.getName() + " 님께서 중고 거래 후기를 남겨주셨어요! ");
+        sb.append(fromMember.getName() + " 님께서 후기를 남겨주셨어요! ");
     }
 
 }

@@ -76,6 +76,9 @@ public class AlarmDto {
             case 5 -> {//취소
                 sb.append(member.getName()+" 님이 예약을 취소했어요.");
             }
+            case 9 ->{ // 리뷰
+                sb.append(member.getName() + " 님께서 후기를 남겨주셨어요!");
+            }
         }
     }
 
@@ -86,6 +89,9 @@ public class AlarmDto {
             }
             case 4 -> { // 거절
                 sb.append("업체 " + company.getName() + " 가(이) 회원님의 예약건을 거절했어요.");
+            }
+            case 9 ->{ // 리뷰
+                sb.append(member.getName() + " 님께서 후기를 남겨주셨어요!");
             }
         }
     }
