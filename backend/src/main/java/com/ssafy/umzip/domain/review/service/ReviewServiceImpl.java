@@ -2,6 +2,7 @@ package com.ssafy.umzip.domain.review.service;
 
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import com.ssafy.umzip.domain.point.service.PointServiceImpl;
 import com.ssafy.umzip.domain.review.dto.CreateReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewRequest;
 import com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse;
@@ -41,6 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTagRepository reviewTagRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
+    private final PointServiceImpl pointService;
 
     /*
     * 리뷰작성
@@ -85,7 +87,19 @@ public class ReviewServiceImpl implements ReviewService {
         reviewTagRepository.saveAll(reviewTags);
 
         // 4) 포인트 추가
-        // createReviewRequest.getPoint();
+        int point = createReviewRequest.getPoint();
+        Role role = Role.valueOf(createReviewRequest.getRole());
+        if(point != 0){
+            if(role == Role.USER) {
+                pointService.savePointByTradeReview(reviewer, point);
+            }
+            if(role == Role.CLEAN) {
+                pointService.savePointByCleanReview(reviewer, point);
+            }
+            if(role == Role.DELIVER) {
+                pointService.savePointByDeliverReview(reviewer, point);
+            }
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));
     }
