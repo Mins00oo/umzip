@@ -22,6 +22,7 @@ public class MyReceiveReviewResponse {
     private float score;
     private LocalDateTime createDt;
     private List<String> tag = new ArrayList<>();
+    private List<Integer> tagType = new ArrayList<>();
 
     public MyReceiveReviewResponse(Long id, String memberName, String memberImageUrl,
                                    Role receiverRole, String content, float score,
