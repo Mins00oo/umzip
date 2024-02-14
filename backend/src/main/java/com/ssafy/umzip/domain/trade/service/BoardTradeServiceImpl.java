@@ -105,8 +105,10 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
         Long boardWriterId = boardTrade.getMember().getId();
 
-        Double rating = reviewReceiverRepository.findAverageScoreReceivedByMemberIdAndReceiverRole(boardWriterId, Role.USER)
-                .orElse(0.0);
+        Double rating = (double) Math.round(
+                reviewReceiverRepository
+                .findAverageScoreReceivedByMemberIdAndReceiverRole(boardWriterId, Role.USER)
+                .orElse(0.0) * 10) / 10.0;
 
         boolean isWriter = false;
         if (Objects.equals(curMemberId, boardWriterId)) {
