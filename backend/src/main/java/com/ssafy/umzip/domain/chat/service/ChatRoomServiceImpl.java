@@ -94,9 +94,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
         Long id = resolveMemberIdByRole(memberId, role);
         List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(id, role);
-        for (ChatRoomListResponseDto c : chatRooms) {
-            System.out.println("c = " + c);
-        }
 
         List<Long> chatRoomIds = chatRooms.stream()
                 .map(ChatRoomListResponseDto::getChatRoomId)
