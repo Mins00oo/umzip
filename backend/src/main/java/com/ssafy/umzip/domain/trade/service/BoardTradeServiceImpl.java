@@ -105,25 +105,16 @@ public class BoardTradeServiceImpl implements BoardTradeService {
 
         Long boardWriterId = boardTrade.getMember().getId();
 
-        Double rating = reviewReceiverRepository.findAverageScoreReceivedByMemberIdAndReceiverRole(boardWriterId, Role.USER)
-                .orElse(0.0);
+        Double rating = (double) Math.round(
+                reviewReceiverRepository
+                .findAverageScoreReceivedByMemberIdAndReceiverRole(boardWriterId, Role.USER)
+                .orElse(0.0) * 10) / 10.0;
 
         boolean isWriter = false;
         if (Objects.equals(curMemberId, boardWriterId)) {
             isWriter = true;
         }
 
-        boolean isActive = false;
-        if (Objects.equals(boardTrade.getCodeSmall().getId(), IS_COMPLETE_SALE)) {
-            // BoardTrade에는 302로 저장하지만, 보여줄 때는 302 또는 303으로 구분한다.
-            BoardTradeActive boardTradeActive = boardTradeActiveRepository
-                    .findByMemberIdAndBoardTradeId(curMemberId, curBoardId)
-                    .orElseThrow(() -> new BaseException(StatusCode.NOT_PURCHASED_FROM_POST));
-
-            if (boardTradeActive.getIsActive()) {
-                isActive = true;
-            }
-        }
 
         List<BoardTradeImage> boardTradeImageList = boardTradeImageRepository.findAllByBoardTradeId(curBoardId);
         List<String> filePathList = new ArrayList<>();
@@ -131,7 +122,7 @@ public class BoardTradeServiceImpl implements BoardTradeService {
             filePathList.add(boardTradeImage.getPath());
         }
 
-        DetailDto responseDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter, isActive);
+        DetailDto responseDto = DetailDto.toDto(boardTrade, rating, filePathList, isWriter);
 
 
         return responseDto;

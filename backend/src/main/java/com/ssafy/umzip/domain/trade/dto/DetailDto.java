@@ -26,17 +26,13 @@ public class DetailDto {
     private boolean isDirect;
     private String content;
     private int readCnt;
-    private Long codeSmallId;
-    private String codeSmallName;
     private boolean isWriter;
-    private boolean isActive;
 
     @Builder
     public DetailDto(Long boardId, List<String> filePathList,
                      Long writerId, String writerName, String writerImageUrl, Double writerRating, String writerAddress,
                      String title, Long price, LocalDateTime createDt, boolean isDirect,
-                     String content, int readCnt, Long codeSmallId, String codeSmallName,
-                     boolean isWriter, boolean isActive) {
+                     String content, int readCnt, boolean isWriter) {
         this.boardId = boardId;
         this.filePathList = filePathList;
         this.writerId = writerId;
@@ -51,20 +47,12 @@ public class DetailDto {
         this.content = content;
         this.readCnt = readCnt;
 
-        if (isActive) {
-            this.codeSmallName = "구매완료";
-            this.codeSmallId = 303L;
-        } else {
-            this.codeSmallName = codeSmallName;
-            this.codeSmallId = codeSmallId;
-        }
 
         this.isWriter = isWriter;
-        this.isActive = isActive;
     }
 
     public static DetailDto toDto(BoardTrade boardTrade, Double rating, List<String> filePathList,
-                                  boolean isWriter, boolean isActive) {
+                                  boolean isWriter) {
         return DetailDto.builder()
                 .boardId(boardTrade.getId())
                 .filePathList(filePathList)
@@ -79,10 +67,7 @@ public class DetailDto {
                 .isDirect(boardTrade.getIsDirect())
                 .content(boardTrade.getContent())
                 .readCnt(boardTrade.getReadCnt())
-                .codeSmallId(boardTrade.getCodeSmall().getId())
-                .codeSmallName(boardTrade.getCodeSmall().getName())
                 .isWriter(isWriter)
-                .isActive(isActive)
                 .build();
     }
 }
