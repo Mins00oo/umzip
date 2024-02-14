@@ -37,15 +37,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional
     @Override
     public ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, Long tradeId, String role) {
-        Member sender = findMember(senderId);
+        Member sender = findMember(resolveMemberIdByRole(senderId, senderRole));
         Member receiver = findMember(receiverId);
 
+        Boolean isReceiverCompany = companyRepository.existsByMember(receiver);
         ChatRoom chatRoom = buildChatRoom(role, tradeId);
 
         chatRoomRepository.save(chatRoom);
 
         saveChatParticipant(chatRoom, sender, senderRole);
-        saveChatParticipant(chatRoom, receiver, role);
+        saveChatParticipant(chatRoom, receiver, (isReceiverCompany) ? role : "USER");
 
         return chatRoom;
     }
@@ -93,6 +94,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoomListResponseDto> retrieveChatRoom(Long memberId, String role) {
         Long id = resolveMemberIdByRole(memberId, role);
         List<ChatRoomListResponseDto> chatRooms = customChatParticipantRepository.findChatRoomDetailsByMemberIdAndRole(id, role);
+        for (ChatRoomListResponseDto c : chatRooms) {
+            System.out.println("c = " + c);
+        }
 
         List<Long> chatRoomIds = chatRooms.stream()
                 .map(ChatRoomListResponseDto::getChatRoomId)

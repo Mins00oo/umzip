@@ -57,7 +57,7 @@ public class JwtTokenProvider {
     public MemberTokenDto generateMemberToken(Member member) {
         MemberTokenDto tokenDto =
                 MemberTokenDto.builder()
-                        .accessToken(this.createAccessToken(member.getEmail(), Role.USER, member.getId(),
+                        .accessToken(this.createAccessToken(member.getEmail(), member.getAddress(), Role.USER, member.getId(),
                                 member.getSigungu(), secretKey, accessExpiredTimeMs))
                         .refreshToken(this.createRefreshToken(member.getEmail(), secretKey, refreshExpiredTimeMs))
                         .build();
@@ -70,7 +70,7 @@ public class JwtTokenProvider {
     public MemberTokenDto generateCompanyToken(Company company) {
         MemberTokenDto tokenDto =
                 MemberTokenDto.builder()
-                        .accessToken(this.createAccessToken(company.getMember().getEmail(), company.getRole(),
+                        .accessToken(this.createAccessToken(company.getMember().getEmail(), company.getAddress(), company.getRole(),
                                 company.getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
                         .refreshToken(this.createRefreshToken(company.getMember().getEmail(), secretKey, refreshExpiredTimeMs))
                         .build();
@@ -83,8 +83,8 @@ public class JwtTokenProvider {
     public MemberTokenDto regenerateCompanyToken(Company company, Role role) {
         MemberTokenDto tokenDto =
                 MemberTokenDto.builder()
-                        .accessToken(this.createAccessToken(company.getMember().getEmail(), role,
-                                company.getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
+                        .accessToken(this.createAccessToken(company.getMember().getEmail(), company.getAddress(),
+                                role, company.getId(), company.getSigungu(), secretKey, accessExpiredTimeMs))
                         .refreshToken(this.createRefreshToken(company.getMember().getEmail(), secretKey, refreshExpiredTimeMs))
                         .build();
 
@@ -94,9 +94,10 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(
-            String email, Role role, Long id, int sigungu, String secretKey, Long accessExpiredTimeMs) {
+            String email, String address, Role role, Long id, int sigungu, String secretKey, Long accessExpiredTimeMs) {
         Claims claims = Jwts.claims();
         claims.put("email", email);
+        claims.put("address", address);
         claims.put("role", role);
         claims.put("id", id);
         claims.put("sigungu", sigungu);
