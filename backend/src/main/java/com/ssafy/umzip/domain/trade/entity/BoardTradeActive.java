@@ -1,6 +1,7 @@
 package com.ssafy.umzip.domain.trade.entity;
 
 import com.ssafy.umzip.domain.member.entity.Member;
+import com.ssafy.umzip.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="board_trade_active")
-public class BoardTradeActive {
+public class BoardTradeActive extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
