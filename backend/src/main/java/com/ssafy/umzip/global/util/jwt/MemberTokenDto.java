@@ -23,6 +23,8 @@ public class MemberTokenDto {
     private List<Role> roleList;
     @Setter
     private Long id;
+    @Setter
+    private String address;
 
     @Builder
     public MemberTokenDto(String accessToken, String refreshToken) {

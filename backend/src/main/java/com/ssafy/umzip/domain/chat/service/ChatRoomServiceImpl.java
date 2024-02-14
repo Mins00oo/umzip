@@ -37,15 +37,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional
     @Override
     public ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, Long tradeId, String role) {
-        Member sender = findMember(senderId);
+        Member sender = findMember(resolveMemberIdByRole(senderId, senderRole));
         Member receiver = findMember(receiverId);
 
+        Boolean isReceiverCompany = companyRepository.existsByMember(receiver);
         ChatRoom chatRoom = buildChatRoom(role, tradeId);
 
         chatRoomRepository.save(chatRoom);
 
         saveChatParticipant(chatRoom, sender, senderRole);
-        saveChatParticipant(chatRoom, receiver, role);
+        saveChatParticipant(chatRoom, receiver, (isReceiverCompany) ? role : "USER");
 
         return chatRoom;
     }
