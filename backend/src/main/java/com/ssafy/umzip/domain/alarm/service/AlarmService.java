@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface AlarmService {
-    ResponseEntity<List<AlarmResponse>> alarmList(int limit, int offset, Long memberId);
+    ResponseEntity<List<AlarmResponse>> alarmList(int limit, int offset, Long memberId, String role);
 }
