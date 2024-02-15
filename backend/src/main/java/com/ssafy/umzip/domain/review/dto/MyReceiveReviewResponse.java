@@ -1,10 +1,7 @@
 package com.ssafy.umzip.domain.review.dto;
 
 import com.ssafy.umzip.global.common.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MyReceiveReviewResponse {
     private Long id;
+    private Long memberId;
     private String memberName;
     private String memberImageUrl;
     private Role receiverRole;
@@ -24,10 +22,11 @@ public class MyReceiveReviewResponse {
     private List<String> tag = new ArrayList<>();
     private List<Integer> tagType = new ArrayList<>();
 
-    public MyReceiveReviewResponse(Long id, String memberName, String memberImageUrl,
+    public MyReceiveReviewResponse(Long id, Long memberId, String memberName, String memberImageUrl,
                                    Role receiverRole, String content, float score,
                                    LocalDateTime createDt) {
         this.id = id;
+        this.memberId = memberId;
         this.memberName = memberName;
         this.memberImageUrl = memberImageUrl;
         this.receiverRole = receiverRole;
@@ -35,10 +34,11 @@ public class MyReceiveReviewResponse {
         this.score = score;
         this.createDt = createDt;
     }
-    public MyReceiveReviewResponse(Long id, String memberName, String memberImageUrl,
+    public MyReceiveReviewResponse(Long id, Long memberId, String memberName, String memberImageUrl,
                                    Role receiverRole, String content, float score,
                                    LocalDateTime createDt, String tag) {
         this.id = id;
+        this.memberId = memberId;
         this.memberName = memberName;
         this.memberImageUrl = memberImageUrl;
         this.receiverRole = receiverRole;

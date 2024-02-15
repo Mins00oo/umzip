@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository  extends JpaRepository<Review, Long> {
-    @Query("SELECT NEW com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse(r.id, m.name, m.imageUrl, rr.receiverRole, r.content, r.score, r.createDt) " +
+    @Query("SELECT NEW com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse(r.id, m.id, m.name, m.imageUrl, rr.receiverRole, r.content, r.score, r.createDt) " +
             "FROM ReviewReceiver rr " +
             "JOIN rr.review r ON r.id = rr.review.id " +
             "JOIN r.member m ON m.id = r.member.id " +
@@ -27,6 +27,7 @@ public interface ReviewRepository  extends JpaRepository<Review, Long> {
 
     @Query("SELECT NEW com.ssafy.umzip.domain.review.dto.MyReceiveReviewResponse(" +
             "r.id, " +
+            "m.id, " +
             "COALESCE(c.name, m.name), " +
             "COALESCE(c.imageUrl, m.imageUrl), " +
             "rr.receiverRole, " +
