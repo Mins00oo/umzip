@@ -102,7 +102,7 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public PointUsageResponseDto retrieveMyPointUsage(Long memberId, Pageable pageable) {
-        Page<Point> pointList = pointRepository.findAllByMemberId(memberId, pageable);
+        Page<Point> pointList = pointRepository.findAllByMemberIdOrderByCreateDt(memberId, pageable);
 
         List<PointUsageDto> usageDtoList = pointList.stream()
                 .map(PointUsageDto::fromEntity)
