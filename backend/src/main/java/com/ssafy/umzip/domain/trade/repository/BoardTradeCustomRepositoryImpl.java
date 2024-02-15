@@ -64,18 +64,20 @@ public class BoardTradeCustomRepositoryImpl implements BoardTradeCustomRepositor
     @Override
     public Page<ProfileListDto> findProfileSellMatchingImageList(Long memberId, Pageable pageable) {
 
-        Long size = queryFactory.select(boardTrade.count())
+        List<Long> list = queryFactory.select(boardTrade.count())
                 .from(boardTrade)
                 .where(boardTrade.id.in(queryFactory.select(boardTrade.id)
                         .from(boardTradeActive)
                         .where(boardTradeActive.member.id.eq(memberId))))
-                .fetchOne();
+                .fetch();
+
+        int size = list.size();
 
         Long totalSize = queryFactory.select(boardTrade.count().subtract(size))
                 .from(boardTrade)
                 .where(boardTrade.member.id.eq(memberId))
                         .fetchOne();
-        System.out.println("count: " + totalSize);
+        System.out.println("totalSize: " + totalSize);
 
         if (totalSize < 0) {
             totalSize = 0L;
