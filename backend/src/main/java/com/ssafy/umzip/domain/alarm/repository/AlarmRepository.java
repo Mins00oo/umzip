@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
     public interface AlarmRepository extends JpaRepository<Alarm, Long> {
-        @Query("SELECT new com.ssafy.umzip.domain.alarm.dto.AlarmResponse(a.id, a.content, a.isRead, a.createDt, a.imgPath) FROM Alarm a WHERE a.member.id = :memberId and a.isRead= false Order By a.createDt desc")
+        @Query("SELECT new com.ssafy.umzip.domain.alarm.dto.AlarmResponse(a.id, a.content, a.isRead, a.createDt, a.imgPath) FROM Alarm a WHERE a.member.id = :memberId Order By a.createDt desc")
         Page<AlarmResponse> findAlarmResponseByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }
