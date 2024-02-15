@@ -4,6 +4,7 @@ import com.ssafy.umzip.domain.alarm.dto.AlarmResponse;
 import com.ssafy.umzip.domain.alarm.repository.AlarmCustomRepository;
 import com.ssafy.umzip.domain.alarm.repository.AlarmRepository;
 import com.ssafy.umzip.domain.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
 
