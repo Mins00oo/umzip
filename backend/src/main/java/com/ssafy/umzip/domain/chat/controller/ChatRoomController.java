@@ -28,7 +28,7 @@ public class ChatRoomController {
     /**
      * 용달 업체와 사용자 간의 채팅방 생성
      */
-    @PostMapping("/deliver/{receiverId}")
+    @PostMapping("/delivery/{receiverId}")
     public ResponseEntity<Object> createDeliverChat(HttpServletRequest request, @PathVariable Long receiverId) {
         Long senderId = jwtTokenProvider.getId(request);
         String senderRole = jwtTokenProvider.getRole(request);
