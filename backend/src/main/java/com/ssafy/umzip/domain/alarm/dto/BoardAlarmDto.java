@@ -86,10 +86,10 @@ public class BoardAlarmDto {
     private void checkAlarmType(StringBuilder sb) {
         switch (this.alarmType) {
             case HELP -> {
-                sb.append("[ 중고 ] ");
+                sb.append("[ 도움 ] ");
             }
             case TRADE -> {
-                sb.append("[ 도움 ] ");
+                sb.append("[ 중고 ] ");
             }
         }
     }
