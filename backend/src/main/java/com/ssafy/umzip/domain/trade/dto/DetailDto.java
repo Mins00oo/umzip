@@ -27,12 +27,13 @@ public class DetailDto {
     private String content;
     private int readCnt;
     private boolean isWriter;
+    private Long codeSmallId;
 
     @Builder
     public DetailDto(Long boardId, List<String> filePathList,
                      Long writerId, String writerName, String writerImageUrl, Double writerRating, String writerAddress,
                      String title, Long price, LocalDateTime createDt, boolean isDirect,
-                     String content, int readCnt, boolean isWriter) {
+                     String content, int readCnt, boolean isWriter, Long codeSmallId) {
         this.boardId = boardId;
         this.filePathList = filePathList;
         this.writerId = writerId;
@@ -47,8 +48,8 @@ public class DetailDto {
         this.content = content;
         this.readCnt = readCnt;
 
-
         this.isWriter = isWriter;
+        this.codeSmallId = codeSmallId;
     }
 
     public static DetailDto toDto(BoardTrade boardTrade, Double rating, List<String> filePathList,
@@ -68,6 +69,7 @@ public class DetailDto {
                 .content(boardTrade.getContent())
                 .readCnt(boardTrade.getReadCnt())
                 .isWriter(isWriter)
+                .codeSmallId(boardTrade.getCodeSmall().getId())
                 .build();
     }
 }
