@@ -22,6 +22,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -141,7 +143,17 @@ public class AuthServiceImpl implements AuthService {
         Company company = companyRepository.findByMemberIdAndRole(requestAuth.getMember().getId(), role)
                 .orElseThrow(() -> new BaseException(StatusCode.COMPANY_ROLE_NOT_MATCH));
 
-        return jwtTokenProvider.regenerateCompanyToken(company, role);
+        MemberTokenDto response = jwtTokenProvider.regenerateCompanyToken(company, role);
+        response.setName(company.getName());
+        response.setAddress(company.getAddress());
+        response.setId(company.getId());
+        response.setWho(-1);
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(role);
+        response.setRoleList(roleList);
+        response.setProfileImage(company.getImageUrl());
+        return response;
+
     }
 
     private boolean isVerify(AuthCodeRequestDto requestDto) {
