@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PointRepository extends JpaRepository<Point, Long> {
-    Page<Point> findAllByMemberIdOrderByCreateDt(Long memberId, Pageable pageable);
+    Page<Point> findAllByMemberIdOrderByCreateDtDesc(Long memberId, Pageable pageable);
 
     long countByMemberId(Long memberId);
 }
