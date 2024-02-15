@@ -41,7 +41,7 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
     public Boolean rejectionClean(Long mappingId,Long companyId) {
         CleanMapping cleanMapping = cleanMappingRepository.findById(mappingId).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CLEAN_MAPPING));
 
-        if(cleanMapping.getCompany().getId()!=(companyId)){
+        if(!cleanMapping.getCompany().getId().equals(companyId)){
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN);
         }
 
@@ -62,8 +62,10 @@ public class CleanCompanyServiceImpl implements CleanCompanyService{
 
     @Override
     public Boolean quotationClean(CleanQuotationRequestDto dto, Long companyId) {
+
         CleanMapping cleanMapping = cleanMappingRepository.findById(dto.getMappingId()).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_MAPPING));
-        if(cleanMapping.getCompany().getId()!=companyId){
+
+        if(!cleanMapping.getCompany().getId().equals(companyId)){
             throw new BaseException(StatusCode.INVALID_ACCESS_CLEAN);
         }
         CodeSmall codeSmall = codeSmallRepository.findById(202L).orElseThrow(() -> new BaseException(StatusCode.NOT_EXIST_CODE));
