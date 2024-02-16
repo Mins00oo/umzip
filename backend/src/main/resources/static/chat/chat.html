@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">  <!-- 문자 인코딩을 UTF-8로 설정 -->
+    <title>채팅방</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="user1_chatRoom.js"></script>
+    <style>
+        /* 기본 채팅 메시지 스타일 */
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        /* 현재 사용자가 보낸 메시지 스타일 */
+        .my-message {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        /* 다른 사용자가 보낸 메시지 스타일 */
+        .their-message {
+            background-color: #f1f0f0;
+            text-align: left;
+        }
+
+        /* 발신자 이름 스타일 */
+        .sender-name {
+            font-weight: bold;
+        }
+
+        /* 메시지 내용 스타일 */
+        .content {
+            margin: 5px 0;
+        }
+
+        /* 메시지 시간 스타일 */
+        .time {
+            font-size: 0.8em;
+            color: grey;
+        }
+
+        /* 메시지 입력 폼 스타일 */
+        #messageForm {
+            margin-top: 20px;
+        }
+
+        .sender-profile-image {
+            width: 40px; /* 이미지 크기 설정 */
+            height: 40px; /* 이미지 크기 설정 */
+            border-radius: 50%; /* 원 모양으로 만들기 */
+            object-fit: cover; /* 이미지 비율 유지하면서 컨테이너에 맞춤 */
+            margin-right: 10px; /* 메시지와의 여백 설정 */
+        }
+
+        .message {
+            display: flex; /* 메시지 요소를 flexbox로 설정 */
+            align-items: center; /* 세로 방향 정렬 */
+            /* 기타 스타일 ... */
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <h2>채팅방</h2>
+    <div id="messages">
+        <!-- 메시지가 여기에 표시됩니다. -->
+    </div>
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+        <button type="submit" class="btn btn-primary">보내기</button>
+    </form>
+    <button id="leaveChatRoom" class="btn btn-danger">나가기</button>
+</div>
+</body>
+</html>
+

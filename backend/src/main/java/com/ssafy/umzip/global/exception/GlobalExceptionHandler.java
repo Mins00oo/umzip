@@ -17,4 +17,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(200)
                 .body(new BaseResponse<>(exception.getStatusCode()));
     }
+
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<?> applicationHandler(RuntimeException e) {
+//        log.error("Error occurs {}", e.toString());
+//        return ResponseEntity.status(200)
+//                .body(new BaseResponse<>("내부 서버 오류입니다."));
+//    }
 }

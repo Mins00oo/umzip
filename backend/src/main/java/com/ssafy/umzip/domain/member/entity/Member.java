@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,4 +55,13 @@ public class Member extends BaseTimeEntity {
         this.sigungu = sigungu;
         this.pwd = pwd;
     }
+
+    public void savePoint(int point) {
+        this.point += point;
+    }
+
+    public void usePoint(int point) {
+        this.point -= point;
+    }
+
 }
