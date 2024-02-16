@@ -1,0 +1,43 @@
+.pagination{
+    border-radius: 20px; /* 둥근 모서리를 위한 속성 */
+    padding: 10px 20px; /* 버튼 내용과 여백 설정 */
+    background-color: #ececec; /* 배경 색상 설정 */
+    color: white; /* 텍스트 색상 설정 */
+    border: none; /* 테두리 제거 */
+    outline: none; /* 포커스 시 테두리 제거 */
+    margin-top: 30px;
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+}
+.active{
+    background-color: #9a90c6;
+    font-weight: bold;
+    border-radius: 10px; /* 둥근 모서리를 위한 속성 */
+    padding: 3px 10px; /* 버튼 내용과 여백 설정 */
+   margin-left: 1px;
+   margin-right: 1px;
+    color: white;
+   border: 0ch;
+   font-weight: 500;
+}
+.unActive{
+    background-color: #7daede;
+    font-weight: bold;
+    border-radius: 10px; /* 둥근 모서리를 위한 속성 */
+    padding: 3px 10px; /* 버튼 내용과 여백 설정 */
+   margin-left: 1px;
+   margin-right: 1px;
+    color: white;
+   border: 0ch;
+   font-weight: 500;
+}
+.arrow{
+    font-weight: bold;
+    border-radius: 10px; /* 둥근 모서리를 위한 속성 */
+    padding: 3px 10px; /* 버튼 내용과 여백 설정 */
+   margin-left: 1px;
+   margin-right: 1px;
+   border: 0ch;
+   font-weight: 500;
+}

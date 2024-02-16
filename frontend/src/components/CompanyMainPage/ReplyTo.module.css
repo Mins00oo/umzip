@@ -1,0 +1,258 @@
+/* 재견적 요청 버튼 */
+.uiverseCheck {
+  position: relative;
+  background: #92a8e7;
+  color: #000;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100px;
+  height: 30px;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipCheck {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #ffffff;
+  color: #ffffff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipCheck::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #ffffff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.uiverseCheck:hover .tooltipCheck {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+svg:hover span,
+svg:hover .tooltipCheck {
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.uiverseCheck:hover,
+.uiverseCheck:hover .tooltipCheck,
+.uiverseCheck:hover .tooltipCheck::before {
+  background: linear-gradient(320deg, #0D6EFD, #678ae4);
+  color: #ffffff;
+}
+
+/* 거절 버튼 */
+.uiverseCancel {
+  position: relative;
+  background: #ed6363;
+  color: #000;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100px;
+  height: 30px;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipCancel {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #ffffff;
+  color: #ffffff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipCancel::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #ffffff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.uiverseCancel:hover .tooltipCancel {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+svg:hover span,
+svg:hover .tooltipCancel {
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.uiverseCancel:hover,
+.uiverseCancel:hover .tooltipCancel,
+.uiverseCancel:hover .tooltipCancel::before {
+  background: linear-gradient(320deg, #DD3D4D,rgb(235, 11, 48));
+  color: #ffffff;
+}
+
+/* 채팅 버튼 */
+.uiverseChat {
+  position: relative;
+  background: #ed84f1;
+  color: #000;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100px;
+  height: 30px;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipChat {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #ffffff;
+  color: #ffffff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipChat::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #ffffff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.uiverseChat:hover .tooltipChat {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+svg:hover span,
+svg:hover .tooltipChat {
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.uiverseChat:hover,
+.uiverseChat:hover .tooltipChat,
+.uiverseChat:hover .tooltipChat::before {
+  background: linear-gradient(320deg, #f06cf5,rgb(213, 11, 235));
+  color: #ffffff;
+}
+
+/* 완료된 항목 */
+.uiverseComplete {
+  position: relative;
+  background: #a6a8ad;
+  color: #000;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100px;
+  height: 30px;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipComplete {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #ffffff;
+  color: #ffffff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltipComplete::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #ffffff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.uiverseComplete:hover .tooltipComplete {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+svg:hover span,
+svg:hover .tooltipComplete {
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.uiverseComplete:hover,
+.uiverseComplete:hover .tooltipComplete,
+.uiverseComplete:hover .tooltipComplete::before {
+  background: linear-gradient(320deg, #a6a8ad, #989898);
+  color: #ffffff;
+}

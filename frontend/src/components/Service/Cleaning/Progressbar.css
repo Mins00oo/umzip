@@ -1,0 +1,14 @@
+/* ProgressBar.css */
+
+.progress-bar-container {
+    width: 100%;
+    height: 5px;
+    background-color: #e0e0e0;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #007bff; /* 진행 바의 색상을 여러분의 디자인에 맞게 수정하세요 */
+    transition: width 0.3s ease; /* 진행 바의 움직임을 부드럽게 만들기 위한 CSS transition */
+  }
+  

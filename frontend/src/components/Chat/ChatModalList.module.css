@@ -1,0 +1,41 @@
+/* ChatModalList.module.css */
+
+.chat-button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 1rem;
+  }
+  
+  .chat-button:hover {
+    background-color: #dddddd;
+  }
+  
+  .unread-message-indicator {
+    position: absolute;
+    top: 95%;
+    start: 70%;
+    transform: translate(-50%, -50%);
+    padding: 0.5rem;
+    background-color: #dc3545;
+    border: 1px solid #fff;
+    border-radius: 50%;
+  }
+  
+/* ChatModalList.module.css */
+
+/* ChatModalList.module.css */
+
+.customModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-100%);
+  width: 50%;
+  height: 50%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}

@@ -1,0 +1,220 @@
+/* 포인트게시판 */
+.pointsContainer {
+    width: 70%; 
+    margin-top: 900px;
+    padding-top: 5rem;
+    margin: 0 auto; 
+    border-radius: 10px; 
+    padding: 20px; 
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+    
+  
+  }
+
+/* 포인트 상단 */
+.head {
+    display: flex;
+    background: linear-gradient(to right, #7daede, #7a64dc);
+    border-bottom: 2px solid #d0d0d0; /* 하단 경계선 설정 */
+    color: white;
+    font-weight: 400;
+  }
+
+.headDate{
+    flex:3
+}
+
+.headContent{
+    flex:7
+}
+
+.headPoint{
+    flex:3
+}
+.listContainer{
+    padding: 0px;
+}
+
+.head span, .listContainer span {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    padding: 0.5rem; /* 상하 좌우 여백 설정 */
+  }
+
+.listContainer{
+    display: flex;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+  }
+  
+  .pageItem {
+    margin: 0 5px;
+  }
+  
+  .pageLink {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .pageLink:hover {
+    background-color: #ddd;
+  }
+  .minus{
+    color: red;
+  }
+  .plus{
+    color: green;
+  }
+
+  /* 현재 포인트 */
+.main {
+  display: flex;
+  justify-content: right; 
+  margin-bottom: 10px;
+  margin-right: 20px;
+  width: 100%;
+  
+  }
+.tooltipContainer {
+  --background:  linear-gradient(to right, #7daede, #7a64dc);
+  --color: #7a64dc;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color);
+  padding: 1em 3em;
+  border-radius: 8px;
+  text-transform: uppercase;
+  height: 40px;
+  width: 40px;
+  place-items: center;
+  border: 2px solid var(--color);
+  
+}
+
+.text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  transform-origin: -100%;
+  transform: scale(1);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tooltipContainer span:last-child {
+  position: absolute;
+  top: 0%;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  opacity: 1;
+  background-color: var(#7a64dc);
+  z-index: -1;
+  border: 2px solid var(#7a64dc);
+  transform: scale(0);
+  transform-origin: 0;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  display: grid;
+  place-items: center;
+}
+
+.tooltip {
+  position: absolute;
+  display: flex; /* Flexbox 레이아웃 사용 */
+  align-items: center; /* 세로 방향 가운데 정렬 */
+  justify-content: center; /* 가로 방향 가운데 정렬 */
+  top: -20px; /* Adjusted to move the tooltip up */
+  bottom: 0px;
+  left: 50%;
+  height: 100%;
+  transform: translateX(-50%);
+  padding: 0.5em 1em; 
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  background: var(--background);
+  z-index: -1;
+  border-radius: 20px;
+  scale: 0;
+  transform-origin: 0 0;
+  text-transform: capitalize;
+  font-weight: 400;
+  font-size: 14px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  width: 120px; /* Adjust the width here */ 
+}
+
+.tooltip::before {
+  position: absolute;
+  content: "";
+  height: 0.6em;
+  width: 0.6em;
+  bottom: -0.2em;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  background: var(--background);
+}
+
+.tooltipContainer:hover .tooltip {
+  top: -130%;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  scale: 1;
+  animation: shake 0.5s ease-in-out both;
+}
+
+.tooltipContainer:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  color: white;
+  border-color: transparent;
+}
+
+.tooltipContainer:hover span:last-child {
+  transform: scale(1);
+  color: #7a64dc;
+  left: 0;
+}
+
+.tooltipContainer:hover .text {
+  opacity: 0;
+  top: 0%;
+  left: 100%;
+  transform: scale(0);
+}
+
+
+@keyframes shake {
+  0% {
+    rotate: 0;
+  }
+
+  25% {
+    rotate: 7deg;
+  }
+
+  50% {
+    rotate: -7deg;
+  }
+
+  75% {
+    rotate: 1deg;
+  }
+
+  100% {
+    rotate: 0;
+  }
+}

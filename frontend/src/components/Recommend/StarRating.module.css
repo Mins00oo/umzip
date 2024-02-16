@@ -1,0 +1,22 @@
+/* StarRating.module.css */
+.starRating {
+  display: flex;
+  flex-direction: row;
+}
+
+.star {
+  width: 1.25rem; /* 20px / 16px = 1.25rem */
+  height: 1.25rem;
+  background: url('/empty-star.png');
+  background-size: contain;
+  margin-right: 0.3125rem; /* 5px / 16px = 0.3125rem */
+}
+
+.star.filled {
+  background: url('/filled-star.png');
+  background-size: contain;
+}
+
+.star:last-child {
+  margin-right: 0;
+}

@@ -1,0 +1,37 @@
+.inputStyling label{
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
+.inputStyling input{
+  padding-left: 30px;
+  margin-right: 20px;
+}
+
+.inputStyling button{
+  min-width: 150px;
+}
+
+small {
+  color: red;
+}
+.signUpDefaultColor {
+  border: 1px solid #40A2D8; 
+  color : black;
+}
+.signUpDefaultColor:hover {
+  background-color: #40A2D8;
+  border-color: #40A2D8;
+  color: white; /* 텍스트 색상을 흰색으로 변경 */
+}
+.signUpClickColor {
+  background-color: #40A2D8; 
+  border: 1px solid #40A2D8; 
+}
+.signUpClickColor:hover {
+  background-color: #40A2D8;
+  border-color: #40A2D8;
+  color: white;
+}

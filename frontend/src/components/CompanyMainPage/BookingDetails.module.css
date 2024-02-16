@@ -1,0 +1,40 @@
+.card {
+    box-sizing: border-box;
+    width: 500px;
+    height: 500px;
+    background: white;
+    /* border: 1px solid white; */
+    box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
+    /* backdrop-filter: blur(6px); */
+    border-radius: 17px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    font-weight: bolder;
+    color: black;
+  }
+  
+  .card:hover {
+    /* border: 1px solid black; */
+    transform: scale(1.01);
+  }
+  
+  .card:active {
+    transform: scale(0.95) rotateZ(1.7deg);
+  }
+
+  .card-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* 내용을 공간에 맞게 균등하게 분포시킵니다. */
+    align-items: flex-start; /* 내용을 상단에 정렬합니다. */
+  }
+  
+  .card-item {
+    margin: 10px; /* 각 항목 사이에 공간을 추가합니다. */
+    min-width: 100px; /* 최소 너비를 설정하여 내용이 너무 좁아지지 않도록 합니다. */
+  }

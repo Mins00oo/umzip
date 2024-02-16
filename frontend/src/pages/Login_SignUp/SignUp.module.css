@@ -1,0 +1,7 @@
+.backgroundContainer {
+    background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('/SignUpBackImg.jpg'); /* 검은색 투명도 조정 */
+    background-size: 100% 100%; 
+    background-position: center;
+    min-width: 100%;
+    min-height: 100vh;
+}

@@ -1,0 +1,22 @@
+/* App.css */
+
+/* 구글 폰트 링크를 가져와서 아래와 같이 적용합니다. */
+@font-face {
+  font-family: 'SUITE-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'JalnanGothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+:root {
+  --font-googleSingleDay: 'SUITE-Regular', cursive; /* 구글 폰트의 이름으로 변경 */
+}
+
+body {
+  font-family: var(--font-googleSingleDay);
+}

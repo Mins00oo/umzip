@@ -1,0 +1,31 @@
+/* CleaningForm.css */
+.clock-container {
+    width: 10rem;
+    height: 10rem;
+    overflow-y: auto;
+    border-radius: 1rem;
+    background-color: white;
+  }
+  
+  .time-options {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .time-option {
+    border-radius: 4rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .time-option:hover {
+    background-color: #f0f0f0;
+    text-decoration: underline;
+    font-weight: bold;
+    
+  }
+  

@@ -1,0 +1,47 @@
+/* CleaningForm.css */
+.car-container {
+    width: 10rem;
+    height: 15rem;
+    border-radius: 1rem;
+    background-color: white;
+  }
+  
+  .car-options {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .car-option {
+    border-radius: 4rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .car-option:hover {
+    background-color: #f0f0f0;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  
+.car-description-container {
+    position: absolute;
+    top: 0%;
+    left: 120%; /* Change this from left: 100% to left: 0 */
+    width: 30rem;
+    padding: 10px;  
+    background-color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+    visibility: hidden;
+}
+
+.car-option:hover .car-description-container {
+    opacity: 1;
+    visibility: visible;
+}

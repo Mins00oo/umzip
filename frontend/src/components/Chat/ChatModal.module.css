@@ -1,0 +1,54 @@
+/* ChatModal.module.css */
+.chatModalContainer::-webkit-scrollbar {
+  display: initial;
+}
+.chatModalContainer {
+    position: relative;
+    z-index: 2;
+    width: 22rem;
+    max-height: 30rem;
+    background-color: #fff;
+    overflow: auto;
+    
+  }
+  
+  
+  .chatModalContainer.shadow {
+    box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.075);
+  }
+  
+  .chatModalHeader {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .chatModalHeader h3 {
+    margin: 0;
+  }
+  
+  .chatModalContent {
+    margin: 1rem;
+  }
+  
+  .chatListItem {
+    opacity: 0;
+  }
+  
+  .chatListItem-enter {
+    opacity: 0;
+  }
+  
+  .chatListItem-enter-active {
+    opacity: 1;
+    transition: opacity 0.5s;
+  }
+  
+  .chatListItem-exit {
+    opacity: 1;
+  }
+  
+  .chatListItem-exit-active {
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  

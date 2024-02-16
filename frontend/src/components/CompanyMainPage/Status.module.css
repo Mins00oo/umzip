@@ -1,0 +1,36 @@
+/* 상태 CSS */
+.statusOption {
+    transition: transform 1s;
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    margin-right: 10px; 
+
+  }
+  
+  .statusOption:hover {
+    transform: scale(1.1);
+  }
+  
+  .statusContainer {
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    height: 100%;
+  }
+  
+  .statusText {
+    font-size: 14px;
+    display: flex; 
+    align-items: center; 
+  }
+  
+  .statusIcon {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px; 
+  }
+  
+  .statusTitle {
+    font-weight: bold;
+  }

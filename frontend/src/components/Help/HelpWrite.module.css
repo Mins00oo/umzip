@@ -1,0 +1,35 @@
+.select {
+    padding: 15px 10px;
+}
+.select input[type=radio]{
+    display: none;
+}
+.select input[type=radio]+label{
+    display: inline-block;
+    cursor: pointer;
+    height: 30px;
+    width: 120px;
+    line-height: 24px;
+    text-align: center;
+    font-weight:bold;
+    font-size:15px;
+}
+.select input[type=radio]+label{
+    background-color: #fff;
+    color: #333;
+}
+.select input[type=radio]:checked+label{
+    background-color: #b4d78b;
+    color: #fff;
+}
+.category{
+    margin-top: 10px;
+}
+.btnWrite{
+    width: 150px;
+    background-image: linear-gradient(135deg, #b9d795 0%, #6ec8e0 100%);
+    border: 0;
+}
+.rangeCss{
+    background: linear-gradient(to right, #FFE283 0%, #FFE283 50%, #ececec 50%, #ececec 100%);
+}
