@@ -33,7 +33,7 @@ public class SmsUtil {
     public SingleMessageSentResponse sendAuthCode(String to, String verificationCode) {
         Message message = new Message();
         // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-        message.setFrom("01046447221");
+        message.setFrom("01012345678");
         message.setTo(to);
         message.setText("[umzip] 아래의 인증번호를 입력해주세요\n" + verificationCode);
 

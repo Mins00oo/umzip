@@ -7,7 +7,7 @@ const api = axios.create({
   // http://192.168.30.206:8080/api 동현
   // http://192.168.30.145:8080/api 민수
   // https://i10e108.p.ssafy.io/api 빌드 주소
-  baseURL: 'https://i10e108.p.ssafy.io/api'
+  baseURL: 'https://umzip.com/api'
 });
 
 api.interceptors.request.use((config) => {

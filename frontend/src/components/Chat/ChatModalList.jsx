@@ -79,7 +79,7 @@ export default function ChatModalList({ toggleDropdown, setChatList, name, chat,
   const socket = () => {
     const { token } = useAuthStore.getState();
     const client = new Client({
-      brokerURL: `wss://i10e108.p.ssafy.io/ws?accessToken=${token}`,
+      brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
       // brokerURL: `ws://192.168.30.145:8080/ws?accessToken=${token}`,
 
       // 여기에 다른 설정도 추가할 수 있습니다.
