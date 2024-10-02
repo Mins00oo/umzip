@@ -33,6 +33,10 @@ jwt:
   accessExpiredTimeMs: ${JWT_ACCESS_EXPIRED_TIME_MS}
   refreshExpiredTimeMs: ${JWT_REFRESH_EXPIRED_TIME_MS}
 
+logging:
+  level:
+    root: info
+
 cloud:
   aws:
     credentials:

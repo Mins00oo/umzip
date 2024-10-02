@@ -27,7 +27,6 @@ public class SecurityConfig {
     private final AuthSuccessHandler successHandler;
     private final AuthFailureHandler failureHandler;
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberDetailService memberDetailService;
     private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
