@@ -17,20 +17,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MemberController.class, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {CustomAuthenticationFilter.class})
 })
-@AutoConfigureMockMvc(addFilters = false)
+@WithMockUser
 public class MemberControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -69,6 +72,7 @@ public class MemberControllerTest {
 
         // then
         mockMvc.perform(get("/api/users/" + memberId)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.me").value(responseDto.isMe()))
@@ -77,7 +81,8 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.result.point").value(responseDto.getPoint()))
                 .andExpect(jsonPath("$.result.email").value(responseDto.getEmail()))
                 .andExpect(jsonPath("$.result.avgScore").value(responseDto.getAvgScore()))
-                .andExpect(jsonPath("$.result.imageUrl").value(responseDto.getImageUrl()));
+                .andExpect(jsonPath("$.result.imageUrl").value(responseDto.getImageUrl()))
+                .andDo(print());
 
         // assert
         verify(memberService, times(1)).retrieveMember(memberId, requestId);
@@ -105,7 +110,8 @@ public class MemberControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.isSuccess").value(true))
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
-                .andExpect(jsonPath("$.code").value(100));
+                .andExpect(jsonPath("$.code").value(100))
+                .andDo(print());
 
         // assert
         verify(memberService, times(1)).createMember(any(MemberCreateRequestDto.class));
