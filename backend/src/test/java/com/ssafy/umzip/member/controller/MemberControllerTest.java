@@ -19,6 +19,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class MemberControllerTest {
         Long requestId = 2L;
 
         MemberResponseDto responseDto = MemberResponseDto.builder()
-                .me(true)
+                .me(memberId.equals(requestId)) // 값이 같은지 실제로 비교
                 .name("John Doe")
                 .phone("123-456-7890")
                 .point(100)
@@ -70,11 +71,12 @@ public class MemberControllerTest {
 
         when(memberService.retrieveMember(memberId, requestId)).thenReturn(responseDto);
 
+        ResultActions resultActions = mockMvc.perform(get("/api/users/" + memberId)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON));
+
         // then
-        mockMvc.perform(get("/api/users/" + memberId)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.me").value(responseDto.isMe()))
                 .andExpect(jsonPath("$.result.name").value(responseDto.getName()))
                 .andExpect(jsonPath("$.result.phone").value(responseDto.getPhone()))
@@ -103,10 +105,14 @@ public class MemberControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(requestDto);
 
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/users")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
         // then
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+        resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.isSuccess").value(true))
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
