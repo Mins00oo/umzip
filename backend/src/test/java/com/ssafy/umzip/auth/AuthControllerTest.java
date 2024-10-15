@@ -33,7 +33,6 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // 필요한 빈 주입
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 

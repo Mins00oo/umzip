@@ -3,7 +3,6 @@ package com.ssafy.umzip.global.config;
 import com.ssafy.umzip.global.util.jwt.JwtTokenFilter;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import com.ssafy.umzip.global.util.security.CustomAuthenticationFilter;
-import com.ssafy.umzip.global.util.security.MemberDetailService;
 import com.ssafy.umzip.global.util.security.handler.AuthFailureHandler;
 import com.ssafy.umzip.global.util.security.handler.AuthSuccessHandler;
 import com.ssafy.umzip.global.util.security.handler.CustomLogoutSuccessHandler;
@@ -51,11 +50,6 @@ public class SecurityConfig {
                                 .logoutSuccessHandler(logoutSuccessHandler)
                 );
 //                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
-
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        // CustomAuthenticationFilter를 필터 체인에 추가합니다.
-        http.addFilter(customAuthenticationFilter(authenticationManager));
-
         return http.build();
     }
 
