@@ -52,6 +52,10 @@ public class SecurityConfig {
                 );
 //                .addFilterBefore(jwtTokenFilter, LogoutFilter.class);
 
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        // CustomAuthenticationFilter를 필터 체인에 추가합니다.
+        http.addFilter(customAuthenticationFilter(authenticationManager));
+
         return http.build();
     }
 
