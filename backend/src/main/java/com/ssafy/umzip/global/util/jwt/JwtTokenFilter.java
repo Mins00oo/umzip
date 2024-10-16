@@ -34,7 +34,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
         return PERMIT_URLS.stream()
                 .anyMatch(exclude -> pathMatcher.match(exclude, path));
     }
