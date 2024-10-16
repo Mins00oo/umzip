@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = MemberController.class, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {CustomAuthenticationFilter.class})
 })
-@WithMockUser
 public class MemberControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -47,6 +46,7 @@ public class MemberControllerTest {
 
     @Test
     @DisplayName("ID별 회원 조회")
+    @WithMockUser(username = "유저1", roles = "USER")
     public void testRetrieveUser() throws Exception {
 
         // given
@@ -91,6 +91,7 @@ public class MemberControllerTest {
 
     @Test
     @DisplayName("회원가입")
+    @WithMockUser(username = "유저1", roles = "USER")
     public void createMember() throws Exception {
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto();
         requestDto.setName("홍길동");
