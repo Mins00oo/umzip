@@ -34,7 +34,6 @@ pipeline {
             steps {
                 dir("${BACKEND_DIR}") {
                     withCredentials([
-                        file(credentialsId: 'APPLICATION_ENV_YML', variable: 'APP_ENV_FILE'),
                         string(credentialsId: 'DB_URL', variable: 'DB_URL'),
                         string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
                         string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
@@ -55,38 +54,13 @@ pipeline {
                         string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
                         // 필요한 만큼 추가
                     ]) {
-                        // Secret File을 현재 디렉토리로 복사
-                        sh 'cp $APP_ENV_FILE ./application-env.yml'
-
-                        // 변수 치환
-                        sh """
-                        sed -i 's#\\\${DB_URL}#${DB_URL}#g' ./application-env.yml
-                        sed -i 's#\\\${DB_USERNAME}#${DB_USERNAME}#g' ./application-env.yml
-                        sed -i 's#\\\${DB_PASSWORD}#${DB_PASSWORD}#g' ./application-env.yml
-                        sed -i 's#\\\${JWT_SECRET_KEY}#${JWT_SECRET_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${JWT_ACCESS_EXPIRED_TIME_MS}#${JWT_ACCESS_EXPIRED_TIME_MS}#g' ./application-env.yml
-                        sed -i 's#\\\${JWT_REFRESH_EXPIRED_TIME_MS}#${JWT_REFRESH_EXPIRED_TIME_MS}#g' ./application-env.yml
-                        sed -i 's#\\\${S3_ACCESS_KEY}#${S3_ACCESS_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${S3_SECRET_KEY}#${S3_SECRET_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${S3_BUCKET}#${S3_BUCKET}#g' ./application-env.yml
-                        sed -i 's#\\\${S3_REGION}#${S3_REGION}#g' ./application-env.yml
-                        sed -i 's#\\\${REDIS_HOST}#${REDIS_HOST}#g' ./application-env.yml
-                        sed -i 's#\\\${REDIS_PASSWORD}#${REDIS_PASSWORD}#g' ./application-env.yml
-                        sed -i 's#\\\${COOL_SMS_API_KEY}#${COOL_SMS_API_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${COOL_SMS_API_SECRET}#${COOL_SMS_API_SECRET}#g' ./application-env.yml
-                        sed -i 's#\\\${BUSINESS_SERVICE_KEY}#${BUSINESS_SERVICE_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${KAKAO_API_KEY}#${KAKAO_API_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${FUEL_API_KEY}#${FUEL_API_KEY}#g' ./application-env.yml
-                        sed -i 's#\\\${MONGO_URI}#${MONGO_URI}#g' ./application-env.yml
-                        """
-                        // 필요한 변수에 대해 추가
-
                         // 빌드
                         sh './gradlew build'
                     }
                 }
             }
         }
+
 
         stage('Stop and Remove Existing Docker Container') {
             steps {
@@ -120,13 +94,54 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh """
-                    echo "Building new Docker image: ${DOCKER_IMAGE}"
-                    docker build -t ${DOCKER_IMAGE} .
+                    withCredentials([
+                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
+                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'JWT_SECRET_KEY', variable: 'JWT_SECRET_KEY'),
+                        string(credentialsId: 'JWT_ACCESS_EXPIRED_TIME_MS', variable: 'JWT_ACCESS_EXPIRED_TIME_MS'),
+                        string(credentialsId: 'S3_ACCESS_KEY', variable: 'S3_ACCESS_KEY'),
+                        string(credentialsId: 'S3_SECRET_KEY', variable: 'S3_SECRET_KEY'),
+                        string(credentialsId: 'S3_BUCKET', variable: 'S3_BUCKET'),
+                        string(credentialsId: 'S3_REGION', variable: 'S3_REGION'),
+                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                        string(credentialsId: 'COOL_SMS_API_KEY', variable: 'COOL_SMS_API_KEY'),
+                        string(credentialsId: 'COOL_SMS_API_SECRET', variable: 'COOL_SMS_API_SECRET'),
+                        string(credentialsId: 'JWT_REFRESH_EXPIRED_TIME_MS', variable: 'JWT_REFRESH_EXPIRED_TIME_MS'),
+                        string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
+                        string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
+                        string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
+                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
+                        // 필요한 만큼 추가
+                    ]) {
+                        sh """
+                        echo "Building new Docker image: ${DOCKER_IMAGE}"
+                        docker build -t ${DOCKER_IMAGE} .
 
-                    echo "Running new Docker container: ${CONTAINER_NAME}"
-                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
-                    """
+                        echo "Running new Docker container: ${CONTAINER_NAME}"
+                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 \\
+                            -e DB_URL=${DB_URL} \\
+                            -e DB_USERNAME=${DB_USERNAME} \\
+                            -e DB_PASSWORD=${DB_PASSWORD} \\
+                            -e JWT_SECRET_KEY=${JWT_SECRET_KEY} \\
+                            -e JWT_ACCESS_EXPIRED_TIME_MS=${JWT_ACCESS_EXPIRED_TIME_MS} \\
+                            -e JWT_REFRESH_EXPIRED_TIME_MS=${JWT_REFRESH_EXPIRED_TIME_MS} \\
+                            -e S3_ACCESS_KEY=${S3_ACCESS_KEY} \\
+                            -e S3_SECRET_KEY=${S3_SECRET_KEY} \\
+                            -e S3_BUCKET=${S3_BUCKET} \\
+                            -e S3_REGION=${S3_REGION} \\
+                            -e REDIS_HOST=${REDIS_HOST} \\
+                            -e REDIS_PASSWORD=${REDIS_PASSWORD} \\
+                            -e COOL_SMS_API_KEY=${COOL_SMS_API_KEY} \\
+                            -e COOL_SMS_API_SECRET=${COOL_SMS_API_SECRET} \\
+                            -e BUSINESS_SERVICE_KEY=${BUSINESS_SERVICE_KEY} \\
+                            -e KAKAO_API_KEY=${KAKAO_API_KEY} \\
+                            -e FUEL_API_KEY=${FUEL_API_KEY} \\
+                            -e MONGO_URI=${MONGO_URI} \\
+                            ${DOCKER_IMAGE}
+                        """
+                    }
                 }
             }
         }
