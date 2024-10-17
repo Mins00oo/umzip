@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/Mins00oo/umzip.git'
+        BACKEND_DIR = 'backend'
+        DOCKER_IMAGE = 'be-app' // Docker 이미지 이름
+        CONTAINER_NAME = 'backend-application' // Docker 컨테이너 이름
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Git 레포지토리에서 코드 체크아웃
+                git credentialsId: 'github-credentials-id', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Change Directory') {
+            steps {
+                // backend 폴더로 이동
+                dir("${BACKEND_DIR}") {
+                    // Checkout 완료 후 backend 폴더로 이동
+                    echo "Moved to ${BACKEND_DIR} directory"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    // Gradle로 테스트 실행
+                    sh './gradlew test'
+                }
+            }
+        }
+
+        stage('Build with Gradle') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    // Gradle로 빌드 수행
+                    sh './gradlew build'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // 빌드 완료 후 결과 출력
+            echo 'Pipeline has finished'
+        }
+        failure {
+            // 빌드 실패 시 알림 (필요시 Slack 알림 등을 추가할 수 있음)
+            echo 'Build failed'
+        }
+    }
+}
