@@ -130,15 +130,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // 빌드 완료 후 결과 출력
-            echo 'Pipeline has finished'
-        }
-        failure {
-            // 빌드 실패 시 알림 (필요시 Slack 알림 등을 추가할 수 있음)
-            echo 'Build failed'
-        }
-    }
 }
