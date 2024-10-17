@@ -30,35 +30,58 @@ pipeline {
             }
         }
 
+
         stage('Build') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    // application.yml 파일이 위치한 디렉토리로 이동
-                    dir('src/main/resources') {
-                        // 변수 치환
-                        sh """
-                        sed -i "s#\${DB_URL}#$DB_URL#" application.yml
-                        sed -i "s#\${DB_USERNAME}#$DB_USERNAME#" application.yml
-                        sed -i "s#\${DB_PASSWORD}#$DB_PASSWORD#" application.yml
-                        sed -i "s#\${JWT_SECRET_KEY}#$JWT_SECRET_KEY#" application.yml
-                        sed -i "s#\${JWT_ACCESS_EXPIRED_TIME_MS}#$JWT_ACCESS_EXPIRED_TIME_MS#" application.yml
-                        sed -i "s#\${JWT_REFRESH_EXPIRED_TIME_MS}#$JWT_REFRESH_EXPIRED_TIME_MS#" application.yml
-                        sed -i "s#\${S3_ACCESS_KEY}#$S3_ACCESS_KEY#" application.yml
-                        sed -i "s#\${S3_SECRET_KEY}#$S3_SECRET_KEY#" application.yml
-                        sed -i "s#\${S3_BUCKET}#$S3_BUCKET#" application.yml
-                        sed -i "s#\${S3_REGION}#$S3_REGION#" application.yml
-                        sed -i "s#\${REDIS_HOST}#$REDIS_HOST#" application.yml
-                        sed -i "s#\${REDIS_PASSWORD}#$REDIS_PASSWORD#" application.yml
-                        sed -i "s#\${COOL_SMS_API_KEY}#$COOL_SMS_API_KEY#" application.yml
-                        sed -i "s#\${COOL_SMS_API_SECRET}#$COOL_SMS_API_SECRET#" application.yml
-                        sed -i "s#\${BUSINESS_SERVICE_KEY}#$BUSINESS_SERVICE_KEY#" application.yml
-                        sed -i "s#\${KAKAO_API_KEY}#$KAKAO_API_KEY#" application.yml
-                        sed -i "s#\${FUEL_API_KEY}#$FUEL_API_KEY#" application.yml
-                        sed -i "s#\${MONGO_URI}#$MONGO_URI#" application.yml
-                        """
+                    withCredentials([
+                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
+                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'JWT_SECRET_KEY', variable: 'JWT_SECRET_KEY'),
+                        string(credentialsId: 'JWT_ACCESS_EXPIRED_TIME_MS', variable: 'JWT_ACCESS_EXPIRED_TIME_MS'),
+                        string(credentialsId: 'JWT_REFRESH_EXPIRED_TIME_MS', variable: 'JWT_REFRESH_EXPIRED_TIME_MS'),
+                        string(credentialsId: 'S3_ACCESS_KEY', variable: 'S3_ACCESS_KEY'),
+                        string(credentialsId: 'S3_SECRET_KEY', variable: 'S3_SECRET_KEY'),
+                        string(credentialsId: 'S3_BUCKET', variable: 'S3_BUCKET'),
+                        string(credentialsId: 'S3_REGION', variable: 'S3_REGION'),
+                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                        string(credentialsId: 'COOL_SMS_API_KEY', variable: 'COOL_SMS_API_KEY'),
+                        string(credentialsId: 'COOL_SMS_API_SECRET', variable: 'COOL_SMS_API_SECRET'),
+                        string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
+                        string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
+                        string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
+                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
+                        // 필요한 만큼 추가
+                    ]) {
+                        // application.yml 파일이 위치한 디렉토리로 이동
+                        dir('src/main/resources') {
+                            // 변수 치환
+                            sh """
+                            sed -i 's#\\\${DB_URL}#${DB_URL}#g' application.yml
+                            sed -i 's#\\\${DB_USERNAME}#${DB_USERNAME}#g' application.yml
+                            sed -i 's#\\\${DB_PASSWORD}#${DB_PASSWORD}#g' application.yml
+                            sed -i 's#\\\${JWT_SECRET_KEY}#${JWT_SECRET_KEY}#g' application.yml
+                            sed -i 's#\\\${JWT_ACCESS_EXPIRED_TIME_MS}#${JWT_ACCESS_EXPIRED_TIME_MS}#g' application.yml
+                            sed -i 's#\\\${JWT_REFRESH_EXPIRED_TIME_MS}#${JWT_REFRESH_EXPIRED_TIME_MS}#g' application.yml
+                            sed -i 's#\\\${S3_ACCESS_KEY}#${S3_ACCESS_KEY}#g' application.yml
+                            sed -i 's#\\\${S3_SECRET_KEY}#${S3_SECRET_KEY}#g' application.yml
+                            sed -i 's#\\\${S3_BUCKET}#${S3_BUCKET}#g' application.yml
+                            sed -i 's#\\\${S3_REGION}#${S3_REGION}#g' application.yml
+                            sed -i 's#\\\${REDIS_HOST}#${REDIS_HOST}#g' application.yml
+                            sed -i 's#\\\${REDIS_PASSWORD}#${REDIS_PASSWORD}#g' application.yml
+                            sed -i 's#\\\${COOL_SMS_API_KEY}#${COOL_SMS_API_KEY}#g' application.yml
+                            sed -i 's#\\\${COOL_SMS_API_SECRET}#${COOL_SMS_API_SECRET}#g' application.yml
+                            sed -i 's#\\\${BUSINESS_SERVICE_KEY}#${BUSINESS_SERVICE_KEY}#g' application.yml
+                            sed -i 's#\\\${KAKAO_API_KEY}#${KAKAO_API_KEY}#g' application.yml
+                            sed -i 's#\\\${FUEL_API_KEY}#${FUEL_API_KEY}#g' application.yml
+                            sed -i 's#\\\${MONGO_URI}#${MONGO_URI}#g' application.yml
+                            """
+                        }
+                        // 프로젝트 루트 디렉토리로 이동하여 빌드 수행
+                        sh './gradlew clean build'
                     }
-                    // 프로젝트 루트 디렉토리로 이동하여 빌드 수행
-                    sh './gradlew clean build'
                 }
             }
         }
