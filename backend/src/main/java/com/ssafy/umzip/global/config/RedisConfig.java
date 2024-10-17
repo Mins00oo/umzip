@@ -18,9 +18,9 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 @Setter
 public class RedisConfig {
 
-    @Value("${REDIS_HOST}")
+    @Value("${spring.data.redis.host}")
     private String host;
-    @Value("${REDIS_PASSWORD}")
+    @Value("${spring.data.redis.password}")
     private String password;
 
     @Bean
