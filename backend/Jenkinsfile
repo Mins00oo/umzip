@@ -8,6 +8,28 @@ pipeline {
         CONTAINER_NAME = 'backend-application' // Docker 컨테이너 이름
     }
 
+    parameters {
+        string(name: 'DB_URL', defaultValue: '', description: 'Database URL')
+        string(name: 'DB_USERNAME', defaultValue: '', description: 'Database Username')
+        string(name: 'DB_PASSWORD', defaultValue: '', description: 'Database Password')
+        string(name: 'JWT_SECRET_KEY', defaultValue: '', description: 'JWT Secret Key')
+        string(name: 'JWT_ACCESS_EXPIRED_TIME_MS', defaultValue: '', description: 'JWT Access Token Expiration Time')
+        string(name: 'S3_ACCESS_KEY', defaultValue: '', description: 'AWS S3 Access Key')
+        string(name: 'S3_SECRET_KEY', defaultValue: '', description: 'AWS S3 Secret Key')
+        string(name: 'S3_BUCKET', defaultValue: '', description: 'AWS S3 Bucket Name')
+        string(name: 'S3_REGION', defaultValue: '', description: 'AWS S3 Region')
+        string(name: 'REDIS_HOST', defaultValue: '', description: 'Redis Host')
+        string(name: 'REDIS_PASSWORD', defaultValue: '', description: 'Redis Password')
+        string(name: 'COOL_SMS_API_KEY', defaultValue: '', description: 'Cool SMS API Key')
+        string(name: 'COOL_SMS_API_SECRET', defaultValue: '', description: 'Cool SMS API Secret')
+        string(name: 'JWT_REFRESH_EXPIRED_TIME_MS', defaultValue: '', description: 'JWT Refresh Token Expiration Time')
+        string(name: 'BUSINESS_SERVICE_KEY', defaultValue: '', description: 'Business Service Key')
+        string(name: 'KAKAO_API_KEY', defaultValue: '', description: 'Kakao API Key')
+        string(name: 'FUEL_API_KEY', defaultValue: '', description: 'Fuel API Key')
+        string(name: 'MONGO_URI', defaultValue: '', description: 'MongoDB URI')
+        // 필요한 만큼 추가
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -33,30 +55,32 @@ pipeline {
         stage('Build') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    withCredentials([
-                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
-                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
-                        string(credentialsId: 'JWT_SECRET_KEY', variable: 'JWT_SECRET_KEY'),
-                        string(credentialsId: 'JWT_ACCESS_EXPIRED_TIME_MS', variable: 'JWT_ACCESS_EXPIRED_TIME_MS'),
-                        string(credentialsId: 'S3_ACCESS_KEY', variable: 'S3_ACCESS_KEY'),
-                        string(credentialsId: 'S3_SECRET_KEY', variable: 'S3_SECRET_KEY'),
-                        string(credentialsId: 'S3_BUCKET', variable: 'S3_BUCKET'),
-                        string(credentialsId: 'S3_REGION', variable: 'S3_REGION'),
-                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
-                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
-                        string(credentialsId: 'COOL_SMS_API_KEY', variable: 'COOL_SMS_API_KEY'),
-                        string(credentialsId: 'COOL_SMS_API_SECRET', variable: 'COOL_SMS_API_SECRET'),
-                        string(credentialsId: 'JWT_REFRESH_EXPIRED_TIME_MS', variable: 'JWT_REFRESH_EXPIRED_TIME_MS'),
-                        string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
-                        string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
-                        string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
-                        // 필요한 만큼 추가
-                    ]) {
-                        // 빌드
-                         sh './gradlew clean build'
+                    // application.yml 파일이 위치한 디렉토리로 이동
+                    dir('src/main/resources') {
+                        // 변수 치환
+                        sh """
+                        sed -i 's#\\\${DB_URL}#${params.DB_URL}#g' application.yml
+                        sed -i 's#\\\${DB_USERNAME}#${params.DB_USERNAME}#g' application.yml
+                        sed -i 's#\\\${DB_PASSWORD}#${params.DB_PASSWORD}#g' application.yml
+                        sed -i 's#\\\${JWT_SECRET_KEY}#${params.JWT_SECRET_KEY}#g' application.yml
+                        sed -i 's#\\\${JWT_ACCESS_EXPIRED_TIME_MS}#${params.JWT_ACCESS_EXPIRED_TIME_MS}#g' application.yml
+                        sed -i 's#\\\${JWT_REFRESH_EXPIRED_TIME_MS}#${params.JWT_REFRESH_EXPIRED_TIME_MS}#g' application.yml
+                        sed -i 's#\\\${S3_ACCESS_KEY}#${params.S3_ACCESS_KEY}#g' application.yml
+                        sed -i 's#\\\${S3_SECRET_KEY}#${params.S3_SECRET_KEY}#g' application.yml
+                        sed -i 's#\\\${S3_BUCKET}#${params.S3_BUCKET}#g' application.yml
+                        sed -i 's#\\\${S3_REGION}#${params.S3_REGION}#g' application.yml
+                        sed -i 's#\\\${REDIS_HOST}#${params.REDIS_HOST}#g' application.yml
+                        sed -i 's#\\\${REDIS_PASSWORD}#${params.REDIS_PASSWORD}#g' application.yml
+                        sed -i 's#\\\${COOL_SMS_API_KEY}#${params.COOL_SMS_API_KEY}#g' application.yml
+                        sed -i 's#\\\${COOL_SMS_API_SECRET}#${params.COOL_SMS_API_SECRET}#g' application.yml
+                        sed -i 's#\\\${BUSINESS_SERVICE_KEY}#${params.BUSINESS_SERVICE_KEY}#g' application.yml
+                        sed -i 's#\\\${KAKAO_API_KEY}#${params.KAKAO_API_KEY}#g' application.yml
+                        sed -i 's#\\\${FUEL_API_KEY}#${params.FUEL_API_KEY}#g' application.yml
+                        sed -i 's#\\\${MONGO_URI}#${params.MONGO_URI}#g' application.yml
+                        """
                     }
+                    // 프로젝트 루트 디렉토리로 이동하여 빌드 수행
+                    sh './gradlew clean build'
                 }
             }
         }
@@ -94,54 +118,13 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    withCredentials([
-                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
-                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
-                        string(credentialsId: 'JWT_SECRET_KEY', variable: 'JWT_SECRET_KEY'),
-                        string(credentialsId: 'JWT_ACCESS_EXPIRED_TIME_MS', variable: 'JWT_ACCESS_EXPIRED_TIME_MS'),
-                        string(credentialsId: 'S3_ACCESS_KEY', variable: 'S3_ACCESS_KEY'),
-                        string(credentialsId: 'S3_SECRET_KEY', variable: 'S3_SECRET_KEY'),
-                        string(credentialsId: 'S3_BUCKET', variable: 'S3_BUCKET'),
-                        string(credentialsId: 'S3_REGION', variable: 'S3_REGION'),
-                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
-                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
-                        string(credentialsId: 'COOL_SMS_API_KEY', variable: 'COOL_SMS_API_KEY'),
-                        string(credentialsId: 'COOL_SMS_API_SECRET', variable: 'COOL_SMS_API_SECRET'),
-                        string(credentialsId: 'JWT_REFRESH_EXPIRED_TIME_MS', variable: 'JWT_REFRESH_EXPIRED_TIME_MS'),
-                        string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
-                        string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
-                        string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
-                        // 필요한 만큼 추가
-                    ]) {
-                        sh """
-                        echo "Building new Docker image: ${DOCKER_IMAGE}"
-                        docker build -t ${DOCKER_IMAGE} .
+                    sh """
+                    echo "Building new Docker image: ${DOCKER_IMAGE}"
+                    docker build -t ${DOCKER_IMAGE} .
 
-                        echo "Running new Docker container: ${CONTAINER_NAME}"
-                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 \\
-                            -e DB_URL=${DB_URL} \\
-                            -e DB_USERNAME=${DB_USERNAME} \\
-                            -e DB_PASSWORD=${DB_PASSWORD} \\
-                            -e JWT_SECRET_KEY=${JWT_SECRET_KEY} \\
-                            -e JWT_ACCESS_EXPIRED_TIME_MS=${JWT_ACCESS_EXPIRED_TIME_MS} \\
-                            -e JWT_REFRESH_EXPIRED_TIME_MS=${JWT_REFRESH_EXPIRED_TIME_MS} \\
-                            -e S3_ACCESS_KEY=${S3_ACCESS_KEY} \\
-                            -e S3_SECRET_KEY=${S3_SECRET_KEY} \\
-                            -e S3_BUCKET=${S3_BUCKET} \\
-                            -e S3_REGION=${S3_REGION} \\
-                            -e REDIS_HOST=${REDIS_HOST} \\
-                            -e REDIS_PASSWORD=${REDIS_PASSWORD} \\
-                            -e COOL_SMS_API_KEY=${COOL_SMS_API_KEY} \\
-                            -e COOL_SMS_API_SECRET=${COOL_SMS_API_SECRET} \\
-                            -e BUSINESS_SERVICE_KEY=${BUSINESS_SERVICE_KEY} \\
-                            -e KAKAO_API_KEY=${KAKAO_API_KEY} \\
-                            -e FUEL_API_KEY=${FUEL_API_KEY} \\
-                            -e MONGO_URI=${MONGO_URI} \\
-                            ${DOCKER_IMAGE}
-                        """
-                    }
+                    echo "Running new Docker container: ${CONTAINER_NAME}"
+                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
+                    """
                 }
             }
         }
