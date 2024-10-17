@@ -55,14 +55,6 @@ pipeline {
                         string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
                     ]) {
                         // application.yml 파일이 위치한 디렉토리로 이동
-                        // 다음과 같이 steps 내에서 사용하도록 변경
-                        script {
-                            echo "S3_ACCESS_KEY: ${S3_ACCESS_KEY}"
-                            echo "S3_SECRET_KEY: ${S3_SECRET_KEY}"
-                            echo "S3_BUCKET: ${S3_BUCKET}"
-                            echo "S3_REGION: ${S3_REGION}"
-                        }
-
                         dir('src/main/resources') {
                             // 변수 치환
                             sh """
