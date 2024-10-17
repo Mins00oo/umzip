@@ -13,14 +13,9 @@ pipeline {
             steps {
                 checkout([$class: 'GitSCM',
                           branches: [[name: 'main']],
-                          userRemoteConfigs: [[url: 'https://github.com/Mins00oo/umzip.git', credentialsId: 'accesstoken_username']]
+                          userRemoteConfigs: [[url: "${REPO_URL}", credentialsId: 'accesstoken_username']]
                 ])
-            }
-
-            steps {
-                // backend 폴더로 이동
                 dir("${BACKEND_DIR}") {
-                    // Checkout 완료 후 backend 폴더로 이동
                     echo "Moved to ${BACKEND_DIR} directory"
                 }
             }
