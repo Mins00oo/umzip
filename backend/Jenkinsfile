@@ -55,7 +55,7 @@ pipeline {
                         // 필요한 만큼 추가
                     ]) {
                         // 빌드
-                        sh './gradlew build'
+                         sh './gradlew clean build'
                     }
                 }
             }
