@@ -10,15 +10,13 @@ pipeline {
 
     stages {
         stage('Checkout') {
-          steps {
+            steps {
                 checkout([$class: 'GitSCM',
                           branches: [[name: 'main']],
                           userRemoteConfigs: [[url: 'https://github.com/Mins00oo/umzip.git', credentialsId: 'accesstoken_username']]
                 ])
             }
-        }
 
-        stage('Change Directory') {
             steps {
                 // backend 폴더로 이동
                 dir("${BACKEND_DIR}") {
@@ -40,7 +38,10 @@ pipeline {
         stage('Build') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh './gradlew build'
+                    withCredentials([file(credentialsId: 'APPLICATION_ENV_YML', variable: 'APP_ENV_FILE')]) {
+                        sh './gradlew build'
+                        sh 'cp $APP_ENV_FILE ./application-env.yml'
+                    }
                 }
             }
         }
@@ -63,14 +64,7 @@ pipeline {
                         docker rm ${CONTAINER_NAME}
                     fi
                     """
-                }
-            }
-        }
-
-        stage('Remove Existing Docker Image') {
-            steps {
-                // 기존 도커 이미지를 삭제
-                script {
+                    // 기존 도커 이미지를 삭제
                     sh """
                     if [ \$(docker images -q ${DOCKER_IMAGE}) ]; then
                         echo "Removing image: ${DOCKER_IMAGE}"
@@ -81,19 +75,16 @@ pipeline {
             }
         }
 
-        stage('Build and Run Docker') {
+        stage('Run Docker Container') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    // Docker 이미지를 빌드하고 컨테이너를 실행
-                    script {
-                        sh """
-                        echo "Building new Docker image: ${DOCKER_IMAGE}"
-                        docker build -t ${DOCKER_IMAGE} .
+                    sh """
+                    echo "Building new Docker image: ${DOCKER_IMAGE}"
+                    docker build -t ${DOCKER_IMAGE} .
 
-                        echo "Running new Docker container: ${CONTAINER_NAME}"
-                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
-                        """
-                    }
+                    echo "Running new Docker container: ${CONTAINER_NAME}"
+                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
+                    """
                 }
             }
         }
