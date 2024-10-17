@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Git 레포지토리에서 코드 체크아웃
-                git credentialsId: 'github-credentials-id', url: "${REPO_URL}"
+                git credentialsId: 'accesstoken_username', url: "${REPO_URL}"
             }
         }
 
