@@ -10,9 +10,11 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                // Git 레포지토리에서 코드 체크아웃
-                git credentialsId: 'accesstoken_username', url: "${REPO_URL}"
+          steps {
+                checkout([$class: 'GitSCM',
+                          branches: [[name: 'main']],
+                          userRemoteConfigs: [[url: 'https://github.com/Mins00oo/umzip.git', credentialsId: 'accesstoken_username']]
+                ])
             }
         }
 
