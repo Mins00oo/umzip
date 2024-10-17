@@ -8,28 +8,6 @@ pipeline {
         CONTAINER_NAME = 'backend-application' // Docker 컨테이너 이름
     }
 
-    parameters {
-        string(name: 'DB_URL', defaultValue: '', description: 'Database URL')
-        string(name: 'DB_USERNAME', defaultValue: '', description: 'Database Username')
-        string(name: 'DB_PASSWORD', defaultValue: '', description: 'Database Password')
-        string(name: 'JWT_SECRET_KEY', defaultValue: '', description: 'JWT Secret Key')
-        string(name: 'JWT_ACCESS_EXPIRED_TIME_MS', defaultValue: '', description: 'JWT Access Token Expiration Time')
-        string(name: 'S3_ACCESS_KEY', defaultValue: '', description: 'AWS S3 Access Key')
-        string(name: 'S3_SECRET_KEY', defaultValue: '', description: 'AWS S3 Secret Key')
-        string(name: 'S3_BUCKET', defaultValue: '', description: 'AWS S3 Bucket Name')
-        string(name: 'S3_REGION', defaultValue: '', description: 'AWS S3 Region')
-        string(name: 'REDIS_HOST', defaultValue: '', description: 'Redis Host')
-        string(name: 'REDIS_PASSWORD', defaultValue: '', description: 'Redis Password')
-        string(name: 'COOL_SMS_API_KEY', defaultValue: '', description: 'Cool SMS API Key')
-        string(name: 'COOL_SMS_API_SECRET', defaultValue: '', description: 'Cool SMS API Secret')
-        string(name: 'JWT_REFRESH_EXPIRED_TIME_MS', defaultValue: '', description: 'JWT Refresh Token Expiration Time')
-        string(name: 'BUSINESS_SERVICE_KEY', defaultValue: '', description: 'Business Service Key')
-        string(name: 'KAKAO_API_KEY', defaultValue: '', description: 'Kakao API Key')
-        string(name: 'FUEL_API_KEY', defaultValue: '', description: 'Fuel API Key')
-        string(name: 'MONGO_URI', defaultValue: '', description: 'MongoDB URI')
-        // 필요한 만큼 추가
-    }
-
     stages {
         stage('Checkout') {
             steps {
