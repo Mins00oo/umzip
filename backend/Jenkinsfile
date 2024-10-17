@@ -44,6 +44,59 @@ pipeline {
                 }
             }
         }
+
+        stage('Stop and Remove Existing Docker Container') {
+            steps {
+                // 기존 도커 컨테이너 중지 및 삭제
+                script {
+                    // 이미 실행 중인 컨테이너를 중지
+                    sh """
+                    if [ \$(docker ps -q -f name=${CONTAINER_NAME}) ]; then
+                        echo "Stopping running container: ${CONTAINER_NAME}"
+                        docker stop ${CONTAINER_NAME}
+                    fi
+                    """
+                    // 컨테이너 삭제
+                    sh """
+                    if [ \$(docker ps -a -q -f name=${CONTAINER_NAME}) ]; then
+                        echo "Removing container: ${CONTAINER_NAME}"
+                        docker rm ${CONTAINER_NAME}
+                    fi
+                    """
+                }
+            }
+        }
+
+        stage('Remove Existing Docker Image') {
+            steps {
+                // 기존 도커 이미지를 삭제
+                script {
+                    sh """
+                    if [ \$(docker images -q ${DOCKER_IMAGE}) ]; then
+                        echo "Removing image: ${DOCKER_IMAGE}"
+                        docker rmi -f ${DOCKER_IMAGE}
+                    fi
+                    """
+                }
+            }
+        }
+
+        stage('Build and Run Docker') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    // Docker 이미지를 빌드하고 컨테이너를 실행
+                    script {
+                        sh """
+                        echo "Building new Docker image: ${DOCKER_IMAGE}"
+                        docker build -t ${DOCKER_IMAGE} .
+
+                        echo "Running new Docker container: ${CONTAINER_NAME}"
+                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
+                        """
+                    }
+                }
+            }
+        }
     }
 
     post {
