@@ -82,9 +82,7 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.result.point").value(responseDto.getPoint()))
                 .andExpect(jsonPath("$.result.email").value(responseDto.getEmail()))
                 .andExpect(jsonPath("$.result.avgScore").value(responseDto.getAvgScore()))
-                .andExpect(jsonPath("$.result.imageUrl").value(responseDto.getImageUrl()))
-                .andDo(print());
-
+                .andExpect(jsonPath("$.result.imageUrl").value(responseDto.getImageUrl()));
         // assert
         verify(memberService, times(1)).retrieveMember(memberId, requestId);
     }
@@ -94,6 +92,7 @@ public class MemberControllerTest {
     @WithMockUser(username = "유저1", roles = "USER")
     public void createMember() throws Exception {
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto();
+
         requestDto.setName("홍길동");
         requestDto.setEmail("hong@example.com");
         requestDto.setPhone("010-1234-5678");
@@ -116,8 +115,7 @@ public class MemberControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.isSuccess").value(true))
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
-                .andExpect(jsonPath("$.code").value(100))
-                .andDo(print());
+                .andExpect(jsonPath("$.code").value(100));
 
         // assert
         verify(memberService, times(1)).createMember(any(MemberCreateRequestDto.class));

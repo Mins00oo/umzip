@@ -78,8 +78,7 @@ public class AuthControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(header().exists("Authorization"))
                 .andExpect(jsonPath("$.result.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.result.refreshToken").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$.result.refreshToken").isNotEmpty());
     }
 
     @Test
@@ -122,8 +121,7 @@ public class AuthControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(header().doesNotExist("Authorization"))
                 .andExpect(jsonPath("$.isSuccess").value("false"))
-                .andExpect(jsonPath("$.message").value("비밀번호 입력값이 잘못되었습니다."))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("비밀번호 입력값이 잘못되었습니다."));
     }
 
 }

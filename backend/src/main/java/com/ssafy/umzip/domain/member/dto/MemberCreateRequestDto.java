@@ -2,7 +2,9 @@ package com.ssafy.umzip.domain.member.dto;
 
 import com.ssafy.umzip.domain.member.entity.Member;
 import com.ssafy.umzip.global.util.s3.S3UploadDto;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
