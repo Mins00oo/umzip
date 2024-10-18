@@ -1,6 +1,6 @@
 <configuration>
     <!-- 로그 파일 경로 설정 -->
-    <property name="LOG_PATH" value="/logs" />
+    <property name="LOG_PATH" value="${LOG_PATH:-logs}" />
     <property name="APP_LOG_FILE" value="${LOG_PATH}/app.log" />
     <property name="DB_LOG_FILE" value="${LOG_PATH}/db.log" />
 
@@ -31,7 +31,7 @@
         </encoder>
     </appender>
 
-    <!-- 콘솔 출력 Appender (필요에 따라 포함) -->
+    <!-- 콘솔 출력 Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -54,6 +54,7 @@
     <!-- 루트 Logger 설정 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
+        <!-- 운영 환경에서만 APP_FILE 사용 -->
         <appender-ref ref="APP_FILE" />
     </root>
 </configuration>

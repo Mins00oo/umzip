@@ -125,6 +125,7 @@ pipeline {
                     echo "Running new Docker container: ${CONTAINER_NAME}"
                     docker run -d --name ${CONTAINER_NAME} -p 8080:8080 \\
                         -v /home/ubuntu/be_app/logs:/logs \\
+                        -e LOG_PATH=/logs \\
                         ${DOCKER_IMAGE}
                     """
                 }
