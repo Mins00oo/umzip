@@ -4,8 +4,8 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/Mins00oo/umzip.git'
         BACKEND_DIR = 'backend'
-        DOCKER_IMAGE = 'be-app' // Docker 이미지 이름
-        CONTAINER_NAME = 'backend-application' // Docker 컨테이너 이름
+        DOCKER_IMAGE = 'be-app'
+        CONTAINER_NAME = 'backend-application'
     }
 
     stages {
@@ -86,7 +86,7 @@ pipeline {
         }
 
 
-        stage('Stop and Remove Existing Docker Container') {
+        stage('Remove Existing Docker Container') {
             steps {
                 // 기존 도커 컨테이너 중지 및 삭제
                 script {
@@ -115,7 +115,7 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Deploy') {
             steps {
                 dir("${BACKEND_DIR}") {
                     sh """
@@ -123,9 +123,21 @@ pipeline {
                     docker build -t ${DOCKER_IMAGE} .
 
                     echo "Running new Docker container: ${CONTAINER_NAME}"
-                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_IMAGE}
+                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 \\
+                        -v /home/ubuntu/be_app/logs:/logs \\
+                        ${DOCKER_IMAGE}
                     """
                 }
+            }
+        }
+
+        post {
+            success {
+                echo 'success'
+            }
+
+            failure {
+                echo 'failed'
             }
         }
     }
