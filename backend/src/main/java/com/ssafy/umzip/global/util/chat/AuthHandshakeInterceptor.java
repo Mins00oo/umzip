@@ -15,6 +15,10 @@ import java.util.Map;
 @Component
 @Slf4j
 public class AuthHandshakeInterceptor implements HandshakeInterceptor {
+
+    /**
+     * 클라이언트가 서버에 연결을 시도할 때, 쿼리 파라미터에서 accessToken을 추출해 WebSocket 세션에 저장
+     */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
@@ -32,6 +36,11 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         log.info("after handShake");
     }
 
+    /**
+     * URI 쿼리 파라미터를 파싱해 key-value 형태로 저장하는 메서드
+     * @param query
+     * @return
+     */
     private Map<String, String> parseQuery(String query) {
         Map<String, String> queryPairs = new LinkedHashMap<>();
         String[] pairs = query.split("&");

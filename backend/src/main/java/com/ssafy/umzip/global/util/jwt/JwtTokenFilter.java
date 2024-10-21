@@ -29,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     private static final List<String> PERMIT_URLS =
-            List.of("/api/users/**", "/api/login", "/api/auth/**");
+            List.of("/api/users/**", "/api/login", "/api/auth/**", "/ws/**");
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
