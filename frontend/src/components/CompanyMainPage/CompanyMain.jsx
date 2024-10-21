@@ -83,7 +83,7 @@ const CompanyMain = () => {
         console.log("Connected: " + frame);
 
         client.subscribe(`/topic/user/${token}`, (message) => {
-          console.log(message.body);
+          console.log("subscribe topic/user", message.body);
 
           setUserId((prev) => {
             const updatedHistory = message.body;
@@ -94,7 +94,6 @@ const CompanyMain = () => {
 
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log("Received message: " + message.body);
-          // console.log(talkHistory)
           showReceivedMessage(message.body);
         });
       },
@@ -133,6 +132,7 @@ const CompanyMain = () => {
         body: JSON.stringify({
           content: userinput,
           type: "TALK",
+          chatRoomId: chatRoom,
         }),
         headers: {
           Authorization: `Bearer ${token}`,
