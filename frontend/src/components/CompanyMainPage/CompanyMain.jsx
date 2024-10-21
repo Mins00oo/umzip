@@ -1,35 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from "framer-motion"
-import useAuthStore from '../../store/store';
-import DeliverReservation from "./DeliverReservation"
-import CleanReservation from "./CleanReservation"
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import useAuthStore from "../../store/store";
+import DeliverReservation from "./DeliverReservation";
+import CleanReservation from "./CleanReservation";
+import { useNavigate } from "react-router-dom";
 import { Client } from "@stomp/stompjs";
-import chatToCompanyStore from '../../store/chatToCompanyStore'
+import chatToCompanyStore from "../../store/chatToCompanyStore";
 
 const CompanyMain = () => {
   // const [requestList, setrequestList] = useState("용달")
-  const { makeChatRoom } = chatToCompanyStore()
-  const [chatRoom, setChatRoom] = useState("")
-    const scrollToBottom = () => {
-        // 스크롤 위치를 항상 맨 아래로 조절
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-    };
-    const [userId, setUserId] = useState("")
-    const [talkHistory, setTalkHistory] = useState([])
-    const chatContainerRef = useRef();
-    const [userinput, setuserinput] = useState("");
-    const [openModal, setOpenModal] = useState(false)
-    const stompClientRef = useRef(null);
+  const { makeChatRoom } = chatToCompanyStore();
+  const [chatRoom, setChatRoom] = useState("");
+  const scrollToBottom = () => {
+    // 스크롤 위치를 항상 맨 아래로 조절
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  };
+  const [userId, setUserId] = useState("");
+  const [talkHistory, setTalkHistory] = useState([]);
+  const chatContainerRef = useRef();
+  const [userinput, setuserinput] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const stompClientRef = useRef(null);
 
-    const handleinput = (event) => {
-        setuserinput(event.target.value);
-    };
-    useEffect(() => {
-        scrollToBottom();
-    }, [openModal, talkHistory ]);
+  const handleinput = (event) => {
+    setuserinput(event.target.value);
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [openModal, talkHistory]);
 
   const buttonVariants = {
     hover: {
@@ -39,79 +40,76 @@ const CompanyMain = () => {
       },
     },
   };
-  const userData = JSON.parse(localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo'))
+  const userData = JSON.parse(
+    localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo")
+  );
   // console.log(userData)
 
   // 현재 role상태에 따라 버튼 활성화를 위한 변수
-  const userRole = userData.roleList
+  const userRole = userData.roleList;
   // console.log(userRole)
-  const [roleBtn, setRoleBtn] = useState(userRole[0])
+  const [roleBtn, setRoleBtn] = useState(userRole[0]);
   const logout = useAuthStore((state) => state.logout);
 
   const navigate = useNavigate();
   const { authChange } = useAuthStore();
 
-
   const handleDeliveryClick = async (role, authNum) => {
     if (!userRole.includes(role)) {
-      alert('사업자 등록을 해주세요!!');
-      return; 
+      alert("사업자 등록을 해주세요!!");
+      return;
     }
-    
+
     try {
       await authChange(authNum);
       // Then set role
       setRoleBtn(role);
     } catch (error) {
-      console.error('오 이런...:', error);
+      console.error("오 이런...:", error);
     }
-};
-
+  };
 
   const handleLogout = async (event) => {
     event.preventDefault();
-    await logout(navigate)
+    await logout(navigate);
   };
 
   const socket = (res) => {
     const { token } = useAuthStore.getState();
-    console.log(res)
+    console.log(res);
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
-      // brokerURL: `ws://192.168.30.125:8080/ws?accessToken=${token}`,
-      // 여기에 다른 설정도 추가할 수 있습니다.
       onConnect: (frame) => {
-        console.log('Connected: ' + frame);
+        console.log("Connected: " + frame);
 
         client.subscribe(`/topic/user/${token}`, (message) => {
-          console.log(message.body)
+          console.log(message.body);
 
           setUserId((prev) => {
-            const updatedHistory = message.body
+            const updatedHistory = message.body;
             // console.log(updatedHistory);
             return updatedHistory;
-          })
+          });
         });
 
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
-          console.log('Received message: ' + message.body);
+          console.log("Received message: " + message.body);
           // console.log(talkHistory)
           showReceivedMessage(message.body);
         });
       },
 
       onStompError: (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      }
+        console.error("Broker reported error: " + frame.headers["message"]);
+        console.error("Additional details: " + frame.body);
+      },
     });
 
     return client;
   };
+
   const showReceivedMessage = (message) => {
     try {
-      // console.log(message)
-
       const jsonData = JSON.parse(message);
       console.log(jsonData);
 
@@ -119,11 +117,9 @@ const CompanyMain = () => {
         const updatedHistory = [...prevTalkHistory, jsonData];
         // console.log(updatedHistory);
         return updatedHistory;
-
-      })
-
+      });
     } catch (error) {
-      console.error('Error parsing received message:', error);
+      console.error("Error parsing received message:", error);
     }
   };
 
@@ -136,61 +132,71 @@ const CompanyMain = () => {
         destination: `/app/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
-          type: 'TALK'
+          type: "TALK",
         }),
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
     } else {
-      console.error('Message is empty or stomp client is not connected.');
+      console.error("Message is empty or stomp client is not connected.");
     }
   };
+
   const stopSocketCommunication = () => {
     if (stompClientRef.current) {
-
       stompClientRef.current.deactivate();
-      console.log("연결X")
+      console.log("연결X");
     }
   };
 
   // 권한변경 함수 넣어주기
   const chatModal = async (res) => {
-    setOpenModal(true)
-    setChatRoom(res)
-    console.log(res)
     const stompClient = socket(res);
     stompClientRef.current = stompClient;
-    stompClient.onConnect(
-        stompClient.activate()
-    )
-}
+    stompClient.onConnect(stompClient.activate());
+    setOpenModal(true);
+    setChatRoom(res);
+  };
+
   return (
     <>
       <AnimatePresence>
         {openModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setOpenModal(false); setTalkHistory([]); setuserinput(''); stopSocketCommunication() }}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setOpenModal(false);
+              setTalkHistory([]);
+              setuserinput("");
+              stopSocketCommunication();
+            }}
             style={{
               zIndex: "99",
-              position: 'fixed',
+              position: "fixed",
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <div style={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
               display: "flex",
-              position: 'relative',
-              width: '40%',
-              height: "70%",
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '8px',
-            }}>
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                position: "relative",
+                width: "40%",
+                height: "70%",
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
               <div
                 onClick={(e) => e.stopPropagation()}
                 ref={chatContainerRef}
@@ -198,44 +204,85 @@ const CompanyMain = () => {
                   width: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  overflowY: "auto"
+                  overflowY: "auto",
                 }}
               >
-                {userId && talkHistory && talkHistory.map((items, index) => (
-                  <div key={index} className='d-flex  flex-column'>
-                    <div className='' style={{ alignSelf: userId !== items.senderId ? "flex-start" : "flex-end", }}>
-                      {userId !== items.senderId ? <div className='d-flex align-items-center gap-1 justify-content-center'><img src={items.senderProfileImage} style={{ width: "2rem", height: "2rem" }} className='rounded-pill' />
-                        <p className='m-0'>{items.senderName}</p></div> : <div className='d-flex align-items-center gap-1 justify-content-center'><p className='m-0'>{items.senderName}</p><img src={items.senderProfileImage} style={{ width: "2rem", height: "2rem" }} className='rounded-pill' />
-                      </div>}
-                    </div>
-                    <div
-                      key={index}
-                      style={{
+                {userId &&
+                  talkHistory &&
+                  talkHistory.map((items, index) => (
+                    <div key={index} className="d-flex  flex-column">
+                      <div
+                        className=""
+                        style={{
+                          alignSelf:
+                            userId !== items.senderId
+                              ? "flex-start"
+                              : "flex-end",
+                        }}
+                      >
+                        {userId !== items.senderId ? (
+                          <div className="d-flex align-items-center gap-1 justify-content-center">
+                            <img
+                              src={items.senderProfileImage}
+                              style={{ width: "2rem", height: "2rem" }}
+                              className="rounded-pill"
+                            />
+                            <p className="m-0">{items.senderName}</p>
+                          </div>
+                        ) : (
+                          <div className="d-flex align-items-center gap-1 justify-content-center">
+                            <p className="m-0">{items.senderName}</p>
+                            <img
+                              src={items.senderProfileImage}
+                              style={{ width: "2rem", height: "2rem" }}
+                              className="rounded-pill"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        key={index}
+                        style={{
+                          maxWidth: "70%",
+                          margin: "5px",
+                          padding: "10px",
+                          borderRadius: "10px",
+                          alignSelf:
+                            userId !== items.senderId
+                              ? "flex-start"
+                              : "flex-end",
+                          background:
+                            userId !== items.senderId ? "#e6e6e6" : "#4caf50",
 
-                        maxWidth: "70%",
-                        margin: "5px",
-                        padding: "10px",
-                        borderRadius: "10px",
-                        alignSelf: userId !== items.senderId ? "flex-start" : "flex-end",
-                        background: userId !== items.senderId ? "#e6e6e6" : "#4caf50",
-
-                        color: userId !== items.senderId ? "#000" : "#fff",
-                      }}
-                    >
-                      {items.content}
+                          color: userId !== items.senderId ? "#000" : "#fff",
+                        }}
+                      >
+                        {items.content}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 <div style={{ marginTop: "auto" }}>
-                  <form className='d-flex justify-content-around' onSubmit={(e) => { e.preventDefault(); sendMessage(); setuserinput(''); }}>
-                    <input value={userinput} className='col-10 border px-3 bg-white shadow-lg rounded-3' type='text' onChange={handleinput} />
-                    <button type="submit" className='btn btn-primary rounded-4'><img src='./Paper_Plane.png' /></button>
+                  <form
+                    className="d-flex justify-content-around"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      sendMessage();
+                      setuserinput("");
+                    }}
+                  >
+                    <input
+                      value={userinput}
+                      className="col-10 border px-3 bg-white shadow-lg rounded-3"
+                      type="text"
+                      onChange={handleinput}
+                    />
+                    <button type="submit" className="btn btn-primary rounded-4">
+                      <img src="./Paper_Plane.png" />
+                    </button>
                   </form>
                 </div>
-
               </div>
             </div>
-
           </motion.div>
         )}
       </AnimatePresence>
@@ -250,8 +297,8 @@ const CompanyMain = () => {
           transition={{ duration: 0.5 }}
           className="col-10 mt-5"
         >
-          <div className="col-12 px-3" style={{marginTop:"10rem"}}>
-            <div className="row my-5" style={{ height: "50%"  }}>
+          <div className="col-12 px-3" style={{ marginTop: "10rem" }}>
+            <div className="row my-5" style={{ height: "50%" }}>
               <div className="col-2 p-3 gap-3 d-flex flex-column align-items-center justify-content-center text-center border-dark-subtle border-end">
                 <img
                   src={userData.profileImage}
@@ -283,11 +330,11 @@ const CompanyMain = () => {
                   className="d-flex flex-column justify-content-center gap-5"
                   style={{ width: "11rem" }}
                 >
-
                   <motion.button
                     type="button"
-                    className={`btn btn-lg d-flex justify-content-center gap-4 align-items-center ${roleBtn === "DELIVER" ? "btn-primary" : "btn-secondary"
-                      }`}
+                    className={`btn btn-lg d-flex justify-content-center gap-4 align-items-center ${
+                      roleBtn === "DELIVER" ? "btn-primary" : "btn-secondary"
+                    }`}
                     variants={buttonVariants}
                     whileHover="hover"
                     style={{ width: "10rem" }}
@@ -303,8 +350,9 @@ const CompanyMain = () => {
 
                   <motion.button
                     type="button"
-                    className={`btn btn-lg d-flex justify-content-center gap-4 align-items-center ${roleBtn === "CLEAN" ? "btn-primary" : "btn-secondary"
-                      }`}
+                    className={`btn btn-lg d-flex justify-content-center gap-4 align-items-center ${
+                      roleBtn === "CLEAN" ? "btn-primary" : "btn-secondary"
+                    }`}
                     variants={buttonVariants}
                     style={{ width: "10rem" }}
                     whileHover="hover"
@@ -330,7 +378,11 @@ const CompanyMain = () => {
                   </motion.button>
                 </div>
               </div>
-              {roleBtn === "DELIVER" ? <DeliverReservation  chatModal={chatModal} /> : roleBtn === "CLEAN" ? <CleanReservation chatModal={chatModal} /> : null}
+              {roleBtn === "DELIVER" ? (
+                <DeliverReservation chatModal={chatModal} />
+              ) : roleBtn === "CLEAN" ? (
+                <CleanReservation chatModal={chatModal} />
+              ) : null}
             </div>
           </div>
         </motion.div>

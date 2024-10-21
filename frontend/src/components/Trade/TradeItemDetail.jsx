@@ -1,18 +1,18 @@
-import { useSubmit, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useSubmit, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { Navigation, Pagination } from 'swiper/modules';
-import BackButton from '../PublicUse/BackButton';
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
+import BackButton from "../PublicUse/BackButton";
 
-import classes from './TradeItemDetail.module.css';
-import { AnimatePresence, motion } from 'framer-motion';
-import useAuthStore from '../../store/store';
-import { Client } from '@stomp/stompjs';
-import { api } from '../../services/api';
+import classes from "./TradeItemDetail.module.css";
+import { AnimatePresence, motion } from "framer-motion";
+import useAuthStore from "../../store/store";
+import { Client } from "@stomp/stompjs";
+import { api } from "../../services/api";
 function ReportModal({ onClose }) {
   return (
     <AnimatePresence>
@@ -22,16 +22,16 @@ function ReportModal({ onClose }) {
         exit={{ opacity: 0 }}
         onClick={onClose}
         style={{
-          zIndex: '99',
-          position: 'fixed',
+          zIndex: "99",
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경색 및 투명도 조절
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경색 및 투명도 조절
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <motion.div
@@ -43,11 +43,11 @@ function ReportModal({ onClose }) {
             event.stopPropagation();
           }}
           style={{
-            position: 'relative',
-            width: '40%',
-            backgroundColor: 'white', // 내용의 배경색
-            padding: '20px',
-            borderRadius: '8px', // 내용의 모서리 둥글게
+            position: "relative",
+            width: "40%",
+            backgroundColor: "white", // 내용의 배경색
+            padding: "20px",
+            borderRadius: "8px", // 내용의 모서리 둥글게
           }}
         >
           <span onClick={onClose}>&times;</span>
@@ -70,17 +70,17 @@ function TradeItemDetail({ trade }) {
   const chatContainerRef = useRef();
   const [userId, setUserId] = useState(null);
   const [talkHistory, setTalkHistory] = useState([]);
-  const [userinput, setUserInput] = useState('');
+  const [userinput, setUserInput] = useState("");
   const createTime = new Date(trade.createDt);
-  const options = { timeZone: 'Asia/Seoul' };
-  const createTimeKST = new Date(createTime.toLocaleString('en-US', options));
+  const options = { timeZone: "Asia/Seoul" };
+  const createTimeKST = new Date(createTime.toLocaleString("en-US", options));
   const now = new Date();
   createTimeKST.setHours(createTimeKST.getHours() + 9);
   const diffTime = Math.abs(now - createTimeKST);
   const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
   const diffMinutes = Math.floor(diffTime / (1000 * 60));
 
-  let displayText = '';
+  let displayText = "";
 
   if (diffMinutes < 60) {
     displayText = `${diffMinutes}분 전`;
@@ -88,8 +88,8 @@ function TradeItemDetail({ trade }) {
     displayText = `${diffHours}시간 전`;
   } else {
     const yy = createTimeKST.getFullYear();
-    const mm = String(createTimeKST.getMonth() + 1).padStart(2, '0');
-    const dd = String(createTimeKST.getDate()).padStart(2, '0');
+    const mm = String(createTimeKST.getMonth() + 1).padStart(2, "0");
+    const dd = String(createTimeKST.getDate()).padStart(2, "0");
 
     displayText = `${yy}-${mm}-${dd}`;
   }
@@ -102,10 +102,10 @@ function TradeItemDetail({ trade }) {
   const hideModal = () => setModalShow(false);
 
   function startDeleteHandler() {
-    const proceed = window.confirm('Are you sure?');
+    const proceed = window.confirm("Are you sure?");
 
     if (proceed) {
-      submit(null, { method: 'delete' });
+      submit(null, { method: "delete" });
     }
   }
 
@@ -116,13 +116,13 @@ function TradeItemDetail({ trade }) {
   };
   const handleSale = async () => {
     try {
-      const response = await api.post('/trade-items/completed-sales', {
+      const response = await api.post("/trade-items/completed-sales", {
         boardId: trade.boardId,
       });
       navigate(-1);
       console.log(response);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -157,7 +157,7 @@ function TradeItemDetail({ trade }) {
       // brokerURL: `ws://192.168.30.145:8080/ws?accessToken=${token}`,
       // 여기에 다른 설정도 추가할 수 있습니다.
       onConnect: (frame) => {
-        console.log('Connected: ' + frame);
+        console.log("Connected: " + frame);
 
         client.subscribe(`/topic/user/${token}`, (message) => {
           setUserId((prev) => {
@@ -169,15 +169,15 @@ function TradeItemDetail({ trade }) {
 
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log(res);
-          console.log('Received message: ' + message.body);
+          console.log("Received message: " + message.body);
           // console.log(talkHistory)
           showReceivedMessage(message.body);
         });
       },
 
       onStompError: (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
+        console.error("Broker reported error: " + frame.headers["message"]);
+        console.error("Additional details: " + frame.body);
       },
     });
 
@@ -196,7 +196,7 @@ function TradeItemDetail({ trade }) {
         return updatedHistory;
       });
     } catch (error) {
-      console.error('Error parsing received message:', error);
+      console.error("Error parsing received message:", error);
     }
   };
 
@@ -209,7 +209,7 @@ function TradeItemDetail({ trade }) {
         destination: `/app/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
-          type: 'TALK',
+          type: "TALK",
           tradeId: tradeId,
         }),
         headers: {
@@ -217,7 +217,7 @@ function TradeItemDetail({ trade }) {
         },
       });
     } else {
-      console.error('Message is empty or stomp client is not connected.');
+      console.error("Message is empty or stomp client is not connected.");
     }
   };
   const MakeRoom = async ({ tradeId, memberId }) => {
@@ -238,7 +238,7 @@ function TradeItemDetail({ trade }) {
   const stopSocketCommunication = () => {
     if (stompClientRef.current) {
       stompClientRef.current.deactivate();
-      console.log('연결X');
+      console.log("연결X");
     }
   };
 
@@ -254,40 +254,40 @@ function TradeItemDetail({ trade }) {
             exit={{ opacity: 0 }}
             onClick={() => {
               setIsModalOpen(false);
-              setTalkHistory([]), setUserInput(''), stopSocketCommunication();
+              setTalkHistory([]), setUserInput(""), stopSocketCommunication();
             }}
             style={{
-              zIndex: '99',
-              position: 'fixed',
+              zIndex: "99",
+              position: "fixed",
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <div
               style={{
-                display: 'flex',
-                position: 'relative',
-                width: '40%',
-                height: '70%',
-                backgroundColor: 'white',
-                padding: '20px',
-                borderRadius: '8px',
+                display: "flex",
+                position: "relative",
+                width: "40%",
+                height: "70%",
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "8px",
               }}
             >
               <div
                 onClick={(e) => e.stopPropagation()}
                 ref={chatContainerRef}
                 style={{
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  overflowY: 'auto',
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  overflowY: "auto",
                 }}
               >
                 {userId &&
@@ -299,15 +299,15 @@ function TradeItemDetail({ trade }) {
                         style={{
                           alignSelf:
                             userId !== items.senderId
-                              ? 'flex-start'
-                              : 'flex-end',
+                              ? "flex-start"
+                              : "flex-end",
                         }}
                       >
                         {userId !== items.senderId ? (
                           <div className="d-flex align-items-center gap-1 justify-content-center">
                             <img
                               src={items.senderProfileImage}
-                              style={{ width: '2rem', height: '2rem' }}
+                              style={{ width: "2rem", height: "2rem" }}
                               className="rounded-pill"
                             />
                             <p className="m-0">{items.senderName}</p>
@@ -317,7 +317,7 @@ function TradeItemDetail({ trade }) {
                             <p className="m-0">{items.senderName}</p>
                             <img
                               src={items.senderProfileImage}
-                              style={{ width: '2rem', height: '2rem' }}
+                              style={{ width: "2rem", height: "2rem" }}
                               className="rounded-pill"
                             />
                           </div>
@@ -326,31 +326,31 @@ function TradeItemDetail({ trade }) {
                       <div
                         key={index}
                         style={{
-                          maxWidth: '70%',
-                          margin: '5px',
-                          padding: '10px',
-                          borderRadius: '10px',
+                          maxWidth: "70%",
+                          margin: "5px",
+                          padding: "10px",
+                          borderRadius: "10px",
                           alignSelf:
                             userId !== items.senderId
-                              ? 'flex-start'
-                              : 'flex-end',
+                              ? "flex-start"
+                              : "flex-end",
                           background:
-                            userId !== items.senderId ? '#e6e6e6' : '#4caf50',
+                            userId !== items.senderId ? "#e6e6e6" : "#4caf50",
 
-                          color: userId !== items.senderId ? '#000' : '#fff',
+                          color: userId !== items.senderId ? "#000" : "#fff",
                         }}
                       >
                         {items.content}
                       </div>
                     </div>
                   ))}
-                <div style={{ marginTop: 'auto' }}>
+                <div style={{ marginTop: "auto" }}>
                   <form
                     className="d-flex justify-content-around"
                     onSubmit={(e) => {
                       e.preventDefault();
                       sendMessage(trade.boardId);
-                      setUserInput('');
+                      setUserInput("");
                     }}
                   >
                     <input
@@ -370,33 +370,33 @@ function TradeItemDetail({ trade }) {
         )}
       </AnimatePresence>
       <BackButton />
-      <article className={classes.trade} style={{ marginTop: '4rem' }}>
+      <article className={classes.trade} style={{ marginTop: "4rem" }}>
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={20}
           slidesPerView={1}
           navigation
           pagination={{ clickable: false }} // clickable을 true로 설정하여 페이지네이션 사용
-          style={{ width: '100%', height: '500px' }}
+          style={{ width: "100%", height: "500px" }}
         >
           {trade.filePathList.map((img, index) => (
             <SwiperSlide key={index}>
               <img
                 src={img}
                 alt={`${trade.title} image ${index}`}
-                style={{ width: '80%', height: '100%', objectFit: 'cover' }}
+                style={{ width: "80%", height: "100%", objectFit: "cover" }}
               />
             </SwiperSlide>
           ))}
         </Swiper>
-        <div style={{ width: '83%', marginLeft: 'auto', marginRight: 'auto' }}>
+        <div style={{ width: "83%", marginLeft: "auto", marginRight: "auto" }}>
           <div className={classes.writer}>
             <div className="d-flex gap-2">
               <motion.img
                 onClick={handleClick}
-                whileHover={{ y: -5, cursor: 'pointer' }}
+                whileHover={{ y: -5, cursor: "pointer" }}
                 className="rounded-pill"
-                style={{ width: '3rem', height: '3rem' }}
+                style={{ width: "3rem", height: "3rem" }}
                 src={trade.writerImageUrl}
                 alt="랜덤 이미지"
               ></motion.img>
@@ -410,7 +410,7 @@ function TradeItemDetail({ trade }) {
                 src="/filled-star.png"
                 alt="star"
                 className={classes.star}
-                style={{ marginTop: '3px', width: 'auto', height: '20px' }}
+                style={{ marginTop: "3px", width: "auto", height: "20px" }}
               />
               <small className="form-text text-dark">
                 {trade.writerRating}
@@ -422,12 +422,12 @@ function TradeItemDetail({ trade }) {
           <div className={classes.title}>{trade.title}</div>
           <div className={classes.detail}>
             <div className={classes.price}>
-              {trade.price.toLocaleString('ko-KR')}원
+              {trade.price.toLocaleString("ko-KR")}원
             </div>
             <div className={classes.date}>{displayText}</div>
           </div>
           <div className={classes.direct}>
-            {trade.direct ? '직거래' : '택배배송'}
+            {trade.direct ? "직거래" : "택배배송"}
           </div>
           <div className={classes.content}>
             {trade.content}
