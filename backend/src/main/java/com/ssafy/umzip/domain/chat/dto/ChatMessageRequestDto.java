@@ -16,6 +16,8 @@ public class ChatMessageRequestDto {
 
     private String type;
 
+    private String chatRoomId;
+
     public static ChatMessage toEntity(
             ChatMessageRequestDto requestDto,
             Member member,

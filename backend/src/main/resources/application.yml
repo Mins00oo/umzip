@@ -27,6 +27,12 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: 'false'
+  kafka:
+    bootstrap-servers: kafka1.umzip.com:9092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}
