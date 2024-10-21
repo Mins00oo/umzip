@@ -28,7 +28,7 @@ spring:
     serialization:
       fail-on-empty-beans: 'false'
   kafka:
-    bootstrap-servers: kafka1.umzip.com:9092
+    bootstrap-servers: ${KAFKA_URI}
     consumer:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
