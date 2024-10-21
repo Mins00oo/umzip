@@ -82,16 +82,6 @@ const CompanyMain = () => {
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 
-        client.subscribe(`/topic/user/${token}`, (message) => {
-          console.log("subscribe topic/user", message.body);
-
-          setUserId((prev) => {
-            const updatedHistory = message.body;
-            // console.log(updatedHistory);
-            return updatedHistory;
-          });
-        });
-
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log("Received message: " + message.body);
           showReceivedMessage(message.body);
