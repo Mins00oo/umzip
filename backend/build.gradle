@@ -51,6 +51,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    // rabbitMQ
+    implementation 'io.projectreactor.netty:reactor-netty:1.0.29'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
