@@ -28,17 +28,14 @@ public class ChatController {
     @MessageMapping("/chat/{chatRoomId}")
     public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
                      @Header("Authorization") String authToken) {
-        // JWT 토큰에서 사용자 ID와 역할(role)을 추출
         Long requestId = jwtTokenProvider.getIdByToken(authToken);
         String role = jwtTokenProvider.getRoleByToken(authToken);
 
-        // LEAVE 메시지 처리
         if (message.getType().equals("LEAVE")) {
             chatRoomService.leaveChatRoom(chatRoomId, requestId, role);
             message.setContent("상대방이 나갔습니다.");
         }
 
-        // 채팅 메시지 저장
         ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId, role);
 
         kafkaProducer.sendMessage("chat-messages-" + chatRoomId, response.toString());
