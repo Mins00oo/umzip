@@ -52,8 +52,7 @@ pipeline {
                         string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
                         string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
                         string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
-                        string(credentialsId: 'KAFKA_URI', variable: 'KAFKA_URI')
+                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
                     ]) {
                         // application.yml 파일이 위치한 디렉토리로 이동
                         dir('src/main/resources') {
@@ -77,7 +76,6 @@ pipeline {
                             sed -i 's#\\\${KAKAO_API_KEY}#${KAKAO_API_KEY}#g' application.yml
                             sed -i 's#\\\${FUEL_API_KEY}#${FUEL_API_KEY}#g' application.yml
                             sed -i 's#\\\${MONGO_URI}#${MONGO_URI}#g' application.yml
-                            sed -i 's#\\\${KAFKA_URI}#${KAFKA_URI}#g' application.yml
                             """
                         }
                         // 프로젝트 루트 디렉토리로 이동하여 빌드 수행
