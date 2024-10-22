@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
 
-        registry.enableStompBrokerRelay("/topic", "/queue")
+        registry.enableStompBrokerRelay("/topic", "/queue", "/chatroom")
                 .setRelayHost(host)
                 .setRelayPort(port)
                 .setClientLogin(username)
