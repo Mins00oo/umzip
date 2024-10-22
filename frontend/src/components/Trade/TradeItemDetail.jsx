@@ -159,14 +159,6 @@ function TradeItemDetail({ trade }) {
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 
-        client.subscribe(`/topic/user/${token}`, (message) => {
-          setUserId((prev) => {
-            const updatedHistory = message.body;
-            // console.log(message.body);
-            return updatedHistory;
-          });
-        });
-
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log(res);
           console.log("Received message: " + message.body);

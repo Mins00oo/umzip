@@ -84,14 +84,6 @@ export default function RecommendPeople({
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 
-        client.subscribe(`/topic/user/${token}`, (message) => {
-          setUserId((prev) => {
-            const updatedHistory = message.body;
-            // console.log(updatedHistory);
-            return updatedHistory;
-          });
-        });
-
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log("Received message: " + message.body);
           // console.log(talkHistory)

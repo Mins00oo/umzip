@@ -76,13 +76,15 @@ const CompanyMain = () => {
 
   const socket = (res) => {
     const { token } = useAuthStore.getState();
-    console.log(res);
+
+    console.log(`res value: ${res}`); // 추가
+
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
       onConnect: (frame) => {
-        console.log("Connected: " + frame);
-
-        client.subscribe(`/topic/chatroom/${res}`, (message) => {
+        const destination = "/topic/chatroom/" + res;
+        console.log(`Subscribing to: ${destination}`);
+        client.subscribe(destination, (message) => {
           console.log("Received message: " + message.body);
           showReceivedMessage(message.body);
         });
@@ -145,6 +147,7 @@ const CompanyMain = () => {
     const stompClient = socket(res);
     stompClientRef.current = stompClient;
     stompClient.onConnect(stompClient.activate());
+
     setOpenModal(true);
     setChatRoom(res);
   };

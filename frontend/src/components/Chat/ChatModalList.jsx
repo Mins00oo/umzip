@@ -69,7 +69,7 @@ export default function ChatModalList({
     // 모달이 열릴 때만 대화 내용을 불러옴
     if (!talkHistory.length) {
       const stompClient = socket();
-      console.log(stompClient);
+      console.log("stompClient", stompClient);
       const talk = await axios_detailChat();
       setTalkHistory(talk);
       stompClientRef.current = stompClient;
@@ -93,16 +93,6 @@ export default function ChatModalList({
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 
-        client.subscribe(`/topic/user/${token}`, (message) => {
-          console.log(message.body);
-
-          setUserId((prev) => {
-            const updatedHistory = message.body;
-            // console.log(updatedHistory);
-            return updatedHistory;
-          });
-        });
-
         client.subscribe(`/topic/chatroom/${chatroomId}`, (message) => {
           console.log("Received message: " + message.body);
           showReceivedMessage(message.body);
@@ -124,8 +114,6 @@ export default function ChatModalList({
       console.log(response.data.result);
       setTradeChat(response.data.result.tradeItem);
       return response.data.result.chatMessages;
-      // console.log(response.data.result)
-      // console.dir(stompClient.subscribe)
     } catch (error) {
       console.error(error);
     }
@@ -219,8 +207,6 @@ export default function ChatModalList({
       console.log(response);
       // setTradeChat(response.data.result.tradeItem)
       return response.data.isSuccess;
-      // console.log(response.data.result)
-      // console.dir(stompClient.subscribe)
     } catch (error) {
       console.error(error);
     }

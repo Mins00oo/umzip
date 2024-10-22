@@ -76,16 +76,6 @@ export default function Requests({
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 
-        client.subscribe(`/topic/user/${token}`, (message) => {
-          console.log(message.body);
-
-          setUserId((prev) => {
-            const updatedHistory = message.body;
-            // console.log(updatedHistory);
-            return updatedHistory;
-          });
-        });
-
         client.subscribe(`/topic/chatroom/${res}`, (message) => {
           console.log("Received message: " + message.body);
           // console.log(talkHistory)
