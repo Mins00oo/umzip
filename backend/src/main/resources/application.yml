@@ -5,7 +5,7 @@ spring:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
+    password: "${RABBITMQ_PASSWORD}"
   data:
     redis:
       host: ${REDIS_HOST}
