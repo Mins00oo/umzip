@@ -36,6 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
 
+        log.info("RabbitMQ Password: {}", username);  // 로그에 출력해 확인
         log.info("RabbitMQ Password: {}", password);  // 로그에 출력해 확인
 
         registry.enableStompBrokerRelay("/topic", "/queue")
