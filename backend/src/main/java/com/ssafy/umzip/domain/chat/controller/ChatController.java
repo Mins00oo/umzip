@@ -21,6 +21,7 @@ public class ChatController {
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat/{chatRoomId}")
     public void send(@Payload ChatMessageRequestDto message, @DestinationVariable Long chatRoomId,
@@ -35,5 +36,6 @@ public class ChatController {
 
         ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId, role);
 
+        messagingTemplate.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }
 }
