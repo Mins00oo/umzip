@@ -52,7 +52,7 @@ pipeline {
                         string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
                         string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
                         string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
+                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
                         string(credentialsId: 'KAFKA_URL', variable: 'KAFKA_URL')
                     ]) {
                         // application.yml 파일이 위치한 디렉토리로 이동
