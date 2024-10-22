@@ -4,7 +4,6 @@ import com.ssafy.umzip.domain.chat.dto.ChatMessageRequestDto;
 import com.ssafy.umzip.domain.chat.dto.ChatMessageResponseDto;
 import com.ssafy.umzip.domain.chat.service.ChatRoomService;
 import com.ssafy.umzip.domain.chat.service.ChatService;
-import com.ssafy.umzip.global.kafka.KafkaProducer;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class ChatController {
-    private final KafkaProducer kafkaProducer;
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
@@ -37,8 +35,6 @@ public class ChatController {
         }
 
         ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId, role);
-
-        kafkaProducer.sendMessage("chat-messages-" + chatRoomId, response.toString());
 
         template.convertAndSend("/topic/chatroom/" + chatRoomId, response);
     }

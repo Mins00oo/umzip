@@ -43,6 +43,8 @@ public class WebSocketEventListener {
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         String destination = event.getMessage().getHeaders().get("simpDestination").toString();
 
+        log.info("subscribe listener destination == " + destination);
+
         MessageHeaders headers = event.getMessage().getHeaders();
         Map<String, Object> sessionAttributes = (Map<String, Object>) headers.get(SimpMessageHeaderAccessor.SESSION_ATTRIBUTES);
 
