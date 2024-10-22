@@ -36,14 +36,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
 
-        log.info("RabbitMQ Password: {}", username);  // 로그에 출력해 확인
+        log.info("RabbitMQ username: {}", username);  // 로그에 출력해 확인
         log.info("RabbitMQ Password: {}", password);  // 로그에 출력해 확인
 
         registry.enableStompBrokerRelay("/topic", "/queue")
                 .setRelayHost(host)      // RabbitMQ 서버 주소
                 .setRelayPort(port)            // STOMP 포트 (기본: 61613)
                 .setClientLogin(username)        // RabbitMQ 사용자명
-                .setClientPasscode(password);    // RabbitMQ 비밀번호
+                .setClientPasscode(password)    // RabbitMQ 비밀번호
+                .setSystemLogin(username)    // 시스템 로그인 추가
+                .setSystemPasscode(password); // 시스템 비밀번호 추가
     }
 
 }
