@@ -52,7 +52,11 @@ pipeline {
                         string(credentialsId: 'BUSINESS_SERVICE_KEY', variable: 'BUSINESS_SERVICE_KEY'),
                         string(credentialsId: 'KAKAO_API_KEY', variable: 'KAKAO_API_KEY'),
                         string(credentialsId: 'FUEL_API_KEY', variable: 'FUEL_API_KEY'),
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
+                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
+                        string(credentialsId: 'RABBITMQ_HOST', variable: 'RABBITMQ_HOST'),
+                        string(credentialsId: 'RABBITMQ_PORT', variable: 'RABBITMQ_PORT'),
+                        string(credentialsId: 'RABBITMQ_USERNAME', variable: 'RABBITMQ_USERNAME'),
+                        string(credentialsId: 'RABBITMQ_PASSWORD', variable: 'RABBITMQ_PASSWORD')
                     ]) {
                         // application.yml 파일이 위치한 디렉토리로 이동
                         dir('src/main/resources') {
@@ -76,6 +80,10 @@ pipeline {
                             sed -i 's#\\\${KAKAO_API_KEY}#${KAKAO_API_KEY}#g' application.yml
                             sed -i 's#\\\${FUEL_API_KEY}#${FUEL_API_KEY}#g' application.yml
                             sed -i 's#\\\${MONGO_URI}#${MONGO_URI}#g' application.yml
+                            sed -i 's#\\\${RABBITMQ_HOST}#${RABBITMQ_HOST}#g' application.yml
+                            sed -i 's#\\\${RABBITMQ_PORT}#${RABBITMQ_PORT}#g' application.yml
+                            sed -i 's#\\\${RABBITMQ_USERNAME}#${RABBITMQ_USERNAME}#g' application.yml
+                            sed -i 's#\\\${RABBITMQ_PASSWORD}#${RABBITMQ_PASSWORD}#g' application.yml
                             """
                         }
                         // 프로젝트 루트 디렉토리로 이동하여 빌드 수행
