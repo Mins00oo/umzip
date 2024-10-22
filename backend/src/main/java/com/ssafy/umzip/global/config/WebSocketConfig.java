@@ -1,6 +1,7 @@
 package com.ssafy.umzip.global.config;
 
 import com.ssafy.umzip.global.util.chat.AuthHandshakeInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -9,6 +10,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
+@Slf4j
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
@@ -33,6 +35,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
+
+        log.info("RabbitMQ Password: {}", password);  // 로그에 출력해 확인
 
         registry.enableStompBrokerRelay("/topic", "/queue")
                 .setRelayHost(host)      // RabbitMQ 서버 주소
