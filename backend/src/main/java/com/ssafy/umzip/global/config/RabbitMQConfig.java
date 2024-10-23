@@ -10,7 +10,6 @@ import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFacto
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,15 +37,12 @@ public class RabbitMQConfig {
     // Queue 등록
     @Bean
     public Queue queue() {
-        log.info("Creating RabbitMQ Queue: {}", CHAT_QUEUE_NAME);
-
         return new Queue(CHAT_QUEUE_NAME, true);  // durable 큐 생성
     }
 
     // Exchange 등록
     @Bean
     public TopicExchange exchange() {
-        log.info("Creating RabbitMQ Exchange: {}", CHAT_EXCHANGE_NAME);
         return new TopicExchange(CHAT_EXCHANGE_NAME, true, false);  // durable, auto-delete false
     }
 
@@ -65,8 +61,6 @@ public class RabbitMQConfig {
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        log.info("Configuring ConnectionFactory to connect to RabbitMQ: {}:{}", host, port);
-
         CachingConnectionFactory factory = new CachingConnectionFactory();
         factory.setHost(host);  // 호스트 설정
         factory.setVirtualHost("/");  // 기본 VHost
@@ -78,8 +72,6 @@ public class RabbitMQConfig {
 
     @Bean
     SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        log.info("Creating SimpleRabbitListenerContainerFactory.");
-
         final SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         return factory;
