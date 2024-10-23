@@ -90,6 +90,10 @@ export default function ChatModalList({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
 
       // 여기에 다른 설정도 추가할 수 있습니다.
+      debug: function (str) {
+        console.log(str);
+      },
+
       onConnect: (frame) => {
         console.log("Connected: " + frame);
 

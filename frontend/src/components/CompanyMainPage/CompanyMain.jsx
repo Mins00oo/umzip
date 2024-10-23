@@ -81,6 +81,11 @@ const CompanyMain = () => {
 
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
+
+      debug: function (str) {
+        console.log(str);
+      },
+
       onConnect: (frame) => {
         const destination = "/topic/chatroom/" + res;
         console.log(`Subscribing to: ${destination}`);
