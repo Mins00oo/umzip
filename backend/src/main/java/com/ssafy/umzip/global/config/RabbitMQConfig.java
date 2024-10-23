@@ -58,6 +58,7 @@ public class RabbitMQConfig {
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory factory = new CachingConnectionFactory();
         factory.setHost(host);  // 호스트 설정
+        factory.setVirtualHost("/");  // 기본 VHost
         factory.setUsername(username);  // 사용자명
         factory.setPassword(password);  // 비밀번호
         factory.setPort(port);  // 포트
