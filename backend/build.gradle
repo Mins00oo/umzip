@@ -53,6 +53,7 @@ dependencies {
 
     // rabbitMQ
     implementation 'io.projectreactor.netty:reactor-netty:1.0.29'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
