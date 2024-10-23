@@ -52,9 +52,9 @@ public class RabbitMQConfig {
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
-        log.info("Initializing RabbitAdmin for RabbitMQ management.");
-
-        return new RabbitAdmin(connectionFactory);
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        admin.setAutoStartup(true);  // 자동 시작 설정을 true로 설정
+        return admin;
     }
 
     // Exchange와 Queue 바인딩
