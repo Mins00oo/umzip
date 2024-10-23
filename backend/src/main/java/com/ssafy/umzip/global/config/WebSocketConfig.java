@@ -41,7 +41,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setClientLogin(username)
                 .setClientPasscode(password)
                 .setSystemLogin(username)
-                .setSystemPasscode(password);
+                .setSystemPasscode(password)
+                .setVirtualHost("/");
 
         //메시지 발행 url
         registry.setPathMatcher(new AntPathMatcher("."));
