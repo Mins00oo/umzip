@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 @EnableRabbit
@@ -46,13 +47,6 @@ public class RabbitMQConfig {
         return new TopicExchange(CHAT_EXCHANGE_NAME, true, false);  // durable, auto-delete false
     }
 
-    @Bean
-    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
-        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
-        admin.setAutoStartup(true);  // 자동 시작 설정을 true로 설정
-        return admin;
-    }
-
     // Exchange와 Queue 바인딩
     @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
@@ -68,6 +62,14 @@ public class RabbitMQConfig {
         factory.setPassword(password);  // 비밀번호
         factory.setPort(port);  // 포트
         return factory;
+    }
+
+    @Bean
+    @DependsOn("connectionFactory")
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        admin.setAutoStartup(true);  // 자동 시작 설정을 true로 설정
+        return admin;
     }
 
     @Bean
