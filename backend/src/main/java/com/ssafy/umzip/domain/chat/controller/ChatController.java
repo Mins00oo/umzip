@@ -36,8 +36,7 @@ public class ChatController {
 
         ChatMessageResponseDto response = chatService.saveMessage(message, chatRoomId, requestId, role);
 
-        String destination = "/topic/chatroom/" + chatRoomId;
-        log.info("Sending message to destination: {}", destination);
+        String destination = "/exchange/chat.exchange/room." + chatRoomId;
         messagingTemplate.convertAndSend(destination, response);
     }
 }
