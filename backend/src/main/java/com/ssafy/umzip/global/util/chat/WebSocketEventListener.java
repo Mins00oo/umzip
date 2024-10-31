@@ -43,8 +43,6 @@ public class WebSocketEventListener {
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         String destination = event.getMessage().getHeaders().get("simpDestination").toString();
 
-        log.info("subscribe listener destination == " + destination);
-
         MessageHeaders headers = event.getMessage().getHeaders();
         Map<String, Object> sessionAttributes = (Map<String, Object>) headers.get(SimpMessageHeaderAccessor.SESSION_ATTRIBUTES);
 
@@ -60,7 +58,7 @@ public class WebSocketEventListener {
         }
         Long chatRoomId;
 
-        if (destination.startsWith("/topic/chatroom/")) {
+        if (destination.startsWith("/exchange/chat.exchange/")) {
             chatRoomId = parseChatRoomId(destination);
             List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomId(chatRoomId);
             String lastMessageId = null;
@@ -73,12 +71,12 @@ public class WebSocketEventListener {
                     .updateLastReadMessage(lastMessageId);
         }
 
-        messagingTemplate.convertAndSend("/topic/user/" + accessToken, id);
+        messagingTemplate.convertAndSend("/exchange/user.exchange/" + accessToken, id);
 
     }
 
     private Long parseChatRoomId(String destination) {
-        String[] parts = destination.split("/");
+        String[] parts = destination.split("\\.");
         String chatRoomId = parts[parts.length - 1];
         return Long.valueOf(chatRoomId);
     }

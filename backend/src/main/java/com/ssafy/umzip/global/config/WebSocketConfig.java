@@ -45,7 +45,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setVirtualHost("/");
 
         //메시지 발행 url
-        registry.setPathMatcher(new AntPathMatcher("."));
         registry.setApplicationDestinationPrefixes("/pub");
     }
 
