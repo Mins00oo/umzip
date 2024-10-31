@@ -39,6 +39,7 @@ export default function Requests({
   const handleinput = (event) => {
     setuserinput(event.target.value);
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [openModal, talkHistory]);
@@ -51,6 +52,7 @@ export default function Requests({
     stompClientRef.current = stompClient;
     stompClient.onConnect(stompClient.activate());
   };
+
   const containerVariants = {
     visible: {
       opacity: 1,
@@ -62,29 +64,29 @@ export default function Requests({
     hidden: { opacity: 0, y: -20 },
     exit: { opacity: 0, y: 20 },
   };
+
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
+
   const socket = (res) => {
     const { token } = useAuthStore.getState();
     console.log(res);
 
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
-      // 여기에 다른 설정도 추가할 수 있습니다.
 
-      debug: function (str) {
-        console.log(str);
-      },
+      onConnect: () => {
+        client.subscribe(`/exchange/user.exchange/${token}`, (message) => {
+          setUserId(() => {
+            const updatedHistory = message.body;
+            return updatedHistory;
+          });
+        });
 
-      onConnect: (frame) => {
-        console.log("Connected: " + frame);
-
-        client.subscribe(`/topic/chatroom/${res}`, (message) => {
-          console.log("Received message: " + message.body);
-          // console.log(talkHistory)
+        client.subscribe(`/exchange/chat.exchange/room.${res}`, (message) => {
           showReceivedMessage(message.body);
         });
       },
@@ -97,9 +99,10 @@ export default function Requests({
 
     return client;
   };
+
   const showReceivedMessage = (message) => {
     try {
-      // console.log(message)
+      console.log("message", message);
 
       const jsonData = JSON.parse(message);
       console.log(jsonData);
@@ -120,7 +123,7 @@ export default function Requests({
     if (userinput && stompClientRef.current.active) {
       // console.log('메시지 보낸다');
       stompClientRef.current.publish({
-        destination: `/app/chat/${chatRoom}`,
+        destination: `/pub/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
           type: "TALK",
@@ -133,6 +136,7 @@ export default function Requests({
       console.error("Message is empty or stomp client is not connected.");
     }
   };
+
   const stopSocketCommunication = () => {
     if (stompClientRef.current) {
       stompClientRef.current.deactivate();

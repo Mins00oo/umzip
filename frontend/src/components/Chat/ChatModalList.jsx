@@ -89,18 +89,20 @@ export default function ChatModalList({
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
 
-      // 여기에 다른 설정도 추가할 수 있습니다.
-      debug: function (str) {
-        console.log(str);
-      },
-
-      onConnect: (frame) => {
-        console.log("Connected: " + frame);
-
-        client.subscribe(`/topic/chatroom/${chatroomId}`, (message) => {
-          console.log("Received message: " + message.body);
-          showReceivedMessage(message.body);
+      onConnect: () => {
+        client.subscribe(`/exchange/user.exchange/${token}`, (message) => {
+          setUserId(() => {
+            const updatedHistory = message.body;
+            return updatedHistory;
+          });
         });
+
+        client.subscribe(
+          `/exchange/chat.exchange/room.${chatroomId}`,
+          (message) => {
+            showReceivedMessage(message.body);
+          }
+        );
       },
 
       onStompError: (frame) => {
@@ -139,12 +141,14 @@ export default function ChatModalList({
       console.error("Error parsing received message:", error);
     }
   };
+
   const stopSocketCommunication = () => {
     if (stompClientRef.current) {
       stompClientRef.current.deactivate();
       console.log("연결X");
     }
   };
+
   const LeaveChat = () => {
     const { token } = useAuthStore.getState();
 
@@ -154,7 +158,7 @@ export default function ChatModalList({
       if (stompClientRef.current.active) {
         console.log("채팅창 나가기");
         stompClientRef.current.publish({
-          destination: `/app/chat/${chatroomId}`,
+          destination: `/pub/chat/${chatroomId}`,
           body: JSON.stringify({
             content: "asdf",
             type: "LEAVE",
@@ -174,6 +178,7 @@ export default function ChatModalList({
       }
     }
   };
+
   const Chat_Call = async () => {
     try {
       const response = await api.get("/chat/rooms", {});
@@ -182,13 +187,14 @@ export default function ChatModalList({
       console.error(error);
     }
   };
+
   const sendMessage = () => {
     // userinput을 사용하도록 수정
     const { token } = useAuthStore.getState();
     if (userinput && stompClientRef.current.active) {
       console.log("메시지 보낸다");
       stompClientRef.current.publish({
-        destination: `/app/chat/${chatroomId}`,
+        destination: `/pub/chat/${chatroomId}`,
         body: JSON.stringify({
           content: userinput,
           type: "TALK",
@@ -202,6 +208,7 @@ export default function ChatModalList({
       console.error("Message is empty or stomp client is not connected.");
     }
   };
+
   const confirmBuy = async () => {
     try {
       console.log(tradeChat.tradeId);
@@ -215,6 +222,7 @@ export default function ChatModalList({
       console.error(error);
     }
   };
+
   const handleBuy = async (e) => {
     e.stopPropagation();
     const userConfirmed = window.confirm("구매를 확정하시겠습니까?");
@@ -234,6 +242,7 @@ export default function ChatModalList({
 
     // setOpenModal(false)
   };
+
   return (
     <>
       <AnimatePresence>

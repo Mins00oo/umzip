@@ -81,10 +81,15 @@ export default function RecommendPeople({
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
       // 여기에 다른 설정도 추가할 수 있습니다.
-      onConnect: (frame) => {
-        console.log("Connected: " + frame);
+      onConnect: () => {
+        client.subscribe(`/exchange/user.exchange/${token}`, (message) => {
+          setUserId(() => {
+            const updatedHistory = message.body;
+            return updatedHistory;
+          });
+        });
 
-        client.subscribe(`/topic/chatroom/${res}`, (message) => {
+        client.subscribe(`/exchange/chat.exchange/room.${res}`, (message) => {
           console.log("Received message: " + message.body);
           // console.log(talkHistory)
           showReceivedMessage(message.body);
@@ -122,7 +127,7 @@ export default function RecommendPeople({
     if (userinput && stompClientRef.current.active) {
       console.log(chatRoom);
       stompClientRef.current.publish({
-        destination: `/app/chat/${chatRoom}`,
+        destination: `/pub/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
           type: "TALK",

@@ -161,10 +161,15 @@ function TradeItemDetail({ trade }) {
         console.log(str);
       },
 
-      onConnect: (frame) => {
-        console.log("Connected: " + frame);
+      onConnect: () => {
+        client.subscribe(`/exchange/user.exchange/${token}`, (message) => {
+          setUserId(() => {
+            const updatedHistory = message.body;
+            return updatedHistory;
+          });
+        });
 
-        client.subscribe(`/topic/chatroom/${res}`, (message) => {
+        client.subscribe(`/exchange/chat.exchange/room.${res}`, (message) => {
           console.log(res);
           console.log("Received message: " + message.body);
           // console.log(talkHistory)
@@ -203,7 +208,7 @@ function TradeItemDetail({ trade }) {
     if (userinput && stompClientRef.current.active) {
       console.log(tradeId, chatRoom);
       stompClientRef.current.publish({
-        destination: `/app/chat/${chatRoom}`,
+        destination: `/pub/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
           type: "TALK",

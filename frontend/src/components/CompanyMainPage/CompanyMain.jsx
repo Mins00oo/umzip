@@ -77,20 +77,19 @@ const CompanyMain = () => {
   const socket = (res) => {
     const { token } = useAuthStore.getState();
 
-    console.log(`res value: ${res}`); // 추가
-
     const client = new Client({
       brokerURL: `wss://umzip.com/ws?accessToken=${token}`,
 
-      debug: function (str) {
-        console.log(str);
-      },
+      onConnect: () => {
+        client.subscribe(`/exchange/user.exchange/${token}`, (message) => {
+          setUserId(() => {
+            const updatedHistory = message.body;
+            return updatedHistory;
+          });
+        });
 
-      onConnect: (frame) => {
-        const destination = "/topic/chatroom/" + res;
-        console.log(`Subscribing to: ${destination}`);
+        const destination = "/exchange/chat.exchange/room." + res;
         client.subscribe(destination, (message) => {
-          console.log("Received message: " + message.body);
           showReceivedMessage(message.body);
         });
       },
@@ -107,7 +106,6 @@ const CompanyMain = () => {
   const showReceivedMessage = (message) => {
     try {
       const jsonData = JSON.parse(message);
-      console.log(jsonData);
 
       setTalkHistory((prevTalkHistory) => {
         const updatedHistory = [...prevTalkHistory, jsonData];
@@ -125,7 +123,7 @@ const CompanyMain = () => {
     if (userinput && stompClientRef.current.active) {
       // console.log('메시지 보낸다');
       stompClientRef.current.publish({
-        destination: `/app/chat/${chatRoom}`,
+        destination: `/pub/chat/${chatRoom}`,
         body: JSON.stringify({
           content: userinput,
           type: "TALK",
