@@ -7,6 +7,7 @@ import com.ssafy.umzip.global.common.BaseResponse;
 import com.ssafy.umzip.global.common.StatusCode;
 import com.ssafy.umzip.global.util.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class MemberController {
      * 일반 사용자 회원가입시 요청을 처리하는 메서드
      */
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody MemberCreateRequestDto requestDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody MemberCreateRequestDto requestDto) {
 
         memberService.createMember(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(StatusCode.SUCCESS));

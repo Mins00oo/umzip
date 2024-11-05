@@ -37,6 +37,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Transactional
     @Override
     public ChatRoom createChatRoom(Long senderId, String senderRole, Long receiverId, Long tradeId, String role) {
+        ChatRoom existingChatRoom = findExistingChatRoom(senderId, receiverId, role);
+        if (existingChatRoom != null) {
+            return existingChatRoom;
+        }
+
         Member sender = findMember(resolveMemberIdByRole(senderId, senderRole));
         Member receiver = findMember(receiverId);
 
@@ -49,6 +54,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         saveChatParticipant(chatRoom, receiver, (isReceiverCompany) ? role : "USER");
 
         return chatRoom;
+    }
+
+    public ChatRoom findExistingChatRoom(Long senderId, Long receiverId, String role) {
+        return chatRoomRepository.findExistingChatRoom(senderId, receiverId, role);
     }
 
     private Member findMember(Long memberId) {
