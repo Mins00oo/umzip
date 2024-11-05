@@ -47,7 +47,6 @@ export default function Requests({
   const toggleModal = async (res) => {
     setOpenModal(true);
     setChatRoom(res);
-    console.log(res);
     const stompClient = socket(res);
     stompClientRef.current = stompClient;
     stompClient.onConnect(stompClient.activate());

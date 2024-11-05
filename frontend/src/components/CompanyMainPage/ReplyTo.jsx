@@ -23,16 +23,12 @@ function ReplyTo({ chatModal, role, status, mappingId, reissuing, memberId }) {
 
   const code = status % 100;
   const MakeRoom = async () => {
-    console.log(role);
     const numericRoomNumber = parseInt(memberId, 10);
     try {
-      const response = await api.post(
-        `/chat/${role}/${numericRoomNumber}`,
-        // 요청 바디를 올바른 위치에 추가
-        {} // 만약 바디가 있다면 여기에 추가하세요.
-      );
-      // setChatRoom(response.data.result)
-      // console.log(response)
+      console.log(role, numericRoomNumber);
+
+      const response = await api.post(`/chat/${role}/${numericRoomNumber}`);
+      console.log(response);
       return response.data.result;
     } catch (error) {
       console.error(error);
@@ -50,8 +46,8 @@ function ReplyTo({ chatModal, role, status, mappingId, reissuing, memberId }) {
 
   const chatStart = async () => {
     try {
-      chatModal(res);
-      const res = await MakeRoom();
+      const chatRoomId = await MakeRoom();
+      // chatModal(chatRoomId);
     } catch (error) {
       console.error("채팅 시작 중 오류가 발생했습니다", error);
     }

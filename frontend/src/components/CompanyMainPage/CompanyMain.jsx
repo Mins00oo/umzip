@@ -141,7 +141,6 @@ const CompanyMain = () => {
   const stopSocketCommunication = () => {
     if (stompClientRef.current) {
       stompClientRef.current.deactivate();
-      console.log("연결X");
     }
   };
 
